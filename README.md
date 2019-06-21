@@ -23,10 +23,10 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
 2. src/test/resources/demo/index.html  这个是demo的页面,可以放到服务器上启动,或者安装好nodejs,live-server, 直接在根目录下执行npm run live-server,启动demo的页面
 3. demo启动好之后到根目录执行mvn clean test
 4. 修改相关的配置,打开application.properties,
-	(1) 修改driverPath,这个是自动化浏览器驱动的exe文件目录
-	(2) 修改baseUrl, 这个是selenium初始化后需要打开的网页
-	(3) 修改errorPic, 这个是selenium报错后屏幕截图的保存文件夹路径
-	(4) 修改useDb,如果是true,用例是维护在数据库的表里面,如果是false,用例是维护在excel里面
+    - (1) 修改driverPath,这个是自动化浏览器驱动的exe文件目录
+    - (2) 修改baseUrl, 这个是selenium初始化后需要打开的网页
+    - (3) 修改errorPic, 这个是selenium报错后屏幕截图的保存文件夹路径
+    - (4) 修改useDb,如果是true,用例是维护在数据库的表里面,如果是false,用例是维护在excel里面
 
 
 #### 用例的表结构
