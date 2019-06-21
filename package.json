@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "live-server": "cd src/test/resources/demo && live-server",
+    "test": "mvn clean test"
+  }
+}
