@@ -12,6 +12,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 import java.util.NoSuchElementException;
 
@@ -77,6 +78,33 @@ public class ClickHandler implements ElementHandler {
             log.debug("根据标签来判断点击的方法");
             this.byTag(webElement);
         }
+        else if (ClickActionEnum.RIGHT_CLICK.equals(actionExecuteMethod)) {
+            this.rightClick(webElement);
+        }
+        else if (ClickActionEnum.DOUBLE_CLICK.equals(actionExecuteMethod)) {
+            this.doubleClick(webElement);
+        }
+    }
+
+    /**
+     * 右键
+     *
+     * @param webElement 要点击的元素
+     */
+    private void rightClick(WebElement webElement) {
+        Actions action = new Actions(WebUtil.driver);
+        action.moveToElement(webElement);
+        action.contextClick(webElement).build().perform();
+    }
+
+    /**
+     * 双击
+     *
+     * @param webElement 要点击的元素
+     */
+    private void doubleClick(WebElement webElement) {
+        Actions action = new Actions(WebUtil.driver);
+        action.doubleClick(webElement).perform();
     }
 
     /**

@@ -16,6 +16,16 @@ public enum ActionEnum {
     CLICK("click", "点击", true),
 
     /**
+     * 双击
+     */
+    DOUBLE_CLICK("doubleClick", "双击", true),
+
+    /**
+     * 右键
+     */
+    RIGHT_CLICK("rightClick", "右键", true),
+
+    /**
      * 填写需要的东西
      */
     SEND_KEYS("sendKeys", "填写需要的东西", true),

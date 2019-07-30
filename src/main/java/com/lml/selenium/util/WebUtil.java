@@ -111,6 +111,24 @@ public class WebUtil {
     }
 
     /**
+     * 执行双击
+     *
+     * @param by 对应的元素
+     */
+    public void retryFindAndDoubleClick(By by) {
+        retryingFindAndDoAction(EleHandleDtoFactory.buildClick(ClickActionEnum.DOUBLE_CLICK, EleHandleDtoFactory.buildCommon(by)));
+    }
+
+    /**
+     * 执行右键
+     *
+     * @param by 对应的元素
+     */
+    public void retryFindAndRightClick(By by) {
+        retryingFindAndDoAction(EleHandleDtoFactory.buildClick(ClickActionEnum.RIGHT_CLICK, EleHandleDtoFactory.buildCommon(by)));
+    }
+
+    /**
      * 通过Javascript进行点击，避免Selenium API点击不成功
      *
      * @param by 对应的元素

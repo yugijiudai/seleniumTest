@@ -24,6 +24,16 @@ public enum ClickActionEnum {
      */
     BY_TAG_TYPE("byTagType", "根据标签类型决定"),
 
+    /**
+     * 双击
+     */
+    DOUBLE_CLICK("doubleClick", "双击"),
+
+    /**
+     * 右键
+     */
+    RIGHT_CLICK("rightClick", "右键"),
+
     ;
 
     /**
