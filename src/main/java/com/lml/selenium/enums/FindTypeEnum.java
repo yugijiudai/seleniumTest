@@ -61,4 +61,14 @@ public enum FindTypeEnum {
         this.code = code;
         this.desc = desc;
     }
+
+    public static FindTypeEnum parse(String code) {
+        for (FindTypeEnum value : values()) {
+            if (value.getCode().equals(code)) {
+                return value;
+            }
+        }
+        throw new EnumConstantNotPresentException(FindTypeEnum.class, "找不到code:" + code);
+    }
+
 }

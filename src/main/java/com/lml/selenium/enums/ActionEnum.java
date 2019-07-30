@@ -53,6 +53,11 @@ public enum ActionEnum {
     GET_TEXT("getText", "获取文本框上的内容", true),
 
     /**
+     * 拖拉
+     */
+    DRAG("drag", "拖拉", false),
+
+    /**
      * 点击alert框
      */
     ALERT("alert", "点击alert框", false),

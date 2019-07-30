@@ -3,8 +3,8 @@ package com.lml.selenium.factory;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.lml.selenium.entity.Selenium;
 import com.lml.selenium.dto.NoEleHandleDto;
+import com.lml.selenium.entity.Selenium;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.exception.BizException;
 import lombok.experimental.UtilityClass;
@@ -50,6 +50,8 @@ public class NoEleHandleDtoFactory {
                 return buildRefresh();
             case SWITCH_MY_FRAME:
                 return buildSwitchMyFrame(selenium);
+            case DRAG:
+                return buildDrag(selenium);
             default:
                 throw new BizException("找不到对应的构建器!");
         }
@@ -112,6 +114,16 @@ public class NoEleHandleDtoFactory {
      * @return {@link NoEleHandleDto}
      */
     private NoEleHandleDto buildSwitchMyFrame(Selenium selenium) {
+        return buildCommon().setExt(selenium.getExt());
+    }
+
+    /**
+     * 构建拖拉需要用的参数
+     *
+     * @param selenium {@link Selenium}
+     * @return {@link NoEleHandleDto}
+     */
+    private NoEleHandleDto buildDrag(Selenium selenium) {
         return buildCommon().setExt(selenium.getExt());
     }
 

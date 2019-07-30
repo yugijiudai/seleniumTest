@@ -70,3 +70,4 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
 
 #### 改进的地方
 1. 暂时没有添加日志去记录错误情况,日后应该会把日志持久化到本地,通过查看日志来定位报错问题
+2. 默认driver使用chrome,暂不支持其他浏览器,google上面说新版的firefox双击好像有问题???

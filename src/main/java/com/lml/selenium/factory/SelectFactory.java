@@ -12,7 +12,7 @@ import org.openqa.selenium.By;
  * @since 2019-05-06
  */
 @UtilityClass
-class SelectFactory {
+public class SelectFactory {
 
 
     /**
@@ -42,5 +42,18 @@ class SelectFactory {
                 throw new BizException("请传入正确的查找方式!");
         }
     }
+
+    /**
+     * 根据查找类型和元素,获得元素查找器
+     *
+     * @param findType 查找的方式
+     * @param ele      要查找的元素
+     * @return 元素查找器
+     */
+    public By getSelector(String findType, String ele) {
+        Selenium selenium = new Selenium().setFindType(FindTypeEnum.parse(findType)).setElement(ele);
+        return getSelector(selenium);
+    }
+
 
 }
