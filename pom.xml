@@ -101,14 +101,9 @@
         <dependency>
             <groupId>org.uncommons</groupId>
             <artifactId>reportng</artifactId>
-            <version>1.1.4</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.testng</groupId>
-                    <artifactId>testng</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>1.1.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/reportng-1.1.5.jar</systemPath>
         </dependency>
 
     </dependencies>
