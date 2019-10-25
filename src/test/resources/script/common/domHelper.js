@@ -70,6 +70,16 @@ $(function () {
                 return dom.val();
             }
 
+            /**
+             * 根据xpath获取dom
+             * @param xpath 对应的xpath
+             * @returns {Node}
+             */
+            static getDomByXpath(xpath) {
+                return document.evaluate(xpath, document).iterateNext();
+            }
+
+
         }
 
         obj.domHelper = obj.domHelper || {};
