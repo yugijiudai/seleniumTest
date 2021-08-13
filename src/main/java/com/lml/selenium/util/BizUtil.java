@@ -2,8 +2,10 @@ package com.lml.selenium.util;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.google.common.collect.Lists;
 import com.lml.selenium.client.HandlerClient;
 import com.lml.selenium.dto.RunMethodDto;
 import com.lml.selenium.entity.Selenium;
@@ -11,11 +13,15 @@ import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.handler.other.RunMethodHandler;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -58,10 +64,10 @@ public class BizUtil {
     private void handleSeleniumBoList(List<Selenium> list) {
         for (Selenium selenium : list) {
             try {
-                HandlerClient.doAction(selenium);
+                WebElement webElement = HandlerClient.doAction(selenium);
                 String assertContent = selenium.getCallBack();
                 if (StrUtil.isNotBlank(assertContent)) {
-                    handleCallbackMethod(assertContent);
+                    handleCallbackMethod(assertContent, webElement);
                 }
                 log.info("处理:{}成功", selenium);
             }
@@ -77,6 +83,9 @@ public class BizUtil {
      * 屏幕截图
      */
     private void savePic() {
+        if (WebUtil.getSetDto().getDebugMode()) {
+            return;
+        }
         File file = ((TakesScreenshot) WebUtil.driver).getScreenshotAs(OutputType.FILE);
         String name = WebUtil.getSetDto().getErrorPic() + "_" + DateUtil.format(new Date(), "yyyy-MM-dd-hh-mm-ss") + ".jpg";
         File dest = new File(name);
@@ -88,8 +97,10 @@ public class BizUtil {
      *
      * @param callBackContent 回调的参数,json格式
      */
-    private void handleCallbackMethod(String callBackContent) {
+    private void handleCallbackMethod(String callBackContent, WebElement webElement) {
         RunMethodDto runMethodDto = JSONUtil.toBean(callBackContent, RunMethodDto.class);
+        // 回调函数第一个参数补上查找到的元素
+        runMethodDto.setArgs(ArrayUtil.insert(runMethodDto.getArgs(), 0, webElement));
         RunMethodHandler runMethodHandler = new RunMethodHandler();
         runMethodHandler.invokeMethod(runMethodDto);
     }
