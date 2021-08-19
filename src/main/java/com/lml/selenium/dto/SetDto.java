@@ -28,7 +28,7 @@ public class SetDto {
     private Integer doWait;
 
     /**
-     * 等待页面加载完成的最长时间(单位:毫秒)
+     * 等待页面或者js脚本加载完成的最长时间(单位:毫秒)
      */
     private Long maxWaitTime;
 
@@ -39,12 +39,12 @@ public class SetDto {
     private Integer interval;
 
     /**
-     * fluentWaitUntil超时时间(单位:秒)
+     * fluentWaitUntil,显式等待超时时间(单位:秒)
      */
     private Integer timeOutInSeconds;
 
     /**
-     * fluentWaitUntil等待时间(单位:毫秒)
+     * fluentWaitUntil显式等待时间(单位:毫秒)
      */
     private Long sleepInMillis;
 

@@ -24,6 +24,7 @@ import org.testng.Assert;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author yugi
@@ -74,6 +75,10 @@ public class WebUtil {
             driver = new ChromeDriver(service);
             // 窗口最大化
             driver.manage().window().maximize();
+            if (setDto.getDebugMode()) {
+                // 如果是debug模式,则会开启隐式等待
+                driver.manage().timeouts().implicitlyWait(setDto.getMaxWaitTime(), TimeUnit.MILLISECONDS);
+            }
             JSWaiter.setDriver(driver);
         }
         catch (Exception e) {
