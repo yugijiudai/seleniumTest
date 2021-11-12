@@ -10,21 +10,28 @@ import com.lml.selenium.exception.FindElementException;
 import com.lml.selenium.factory.EleHandleDtoFactory;
 import com.lml.selenium.factory.HandlerFactory;
 import com.lml.selenium.handler.element.ElementHandler;
+import com.lml.selenium.proxy.ChromeDriverProxy;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.logging.LogType;
+import org.openqa.selenium.logging.LoggingPreferences;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 /**
  * @author yugi
@@ -60,6 +67,7 @@ public class WebUtil {
      * 关闭驱动
      */
     public void quitDriver() {
+        ChromeDriverProxy.saveHttpTransferDataIfNecessary((ChromeDriverProxy) driver);
         driver.quit();
         service.stop();
     }
@@ -70,11 +78,30 @@ public class WebUtil {
      */
     public void webDriverInit() {
         try {
-            service = new ChromeDriverService.Builder().usingDriverExecutable(new File(setDto.getDriverPath())).usingAnyFreePort().build();
+            service = new ChromeDriverService.Builder().usingDriverExecutable(new File(setDto.getDriverPath())).usingPort(ChromeDriverProxy.CHROME_DRIVER_PORT).build();
             service.start();
-            driver = new ChromeDriver(service);
+            ChromeOptions options = new ChromeOptions();
+            // 禁用阻止弹出窗口
+            options.addArguments("--disable-popup-blocking");
+            // 启动无沙盒模式运行
+            options.addArguments("no-sandbox");
+            // 禁用扩展
+            options.addArguments("disable-extensions");
+            // 默认浏览器检查
+            options.addArguments("no-default-browser-check");
+            Map<String, Object> prefs = new HashMap<>(2);
+            prefs.put("credentials_enable_service", false);
+            prefs.put("profile.password_manager_enabled", false);
+            // 禁用保存密码提示框
+            options.setExperimentalOption("prefs", prefs);
+            options.setExperimentalOption("w3c", false);
+            LoggingPreferences logPrefs = new LoggingPreferences();
+            logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
+            options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+
+            driver = new ChromeDriverProxy(service, options);
             // 窗口最大化
-            driver.manage().window().maximize();
+            // driver.manage().window().maximize();
             if (setDto.getDebugMode()) {
                 // 如果是debug模式,则会开启隐式等待
                 driver.manage().timeouts().implicitlyWait(setDto.getMaxWaitTime(), TimeUnit.MILLISECONDS);
@@ -85,6 +112,23 @@ public class WebUtil {
             Assert.fail("初始化失败", e);
         }
     }
+    // public void webDriverInit() {
+    //     try {
+    //         service = new ChromeDriverService.Builder().usingDriverExecutable(new File(setDto.getDriverPath())).usingAnyFreePort().build();
+    //         service.start();
+    //         driver = new ChromeDriver(service);
+    //         // 窗口最大化
+    //         // driver.manage().window().maximize();
+    //         if (setDto.getDebugMode()) {
+    //             // 如果是debug模式,则会开启隐式等待
+    //             driver.manage().timeouts().implicitlyWait(setDto.getMaxWaitTime(), TimeUnit.MILLISECONDS);
+    //         }
+    //         JSWaiter.setDriver(driver);
+    //     }
+    //     catch (Exception e) {
+    //         Assert.fail("初始化失败", e);
+    //     }
+    // }
 
 
     /**
