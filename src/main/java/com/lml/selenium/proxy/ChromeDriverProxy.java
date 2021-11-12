@@ -118,14 +118,27 @@ public class ChromeDriverProxy extends ChromeDriver {
             for (LogEntry entry : logEntries) {
                 JSONObject jsonObj = JSONUtil.parseObj(entry.getMessage()).getJSONObject("message");
                 String method = jsonObj.getStr("method");
-                String params = jsonObj.getStr("params");
-                if (NETWORK_RESPONSE_RECEIVED.equals(method)) {
+                JSONObject params = jsonObj.getJSONObject("params");
+                String url = params.getJSONObject("response").getStr("url");
+                if (NETWORK_RESPONSE_RECEIVED.equals(method) && driver.isNeedSave(url)) {
                     ChromeResponseVo response = JSONUtil.toBean(params, ChromeResponseVo.class);
                     responseReceivedEvents.add(response);
                 }
             }
             doSaveHttpTransferDataIfNecessary(driver, responseReceivedEvents);
         }
+    }
+
+    private boolean isNeedSave(String url) {
+        boolean staticFiles = url.endsWith(".png")
+                || url.endsWith(".jpg")
+                || url.endsWith(".css")
+                || url.endsWith(".ico")
+                || url.endsWith(".js")
+                || url.endsWith(".gif")
+                || url.endsWith(".svg")
+                || url.endsWith(".woff2");
+        return !staticFiles && url.startsWith("http");
     }
 
 
