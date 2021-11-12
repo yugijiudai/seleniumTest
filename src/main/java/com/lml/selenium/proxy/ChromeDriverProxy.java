@@ -5,6 +5,8 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.google.common.collect.Lists;
+import com.lml.selenium.util.ParamUtil;
 import com.lml.selenium.vo.ChromeResponseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -15,7 +17,6 @@ import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.Logs;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -112,63 +113,31 @@ public class ChromeDriverProxy extends ChromeDriver {
     public static void saveHttpTransferDataIfNecessary(ChromeDriverProxy driver) {
         Logs logs = driver.manage().logs();
         Set<String> availableLogTypes = logs.getAvailableLogTypes();
-        if (availableLogTypes.contains(LogType.PERFORMANCE)) {
-            LogEntries logEntries = logs.get(LogType.PERFORMANCE);
-            List<ChromeResponseVo> responseReceivedEvents = new ArrayList<>();
-            for (LogEntry entry : logEntries) {
-                JSONObject jsonObj = JSONUtil.parseObj(entry.getMessage()).getJSONObject("message");
-                String method = jsonObj.getStr("method");
-                JSONObject params = jsonObj.getJSONObject("params");
-                String url = params.getJSONObject("response").getStr("url");
-                if (NETWORK_RESPONSE_RECEIVED.equals(method) && driver.isNeedSave(url)) {
-                    ChromeResponseVo response = JSONUtil.toBean(params, ChromeResponseVo.class);
-                    responseReceivedEvents.add(response);
-                }
-            }
-            doSaveHttpTransferDataIfNecessary(driver, responseReceivedEvents);
+        if (!availableLogTypes.contains(LogType.PERFORMANCE)) {
+            return;
         }
-    }
-
-    private boolean isNeedSave(String url) {
-        boolean staticFiles = url.endsWith(".png")
-                || url.endsWith(".jpg")
-                || url.endsWith(".css")
-                || url.endsWith(".ico")
-                || url.endsWith(".js")
-                || url.endsWith(".gif")
-                || url.endsWith(".svg")
-                || url.endsWith(".woff2");
-        return !staticFiles && url.startsWith("http");
-    }
-
-
-    /**
-     * 解析对应的返回内容列表，并且对其操作
-     *
-     * @param driver    对应的驱动
-     * @param responses 返回的列表
-     */
-    private static void doSaveHttpTransferDataIfNecessary(ChromeDriverProxy driver, List<ChromeResponseVo> responses) {
-        for (ChromeResponseVo chromeResponseVo : responses) {
-            String url = JSONUtil.parseObj(chromeResponseVo.getResponse()).getStr("url");
-            boolean staticFiles = url.endsWith(".png")
-                    || url.endsWith(".jpg")
-                    || url.endsWith(".css")
-                    || url.endsWith(".ico")
-                    || url.endsWith(".js")
-                    || url.endsWith(".gif")
-                    || url.endsWith(".svg")
-                    || url.endsWith(".woff2");
-
-            if (!staticFiles && url.startsWith("http")) {
-                // 使用上面开发的接口获取返回数据
-                String body = driver.getResponseBody(chromeResponseVo.getRequestId());
-                log.info("url:{}\n body:{}", url, JSONUtil.parseObj(body));
-                // JSONArray cookies = driver.getCookies(responseReceivedEvent.getRequestId());
-                // System.out.println("url:" + url + " ,cookies-->" + cookies);
+        LogEntries logEntries = logs.get(LogType.PERFORMANCE);
+        List<ChromeResponseVo> responseVoList = Lists.newArrayList();
+        for (LogEntry entry : logEntries) {
+            JSONObject jsonObj = JSONUtil.parseObj(entry.getMessage()).getJSONObject("message");
+            String method = jsonObj.getStr("method");
+            if (!NETWORK_RESPONSE_RECEIVED.equals(method)) {
+                continue;
+            }
+            JSONObject params = jsonObj.getJSONObject("params");
+            String url = JSONUtil.getByPath(params, "$.response.url").toString();
+            if (!ParamUtil.isStaticResource(url)) {
+                ChromeResponseVo vo = JSONUtil.toBean(params, ChromeResponseVo.class);
+                vo.setUrl(url);
+                responseVoList.add(vo);
             }
         }
+        List<ChromeResponseVo> list = responseVoList.subList(0, 10);
+        for (ChromeResponseVo chromeResponseVo : list) {
+            String body = driver.getResponseBody(chromeResponseVo.getRequestId());
+            JSONObject bodyJson = JSONUtil.parseObj(body);
+            log.info("body:{}", bodyJson);
+        }
     }
-
 
 }

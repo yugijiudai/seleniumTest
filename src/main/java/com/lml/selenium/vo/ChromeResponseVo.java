@@ -26,4 +26,6 @@ public class ChromeResponseVo {
     private String type;
 
     private String timestamp;
+
+    private String url;
 }
