@@ -1,11 +1,10 @@
 package com.lml.selenium.proxy;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.json.JSONArray;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.lml.selenium.util.ParamUtil;
 import com.lml.selenium.vo.ChromeResponseVo;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +13,7 @@ import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.devtools.Command;
 import org.openqa.selenium.devtools.v95.network.Network;
+import org.openqa.selenium.devtools.v95.network.model.Cookie;
 import org.openqa.selenium.devtools.v95.network.model.RequestId;
 import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.LogEntry;
@@ -55,64 +55,31 @@ public class ChromeDriverProxy extends ChromeDriver {
 
     /**
      * 根据请求ID获取返回内容
+     * http://localhost:%s/session/%s/goog/cdp/execute
      *
      * @param requestId 请求id
      * @return 返回的内容
      */
-    public String getResponseBody(String requestId) {
-        try {
-            // selenium4提供的新方法
-            // Command<Network.GetResponseBodyResponse> responseBody = Network.getResponseBody(new RequestId(requestId));
-            // Map<String, Object> re = this.executeCdpCommand(responseBody.getMethod(), responseBody.getParams());
-            // System.out.println(re);
-            // Map<String, Object> re = this.executeCdpCommand("Network.getResponseBody", JSONUtil.createObj().set("requestId", requestId));
-            // CHROME_DRIVER_PORT chromeDriver提供的端口
-            String url = String.format("http://localhost:%s/session/%s/goog/cdp/execute", CHROME_DRIVER_PORT, this.getSessionId());
-            JSONObject paramMap = JSONUtil.createObj();
-            paramMap.set("cmd", NETWORK_RESPONSE_BODY_CMD).set("params", JSONUtil.createObj().set("requestId", requestId));
-            String result = HttpRequest.post(url).body(JSONUtil.toJsonStr(paramMap)).execute().body();
-            System.out.println(result);
-            return this.getResponseValue(result);
-        }
-        catch (Exception e) {
-            log.error("getResponseBody failed!", e);
-        }
-        return null;
+    public Map<String, Object> getResponseBody(String requestId) {
+        // selenium4提供的新方法
+        Command<Network.GetResponseBodyResponse> responseBody = Network.getResponseBody(new RequestId(requestId));
+        return super.executeCdpCommand(responseBody.getMethod(), responseBody.getParams());
     }
 
 
     /**
-     * 根据请求ID获取返回cookies
+     * 获取返回cookies
      * https://github.com/bayandin/chromedriver/blob/master/server/http_handler.cc
+     * http://localhost:%s/session/%s/cookie
      *
      * @return cookie
      */
-    public JSONArray getCookies() {
-        try {
-            // CHROME_DRIVER_PORT chromeDriver提供的端口
-            String url = String.format("http://localhost:%s/session/%s/cookie", CHROME_DRIVER_PORT, getSessionId());
-            String cookieStr = HttpRequest.get(url).execute().body();
-            return JSONUtil.parseArray(getResponseValue(cookieStr));
-        }
-        catch (Exception e) {
-            log.error("获取cookie失败!", e);
-        }
-        return null;
+    public Map<String, Object> getCookies() {
+        // CHROME_DRIVER_PORT chromeDriver提供的端口
+        Command<List<Cookie>> allCookies = Network.getAllCookies();
+        return super.executeCdpCommand(allCookies.getMethod(), Maps.newHashMap());
     }
 
-    /**
-     * 判断结果并且返回value的值
-     *
-     * @param data 有响应结果
-     * @return 只返回value的值
-     */
-    private String getResponseValue(String data) {
-        JSONObject object = JSONUtil.parseObj(data);
-        if (0 != object.getInt("status")) {
-            throw new RuntimeException(StrUtil.format("status error:{}", JSONUtil.toJsonStr(data)));
-        }
-        return object.getStr("value");
-    }
 
     /**
      * 保存返回请求的内容
@@ -136,16 +103,17 @@ public class ChromeDriverProxy extends ChromeDriver {
             }
             JSONObject params = jsonObj.getJSONObject("params");
             String url = JSONUtil.getByPath(params, "$.response.url").toString();
-            if (!ParamUtil.isStaticResource(url)) {
-                ChromeResponseVo vo = JSONUtil.toBean(params, ChromeResponseVo.class);
-                vo.setUrl(url);
+            if (!ParamUtil.isStaticResource(url) && "XHR".equals(params.getStr("type"))) {
+                ChromeResponseVo vo = new ChromeResponseVo();
+                vo.setHeader(params.getJSONObject("response").getJSONObject("headers"));
+                Map<String, Object> responseBody = driver.getResponseBody(params.getStr("requestId"));
+                vo.setUrl(url).setBody(responseBody.get("body")).setBase64Encoded(MapUtil.getBool(responseBody, "base64Encoded"));
                 responseVoList.add(vo);
             }
         }
+        System.out.println(responseVoList.size());
         for (ChromeResponseVo chromeResponseVo : responseVoList) {
-            String body = driver.getResponseBody(chromeResponseVo.getRequestId());
-            JSONObject bodyJson = JSONUtil.parseObj(body);
-            log.info("body:{}", bodyJson);
+            log.info("{}", JSONUtil.toJsonStr(chromeResponseVo));
         }
         return responseVoList;
     }

@@ -1,8 +1,8 @@
 package com.lml.selenium.vo;
 
-import lombok.AllArgsConstructor;
+import cn.hutool.json.JSONObject;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 
 /**
@@ -11,21 +11,27 @@ import lombok.NoArgsConstructor;
  * @since 2021-11-12
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Accessors(chain = true)
 public class ChromeResponseVo {
 
-    private String frameId;
 
-    private String requestId;
+    /**
+     * 响应头
+     */
+    private JSONObject header;
 
-    private String response;
-
-    private String loaderId;
-
-    private String type;
-
-    private String timestamp;
-
+    /**
+     * 请求连接
+     */
     private String url;
+
+    /**
+     * 请求返回的body
+     */
+    private Object body;
+
+    /**
+     * 是否用base64
+     */
+    private Boolean base64Encoded;
 }
