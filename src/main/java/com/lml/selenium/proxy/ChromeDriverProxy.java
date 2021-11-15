@@ -3,10 +3,8 @@ package com.lml.selenium.proxy;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONException;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.lml.selenium.util.ParamUtil;
 import com.lml.selenium.vo.ChromeResponseVo;
@@ -14,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.chromium.ChromiumNetworkConditions;
+import org.openqa.selenium.devtools.Command;
+import org.openqa.selenium.devtools.v95.network.Network;
+import org.openqa.selenium.devtools.v95.network.model.RequestId;
 import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.LogType;
@@ -45,7 +45,7 @@ public class ChromeDriverProxy extends ChromeDriver {
     /**
      * 必须固定端口，因为ChromeDriver没有实时获取端口的接口；
      */
-    public static final int CHROME_DRIVER_PORT = 9101;
+    public static final int CHROME_DRIVER_PORT = 9102;
 
 
     public ChromeDriverProxy(ChromeDriverService driverService, ChromeOptions options) {
@@ -62,12 +62,16 @@ public class ChromeDriverProxy extends ChromeDriver {
     public String getResponseBody(String requestId) {
         try {
             // selenium4提供的新方法
-            // Map<String, Object> requestId1 = this.executeCdpCommand("Network.Request", JSONUtil.createObj().set("requestId", requestId));
+            // Command<Network.GetResponseBodyResponse> responseBody = Network.getResponseBody(new RequestId(requestId));
+            // Map<String, Object> re = this.executeCdpCommand(responseBody.getMethod(), responseBody.getParams());
+            // System.out.println(re);
+            // Map<String, Object> re = this.executeCdpCommand("Network.getResponseBody", JSONUtil.createObj().set("requestId", requestId));
             // CHROME_DRIVER_PORT chromeDriver提供的端口
             String url = String.format("http://localhost:%s/session/%s/goog/cdp/execute", CHROME_DRIVER_PORT, this.getSessionId());
             JSONObject paramMap = JSONUtil.createObj();
             paramMap.set("cmd", NETWORK_RESPONSE_BODY_CMD).set("params", JSONUtil.createObj().set("requestId", requestId));
             String result = HttpRequest.post(url).body(JSONUtil.toJsonStr(paramMap)).execute().body();
+            System.out.println(result);
             return this.getResponseValue(result);
         }
         catch (Exception e) {

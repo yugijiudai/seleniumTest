@@ -22,6 +22,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
@@ -66,7 +67,7 @@ public class WebUtil {
      * 关闭驱动
      */
     public void quitDriver() {
-        // ChromeDriverProxy.saveHttpTransferDataIfNecessary((ChromeDriverProxy) driver);
+        ChromeDriverProxy.saveHttpTransferDataIfNecessary((ChromeDriverProxy) driver);
         driver.quit();
         service.stop();
     }
@@ -223,7 +224,8 @@ public class WebUtil {
     public WebElement fluentWaitUntilFind(EleHandleDto eleHandleDto) {
         Integer timeWait = eleHandleDto.getWaitTime();
         timeWait = timeWait != null ? timeWait : setDto.getTimeOutInSeconds();
-        WebDriverWait waitSetting = new WebDriverWait(driver, Duration.ofMillis(timeWait), Duration.ofMillis(setDto.getSleepInMillis()));
+        // WebDriverWait waitSetting = new WebDriverWait(driver, timeWait, setDto.getSleepInMillis());
+        WebDriverWait waitSetting = new WebDriverWait(driver,Duration.ofSeconds(timeWait), Duration.ofMillis(setDto.getSleepInMillis()));
         WebElement element = waitSetting.until(driver -> {
             // 等待页面状态加载完成
             // waitPageLoaded();
@@ -278,8 +280,7 @@ public class WebUtil {
      */
     public void waitPageLoaded() {
         WebDriverWait waitSetting = new WebDriverWait(driver, setDto.getMaxWaitTime(), setDto.getInterval());
-        waitSetting.until(driver -> "complete".equals(JsUtil.runJs("return document.readyState")));
-        // waitSetting.until((ExpectedCondition<Boolean>) driver -> "complete".equals(JsUtil.runJs("return document.readyState")));
+        waitSetting.until((ExpectedCondition<Boolean>) driver -> "complete".equals(JsUtil.runJs("return document.readyState")));
     }
 
     /**
