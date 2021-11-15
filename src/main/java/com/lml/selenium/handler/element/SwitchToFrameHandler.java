@@ -22,7 +22,8 @@ public class SwitchToFrameHandler implements ElementHandler {
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
         EleHandleDto handleDto = (EleHandleDto) baseSeleniumDto;
         Wait<WebDriver> wait = WaitFactory.createDefaultWait();
-        wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(handleDto.getElement()));
+        wait.until(webDriver -> ExpectedConditions.frameToBeAvailableAndSwitchToIt(handleDto.getElement()));
+        // wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(handleDto.getElement()));
         log.debug("切换[" + handleDto.getBy() + "],frame成功");
     }
 

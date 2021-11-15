@@ -7,6 +7,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+
 
 /**
  * @author yugi
@@ -25,7 +27,7 @@ public class JSWaiter {
 
     public static void setDriver(WebDriver driver) {
         jsWaitDriver = driver;
-        jsWait = new WebDriverWait(jsWaitDriver, 20);
+        jsWait = new WebDriverWait(jsWaitDriver, Duration.ofSeconds(20));
         jsExec = (JavascriptExecutor) jsWaitDriver;
     }
 
@@ -34,7 +36,7 @@ public class JSWaiter {
      */
     private static void waitForJQueryLoad() {
         //Wait for jQuery to load
-        ExpectedCondition<Boolean> jQueryLoad = driver -> ((Long) ((JavascriptExecutor) jsWaitDriver).executeScript("return jQuery.active") == 0);
+        // ExpectedCondition<Boolean> jQueryLoad = driver -> ((Long) ((JavascriptExecutor) jsWaitDriver).executeScript("return jQuery.active") == 0);
         //Get JQuery is Ready
         boolean jqueryReady = (Boolean) jsExec.executeScript("return jQuery.active==0");
 
@@ -42,7 +44,8 @@ public class JSWaiter {
         if (!jqueryReady) {
             log.debug("JQuery is NOT Ready!");
             //Wait for jQuery to load
-            jsWait.until(jQueryLoad);
+            // jsWait.until(jQueryLoad);
+            jsWait.until(webDriver -> ((Long) ((JavascriptExecutor) jsWaitDriver).executeScript("return jQuery.active") == 0));
         }
         else {
             log.debug("JQuery is Ready!");
@@ -53,25 +56,19 @@ public class JSWaiter {
      * Wait for Angular Load
      */
     private static void waitForAngularLoad() {
-        WebDriverWait wait = new WebDriverWait(jsWaitDriver, 15);
+        WebDriverWait wait = new WebDriverWait(jsWaitDriver, Duration.ofSeconds(15));
         JavascriptExecutor jsExec = (JavascriptExecutor) jsWaitDriver;
-
         String angularReadyScript = "return angular.element(document).injector().get('$http').pendingRequests.length === 0";
-
         //Wait for ANGULAR to load
-        ExpectedCondition<Boolean> angularLoad = driver -> {
-            assert driver != null;
-            return Boolean.valueOf(((JavascriptExecutor) driver).executeScript(angularReadyScript).toString());
-        };
-
+        // ExpectedCondition<Boolean> angularLoad = driver -> Boolean.valueOf(((JavascriptExecutor) driver).executeScript(angularReadyScript).toString());
         //Get Angular is Ready
-        boolean angularReady = Boolean.valueOf(jsExec.executeScript(angularReadyScript).toString());
-
+        boolean angularReady = Boolean.parseBoolean(jsExec.executeScript(angularReadyScript).toString());
         //Wait ANGULAR until it is Ready!
         if (!angularReady) {
             log.debug("ANGULAR is NOT Ready!");
             //Wait for Angular to load
-            wait.until(angularLoad);
+            wait.until(driver -> Boolean.valueOf(((JavascriptExecutor) driver).executeScript(angularReadyScript).toString()));
+            // wait.until(angularLoad);
         }
         else {
             log.debug("ANGULAR is Ready!");
@@ -82,20 +79,18 @@ public class JSWaiter {
      * Wait Until JS Ready
      */
     private static void waitUntilJSReady() {
-        WebDriverWait wait = new WebDriverWait(jsWaitDriver, 15);
+        WebDriverWait wait = new WebDriverWait(jsWaitDriver, Duration.ofSeconds(15));
         JavascriptExecutor jsExec = (JavascriptExecutor) jsWaitDriver;
-
         //Wait for Javascript to load
-        ExpectedCondition<Boolean> jsLoad = driver -> "complete".equals(((JavascriptExecutor) jsWaitDriver).executeScript("return document.readyState").toString());
-
+        // ExpectedCondition<Boolean> jsLoad = driver -> "complete".equals(((JavascriptExecutor) jsWaitDriver).executeScript("return document.readyState").toString());
         //Get JS is Ready
         boolean jsReady = "complete".equals(jsExec.executeScript("return document.readyState").toString());
-
         //Wait Javascript until it is Ready!
         if (!jsReady) {
             log.debug("JS in NOT Ready!");
             //Wait for Javascript to load
-            wait.until(jsLoad);
+            // wait.until(jsLoad);
+            wait.until(driver -> "complete".equals(((JavascriptExecutor) jsWaitDriver).executeScript("return document.readyState").toString()));
         }
         else {
             log.debug("JS is Ready!");

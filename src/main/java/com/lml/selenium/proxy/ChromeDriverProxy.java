@@ -112,9 +112,9 @@ public class ChromeDriverProxy extends ChromeDriver {
             }
         }
         System.out.println(responseVoList.size());
-        for (ChromeResponseVo chromeResponseVo : responseVoList) {
-            log.info("{}", JSONUtil.toJsonStr(chromeResponseVo));
-        }
+        // for (ChromeResponseVo chromeResponseVo : responseVoList) {
+        //     log.info("{}", JSONUtil.toJsonStr(chromeResponseVo));
+        // }
         return responseVoList;
     }
 

@@ -17,7 +17,7 @@
     <properties>
         <java.version>1.8</java.version>
         <selenium.version>4.0.0</selenium.version>
-<!--        <selenium.version>3.141.59</selenium.version>-->
+        <!--        <selenium.version>3.141.59</selenium.version>-->
         <testNg.version>6.14.3</testNg.version>
     </properties>
 
@@ -41,11 +41,11 @@
             <version>${selenium.version}</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.seleniumhq.selenium</groupId>-->
-<!--            <artifactId>selenium-server</artifactId>-->
-<!--            <version>${selenium.version}</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.seleniumhq.selenium</groupId>-->
+        <!--            <artifactId>selenium-server</artifactId>-->
+        <!--            <version>${selenium.version}</version>-->
+        <!--        </dependency>-->
 
 
         <dependency>
@@ -116,7 +116,6 @@
         </dependency>
 
 
-
         <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -126,12 +125,30 @@
 
 
         <!-- https://mvnrepository.com/artifact/com.moxproxy/moxproxy.core -->
-<!--        <dependency>-->
-<!--            <groupId>com.moxproxy</groupId>-->
-<!--            <artifactId>moxproxy.core</artifactId>-->
-<!--            <version>1.1.2</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.moxproxy</groupId>-->
+        <!--            <artifactId>moxproxy.core</artifactId>-->
+        <!--            <version>1.1.2</version>-->
+        <!--        </dependency>-->
 
+
+        <dependency>
+            <groupId>net.lightbody.bmp</groupId>
+            <artifactId>browsermob-core</artifactId>
+            <version>2.1.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.lightbody.bmp</groupId>
+            <artifactId>browsermob-legacy</artifactId>
+            <version>2.1.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.0.1-jre</version>
+        </dependency>
 
 
     </dependencies>

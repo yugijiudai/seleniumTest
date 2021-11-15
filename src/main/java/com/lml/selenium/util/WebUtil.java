@@ -11,10 +11,20 @@ import com.lml.selenium.factory.EleHandleDtoFactory;
 import com.lml.selenium.factory.HandlerFactory;
 import com.lml.selenium.handler.element.ElementHandler;
 import com.lml.selenium.proxy.ChromeDriverProxy;
+import io.netty.handler.codec.http.HttpMethod;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import net.lightbody.bmp.BrowserMobProxy;
+import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.client.ClientUtil;
+import net.lightbody.bmp.core.har.Har;
+import net.lightbody.bmp.core.har.HarEntry;
+import net.lightbody.bmp.core.har.HarRequest;
+import net.lightbody.bmp.core.har.HarResponse;
+import net.lightbody.bmp.proxy.CaptureType;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -22,11 +32,11 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
 import java.io.File;
+import java.nio.charset.UnsupportedCharsetException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +55,9 @@ public class WebUtil {
     private ChromeDriverService service;
 
     public WebDriver driver;
+
+    public BrowserMobProxy browserMobProxy = new BrowserMobProxyServer();
+
 
     /**
      * 配置文件映射到的实体类
@@ -67,7 +80,18 @@ public class WebUtil {
      * 关闭驱动
      */
     public void quitDriver() {
-        ChromeDriverProxy.saveHttpTransferDataIfNecessary((ChromeDriverProxy) driver);
+        // ChromeDriverProxy.saveHttpTransferDataIfNecessary((ChromeDriverProxy) driver);
+
+        // 获取返回的请求内容
+        Har har = browserMobProxy.getHar();
+        List<HarEntry> entries = har.getLog().getEntries();
+        for (HarEntry harEntry : entries) {
+            HarRequest request = harEntry.getRequest();
+            String url = harEntry.getRequest().getUrl();
+            if (request.getMethod().equals("POST")) {
+                System.out.println("url:{}" + url + "{}" + request.getComment());
+            }
+        }
         driver.quit();
         service.stop();
     }
@@ -99,6 +123,29 @@ public class WebUtil {
             logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
             options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
 
+
+            browserMobProxy.start();
+            browserMobProxy.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT);
+            browserMobProxy.setHarCaptureTypes(CaptureType.REQUEST_CONTENT);
+            // browserMobProxy.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT);
+            // browserMobProxy.setHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT);
+            browserMobProxy.newHar("kk");
+
+            Proxy seleniumProxy = ClientUtil.createSeleniumProxy(browserMobProxy);
+            // 设置浏览器参数
+            options.setProxy(seleniumProxy);
+            options.setAcceptInsecureCerts(true);
+            options.setExperimentalOption("useAutomationExtension", false);
+
+            // 监听网络请求
+            browserMobProxy.addRequestFilter((request, contents, messageInfo) -> {
+                if ("application/json".equals(contents.getContentType())) {
+                    // 打印浏览器请求的url和请求头
+                    System.out.println(request.uri() + " --->> " + contents.getTextContents());
+                }
+                return null;
+            });
+
             driver = new ChromeDriverProxy(service, options);
             // 窗口最大化
             // driver.manage().window().maximize();
@@ -112,6 +159,42 @@ public class WebUtil {
             Assert.fail("初始化失败", e);
         }
     }
+    // public void webDriverInit() {
+    //     try {
+    //         service = new ChromeDriverService.Builder().usingDriverExecutable(new File(setDto.getDriverPath())).usingPort(ChromeDriverProxy.CHROME_DRIVER_PORT).build();
+    //         service.start();
+    //         ChromeOptions options = new ChromeOptions();
+    //         // 禁用阻止弹出窗口
+    //         options.addArguments("--disable-popup-blocking");
+    //         // 启动无沙盒模式运行
+    //         options.addArguments("no-sandbox");
+    //         // 禁用扩展
+    //         options.addArguments("disable-extensions");
+    //         // 默认浏览器检查
+    //         options.addArguments("no-default-browser-check");
+    //         Map<String, Object> prefs = new HashMap<>(2);
+    //         prefs.put("credentials_enable_service", false);
+    //         prefs.put("profile.password_manager_enabled", false);
+    //         // 禁用保存密码提示框
+    //         options.setExperimentalOption("prefs", prefs);
+    //         options.setExperimentalOption("w3c", false);
+    //         LoggingPreferences logPrefs = new LoggingPreferences();
+    //         logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
+    //         options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+    //
+    //         driver = new ChromeDriverProxy(service, options);
+    //         // 窗口最大化
+    //         // driver.manage().window().maximize();
+    //         if (setDto.getDebugMode()) {
+    //             // 如果是debug模式,则会开启隐式等待
+    //             driver.manage().timeouts().implicitlyWait(Duration.ofMillis(setDto.getMaxWaitTime()));
+    //         }
+    //         JSWaiter.setDriver(driver);
+    //     }
+    //     catch (Exception e) {
+    //         Assert.fail("初始化失败", e);
+    //     }
+    // }
 
     /**
      * 重复查找获取控件的文本
@@ -224,8 +307,7 @@ public class WebUtil {
     public WebElement fluentWaitUntilFind(EleHandleDto eleHandleDto) {
         Integer timeWait = eleHandleDto.getWaitTime();
         timeWait = timeWait != null ? timeWait : setDto.getTimeOutInSeconds();
-        // WebDriverWait waitSetting = new WebDriverWait(driver, timeWait, setDto.getSleepInMillis());
-        WebDriverWait waitSetting = new WebDriverWait(driver,Duration.ofSeconds(timeWait), Duration.ofMillis(setDto.getSleepInMillis()));
+        WebDriverWait waitSetting = new WebDriverWait(driver, Duration.ofSeconds(timeWait), Duration.ofMillis(setDto.getSleepInMillis()));
         WebElement element = waitSetting.until(driver -> {
             // 等待页面状态加载完成
             // waitPageLoaded();
@@ -280,7 +362,8 @@ public class WebUtil {
      */
     public void waitPageLoaded() {
         WebDriverWait waitSetting = new WebDriverWait(driver, setDto.getMaxWaitTime(), setDto.getInterval());
-        waitSetting.until((ExpectedCondition<Boolean>) driver -> "complete".equals(JsUtil.runJs("return document.readyState")));
+        waitSetting.until(driver -> "complete".equals(JsUtil.runJs("return document.readyState")));
+        // waitSetting.until((ExpectedCondition<Boolean>) driver -> "complete".equals(JsUtil.runJs("return document.readyState")));
     }
 
     /**
