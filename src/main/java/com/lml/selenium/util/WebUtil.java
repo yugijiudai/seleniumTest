@@ -22,15 +22,14 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 /**
@@ -67,7 +66,7 @@ public class WebUtil {
      * 关闭驱动
      */
     public void quitDriver() {
-        ChromeDriverProxy.saveHttpTransferDataIfNecessary((ChromeDriverProxy) driver);
+        // ChromeDriverProxy.saveHttpTransferDataIfNecessary((ChromeDriverProxy) driver);
         driver.quit();
         service.stop();
     }
@@ -104,7 +103,7 @@ public class WebUtil {
             // driver.manage().window().maximize();
             if (setDto.getDebugMode()) {
                 // 如果是debug模式,则会开启隐式等待
-                driver.manage().timeouts().implicitlyWait(setDto.getMaxWaitTime(), TimeUnit.MILLISECONDS);
+                driver.manage().timeouts().implicitlyWait(Duration.ofMillis(setDto.getMaxWaitTime()));
             }
             JSWaiter.setDriver(driver);
         }
@@ -112,24 +111,6 @@ public class WebUtil {
             Assert.fail("初始化失败", e);
         }
     }
-    // public void webDriverInit() {
-    //     try {
-    //         service = new ChromeDriverService.Builder().usingDriverExecutable(new File(setDto.getDriverPath())).usingAnyFreePort().build();
-    //         service.start();
-    //         driver = new ChromeDriver(service);
-    //         // 窗口最大化
-    //         // driver.manage().window().maximize();
-    //         if (setDto.getDebugMode()) {
-    //             // 如果是debug模式,则会开启隐式等待
-    //             driver.manage().timeouts().implicitlyWait(setDto.getMaxWaitTime(), TimeUnit.MILLISECONDS);
-    //         }
-    //         JSWaiter.setDriver(driver);
-    //     }
-    //     catch (Exception e) {
-    //         Assert.fail("初始化失败", e);
-    //     }
-    // }
-
 
     /**
      * 重复查找获取控件的文本
@@ -242,7 +223,7 @@ public class WebUtil {
     public WebElement fluentWaitUntilFind(EleHandleDto eleHandleDto) {
         Integer timeWait = eleHandleDto.getWaitTime();
         timeWait = timeWait != null ? timeWait : setDto.getTimeOutInSeconds();
-        WebDriverWait waitSetting = new WebDriverWait(driver, timeWait, setDto.getSleepInMillis());
+        WebDriverWait waitSetting = new WebDriverWait(driver, Duration.ofMillis(timeWait), Duration.ofMillis(setDto.getSleepInMillis()));
         WebElement element = waitSetting.until(driver -> {
             // 等待页面状态加载完成
             // waitPageLoaded();
@@ -297,7 +278,8 @@ public class WebUtil {
      */
     public void waitPageLoaded() {
         WebDriverWait waitSetting = new WebDriverWait(driver, setDto.getMaxWaitTime(), setDto.getInterval());
-        waitSetting.until((ExpectedCondition<Boolean>) driver -> "complete".equals(JsUtil.runJs("return document.readyState")));
+        waitSetting.until(driver -> "complete".equals(JsUtil.runJs("return document.readyState")));
+        // waitSetting.until((ExpectedCondition<Boolean>) driver -> "complete".equals(JsUtil.runJs("return document.readyState")));
     }
 
     /**

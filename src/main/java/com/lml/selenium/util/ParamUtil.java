@@ -13,6 +13,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 @UtilityClass
 public class ParamUtil {
 
+    /**
+     * 静态资源的前缀
+     */
+    private final String STATIC_PREFFIX = "http";
 
     /**
      * 解析url的参数,生成MultiValueMap
@@ -32,14 +36,13 @@ public class ParamUtil {
      * @return true表示静态资源
      */
     public boolean isStaticResource(String url) {
-        return url.startsWith("http") && URLUtil.getPath(url).endsWith(".png")
-                || url.endsWith(".jpg")
-                || url.endsWith(".css")
-                || url.endsWith(".ico")
-                || url.endsWith(".js")
-                || url.endsWith(".gif")
-                || url.endsWith(".svg")
-                || url.endsWith(".woff2");
+        if (!url.startsWith(STATIC_PREFFIX)) {
+            return false;
+        }
+        String httpUrl = URLUtil.getPath(url);
+        return httpUrl.endsWith(".png") || httpUrl.endsWith(".jpg") || httpUrl.endsWith(".css")
+                || httpUrl.endsWith(".ico") || httpUrl.endsWith(".js") || httpUrl.endsWith(".gif")
+                || httpUrl.endsWith(".svg") || httpUrl.endsWith(".woff2");
     }
 
 

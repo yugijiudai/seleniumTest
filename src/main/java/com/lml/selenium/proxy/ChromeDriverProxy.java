@@ -3,8 +3,10 @@ package com.lml.selenium.proxy;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONException;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.lml.selenium.util.ParamUtil;
 import com.lml.selenium.vo.ChromeResponseVo;
@@ -12,12 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.chromium.ChromiumNetworkConditions;
 import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.Logs;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -57,6 +61,8 @@ public class ChromeDriverProxy extends ChromeDriver {
      */
     public String getResponseBody(String requestId) {
         try {
+            // selenium4提供的新方法
+            // Map<String, Object> requestId1 = this.executeCdpCommand("Network.Request", JSONUtil.createObj().set("requestId", requestId));
             // CHROME_DRIVER_PORT chromeDriver提供的端口
             String url = String.format("http://localhost:%s/session/%s/goog/cdp/execute", CHROME_DRIVER_PORT, this.getSessionId());
             JSONObject paramMap = JSONUtil.createObj();
@@ -75,10 +81,9 @@ public class ChromeDriverProxy extends ChromeDriver {
      * 根据请求ID获取返回cookies
      * https://github.com/bayandin/chromedriver/blob/master/server/http_handler.cc
      *
-     * @param requestId 请求id
      * @return cookie
      */
-    public JSONArray getCookies(String requestId) {
+    public JSONArray getCookies() {
         try {
             // CHROME_DRIVER_PORT chromeDriver提供的端口
             String url = String.format("http://localhost:%s/session/%s/cookie", CHROME_DRIVER_PORT, getSessionId());
@@ -110,11 +115,12 @@ public class ChromeDriverProxy extends ChromeDriver {
      *
      * @param driver 对应的驱动
      */
-    public static void saveHttpTransferDataIfNecessary(ChromeDriverProxy driver) {
+    public static List<ChromeResponseVo> saveHttpTransferDataIfNecessary(ChromeDriverProxy driver) {
         Logs logs = driver.manage().logs();
         Set<String> availableLogTypes = logs.getAvailableLogTypes();
         if (!availableLogTypes.contains(LogType.PERFORMANCE)) {
-            return;
+            log.warn("没有记录到相关的请求");
+            return null;
         }
         LogEntries logEntries = logs.get(LogType.PERFORMANCE);
         List<ChromeResponseVo> responseVoList = Lists.newArrayList();
@@ -132,12 +138,12 @@ public class ChromeDriverProxy extends ChromeDriver {
                 responseVoList.add(vo);
             }
         }
-        List<ChromeResponseVo> list = responseVoList.subList(0, 10);
-        for (ChromeResponseVo chromeResponseVo : list) {
+        for (ChromeResponseVo chromeResponseVo : responseVoList) {
             String body = driver.getResponseBody(chromeResponseVo.getRequestId());
             JSONObject bodyJson = JSONUtil.parseObj(body);
             log.info("body:{}", bodyJson);
         }
+        return responseVoList;
     }
 
 }
