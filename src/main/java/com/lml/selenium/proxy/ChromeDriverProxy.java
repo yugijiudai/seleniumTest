@@ -37,12 +37,6 @@ public class ChromeDriverProxy extends ChromeDriver {
      */
     public static final String NETWORK_RESPONSE_RECEIVED = "Network.responseReceived";
 
-    /**
-     * 获取响应体的命令
-     */
-    private static final String NETWORK_RESPONSE_BODY_CMD = "Network.getResponseBody";
-
-
 
     public ChromeDriverProxy(ChromeDriverService driverService, ChromeOptions options) {
         super(driverService, options);
@@ -78,7 +72,7 @@ public class ChromeDriverProxy extends ChromeDriver {
 
 
     /**
-     * 保存返回请求的内容
+     * 保存返回请求的内容(这个方法只能保存返回的结果,不能抓到请求参数)
      *
      * @param driver 对应的驱动
      */
@@ -108,9 +102,6 @@ public class ChromeDriverProxy extends ChromeDriver {
             }
         }
         System.out.println(responseVoList.size());
-        // for (ChromeResponseVo chromeResponseVo : responseVoList) {
-        //     log.info("{}", JSONUtil.toJsonStr(chromeResponseVo));
-        // }
         return responseVoList;
     }
 

@@ -77,4 +77,9 @@ public class SetDto {
      * 执行报错屏幕截图保存的地址
      */
     private String errorPic;
+
+    /**
+     * 是否使用bmp代理来获取请求参数和响应结果
+     */
+    private Boolean useBmpProxy;
 }

@@ -1,9 +1,10 @@
 package com.lml.selenium.util;
 
-import cn.hutool.core.util.URLUtil;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.regex.Pattern;
 
 /**
  * @author yugi
@@ -17,6 +18,12 @@ public class ParamUtil {
      * 静态资源的前缀
      */
     private final String STATIC_PREFFIX = "http";
+
+    /**
+     * 静态资源正则
+     */
+    public final String STATIC_REX = ".*(css|ico|jpg|jpeg|png|gif|bmp|wav|js|woff2|woff|json|svg)(\\?.*)?$";
+
 
     /**
      * 解析url的参数,生成MultiValueMap
@@ -39,10 +46,7 @@ public class ParamUtil {
         if (!url.startsWith(STATIC_PREFFIX)) {
             return false;
         }
-        String httpUrl = URLUtil.getPath(url);
-        return httpUrl.endsWith(".png") || httpUrl.endsWith(".jpg") || httpUrl.endsWith(".css")
-                || httpUrl.endsWith(".ico") || httpUrl.endsWith(".js") || httpUrl.endsWith(".gif")
-                || httpUrl.endsWith(".svg") || httpUrl.endsWith(".woff2") || httpUrl.endsWith(".woff") || httpUrl.endsWith(".json");
+        return Pattern.matches(STATIC_REX, url);
     }
 
 

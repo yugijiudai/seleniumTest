@@ -17,9 +17,6 @@ import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.lightbody.bmp.BrowserMobProxyServer;
-import net.lightbody.bmp.core.har.Har;
-import net.lightbody.bmp.core.har.HarEntry;
-import net.lightbody.bmp.core.har.HarRequest;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -74,7 +71,10 @@ public class WebUtil {
      */
     public void quitDriver() {
         // ChromeDriverProxy.saveHttpTransferDataIfNecessary((ChromeDriverProxy) driver);
-        requestProxy.afterRequest();
+        if (setDto.getUseBmpProxy()) {
+            // 如果使用了bmp代理,则会调用后置的处理
+            requestProxy.afterRequest();
+        }
         driver.quit();
         service.stop();
     }
@@ -88,10 +88,7 @@ public class WebUtil {
             service = new ChromeDriverService.Builder().usingDriverExecutable(new File(setDto.getDriverPath())).usingAnyFreePort().build();
             service.start();
             ChromeOptions options = createChromeOption();
-            requestProxy.addFilter();
             driver = new ChromeDriverProxy(service, options);
-            // 窗口最大化
-            // driver.manage().window().maximize();
             if (setDto.getDebugMode()) {
                 // 如果是debug模式,则会开启隐式等待
                 driver.manage().timeouts().implicitlyWait(Duration.ofMillis(setDto.getMaxWaitTime()));
@@ -127,7 +124,9 @@ public class WebUtil {
         options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
         options.setAcceptInsecureCerts(true);
         options.setExperimentalOption("useAutomationExtension", false);
-        options.setProxy(requestProxy.createProxy());
+        if (setDto.getUseBmpProxy()) {
+            options.setProxy(requestProxy.createProxy());
+        }
         return options;
     }
 
