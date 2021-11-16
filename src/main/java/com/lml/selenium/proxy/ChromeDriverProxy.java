@@ -42,10 +42,6 @@ public class ChromeDriverProxy extends ChromeDriver {
      */
     private static final String NETWORK_RESPONSE_BODY_CMD = "Network.getResponseBody";
 
-    /**
-     * 必须固定端口，因为ChromeDriver没有实时获取端口的接口；
-     */
-    public static final int CHROME_DRIVER_PORT = 9102;
 
 
     public ChromeDriverProxy(ChromeDriverService driverService, ChromeOptions options) {

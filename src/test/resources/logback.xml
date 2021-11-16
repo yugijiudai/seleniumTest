@@ -5,7 +5,8 @@
     <!-- 日志级别 -->
     <property name="logLevel" value="INFO"/>
     <!--控制台输出格式-->
-    <property name="consoleLogFormat" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p - %m%n"/>
+    <property name="consoleLogFormat" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %logger{50}  - %m%n"/>
+<!--    <property name="consoleLogFormat" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p - %m%n"/>-->
 
     <!-- 控制台打印日志的相关配置 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">

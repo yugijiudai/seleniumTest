@@ -42,7 +42,7 @@ public class ParamUtil {
         String httpUrl = URLUtil.getPath(url);
         return httpUrl.endsWith(".png") || httpUrl.endsWith(".jpg") || httpUrl.endsWith(".css")
                 || httpUrl.endsWith(".ico") || httpUrl.endsWith(".js") || httpUrl.endsWith(".gif")
-                || httpUrl.endsWith(".svg") || httpUrl.endsWith(".woff2");
+                || httpUrl.endsWith(".svg") || httpUrl.endsWith(".woff2") || httpUrl.endsWith(".woff") || httpUrl.endsWith(".json");
     }
 
 
