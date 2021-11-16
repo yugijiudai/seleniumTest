@@ -88,12 +88,12 @@ public class RequestProxy {
         BrowserVo browserVo = new BrowserVo().setUrl(request.getUrl()).setResponseBody(JSONUtil.parseObj(response.getContent().getText()));
         if (HttpMethod.POST.name().equals(method)) {
             HarPostData postData = request.getPostData();
-            browserVo.setRequestParam(postData == null ? null : JSONUtil.parseObj(postData.getParams()));
+            browserVo.setRequestParam(postData == null ? null : JSONUtil.parseObj(postData.getText()));
             postList.add(browserVo);
         }
         else if (HttpMethod.GET.name().equals(method)) {
             List<HarNameValuePair> param = request.getQueryString();
-            browserVo.setRequestParam((CollectionUtil.isNotEmpty(param) ? null : param));
+            browserVo.setRequestParam((CollectionUtil.isEmpty(param) ? null : JSONUtil.parseArray(param)));
             getList.add(browserVo);
         }
     }
