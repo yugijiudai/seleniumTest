@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.core.har.Har;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -47,7 +48,8 @@ public class WebUtil {
 
     public WebDriver driver;
 
-    public RequestProxy requestProxy = new RequestProxy(new BrowserMobProxyServer());
+    @Getter
+    private final RequestProxy requestProxy = new RequestProxy(new BrowserMobProxyServer());
 
     /**
      * 配置文件映射到的实体类
@@ -71,10 +73,6 @@ public class WebUtil {
      */
     public void quitDriver() {
         // ChromeDriverProxy.saveHttpTransferDataIfNecessary((ChromeDriverProxy) driver);
-        if (setDto.getUseBmpProxy()) {
-            // 如果使用了bmp代理,则会调用后置的处理
-            requestProxy.afterRequest();
-        }
         driver.quit();
         service.stop();
     }

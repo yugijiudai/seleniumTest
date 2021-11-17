@@ -2,7 +2,7 @@ package com.lml.selenium.proxy;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.lang.Console;
+import cn.hutool.core.lang.Pair;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import com.lml.selenium.util.ParamUtil;
@@ -48,18 +48,22 @@ public class RequestProxy {
         this.browserMobProxy.start();
         this.browserMobProxy.setHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT, CaptureType.REQUEST_HEADERS);
         this.browserMobProxy.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT, CaptureType.REQUEST_HEADERS);
-        this.browserMobProxy.newHar("radar");
         return ClientUtil.createSeleniumProxy(this.browserMobProxy);
     }
 
     /**
-     * 请求过后的后置操作,目前只记录get和post的方法,并且只会记录响应是json格式的数据
+     * <ol>
+     *     <li>请求过后的后置操作,目前只记录get和post的方法,并且只会记录响应是json格式的数据</li>
+     *     <li>此方法调用一次就会获取当前的har然后把里面的结果全部提取出来,最后会调用清空的方法，如果想再次调用这个方法需要调用this.browserMobProxy.newHar()创建新的har</li>
+     *     <li>如果请求过多har文件会过大,请根据实际情况来判断是否一次获取还是分批获取</li>
+     * </ol>
+     *
+     * @return 返回har文件和结果集，左边是结果集，右边是har文件
      */
-    public void afterRequest() {
+    public Pair<List<BrowserVo>, Har> captureRequest() {
         Har har = this.browserMobProxy.getHar();
         List<HarEntry> entries = har.getLog().getEntries();
-        List<BrowserVo> getList = Lists.newArrayList();
-        List<BrowserVo> postList = Lists.newArrayList();
+        List<BrowserVo> resultList = Lists.newLinkedList();
         for (HarEntry harEntry : entries) {
             HarRequest request = harEntry.getRequest();
             HarResponse response = harEntry.getResponse();
@@ -67,34 +71,31 @@ public class RequestProxy {
             if (!response.getContent().getMimeType().contains("json") || ParamUtil.isStaticResource(request.getUrl())) {
                 continue;
             }
-            this.handleRequestMethod(getList, postList, request, response);
+            this.handleRequestByMethod(resultList, request, response);
         }
-        Console.log("post请求了{}个", postList.size());
-        Console.log("get请求了{}个", getList.size());
-        this.outPutFile(getList, "Z:\\request.json");
-        this.outPutFile(postList, "Z:\\post.json");
+        this.browserMobProxy.endHar();
+        return Pair.of(resultList, har);
     }
 
     /**
-     * 根据requestMethod来设置请求参数和响应体
+     * 根据requestMethod来设置请求参数和响应体,目前只获取post和get的
      *
-     * @param getList  get请求的结果集
-     * @param postList post请求的结果集
-     * @param request  请求
-     * @param response 响应体
+     * @param resultList 请求的结果集
+     * @param request    请求
+     * @param response   响应体
      */
-    private void handleRequestMethod(List<BrowserVo> getList, List<BrowserVo> postList, HarRequest request, HarResponse response) {
+    private void handleRequestByMethod(List<BrowserVo> resultList, HarRequest request, HarResponse response) {
         String method = request.getMethod();
         BrowserVo browserVo = new BrowserVo().setUrl(request.getUrl()).setResponseBody(JSONUtil.parseObj(response.getContent().getText()));
         if (HttpMethod.POST.name().equals(method)) {
             HarPostData postData = request.getPostData();
             browserVo.setRequestParam(postData == null ? null : JSONUtil.parseObj(postData.getText()));
-            postList.add(browserVo);
+            resultList.add(browserVo.setMethod(method));
         }
         else if (HttpMethod.GET.name().equals(method)) {
             List<HarNameValuePair> param = request.getQueryString();
             browserVo.setRequestParam((CollectionUtil.isEmpty(param) ? null : JSONUtil.parseArray(param)));
-            getList.add(browserVo);
+            resultList.add(browserVo.setMethod(method));
         }
     }
 
@@ -104,13 +105,9 @@ public class RequestProxy {
      * @param list get或者post的请求list
      * @param file 文件的路径
      */
-    private void outPutFile(List<BrowserVo> list, String file) {
+    public static void outPutFile(List<BrowserVo> list, String file) {
         FileUtil.writeString(JSONUtil.toJsonStr(list), FileUtil.file(file), Charset.defaultCharset());
     }
 
-
-    public void addFilter() {
-        browserMobProxy.addRequestFilter((request, contents, messageInfo) -> null);
-    }
 
 }

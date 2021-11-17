@@ -34,4 +34,14 @@ public class ChromeResponseVo {
      * 是否用base64
      */
     private Boolean base64Encoded;
+
+    /**
+     * 请求参数
+     */
+    private Object requestParam;
+
+    /**
+     * 请求头
+     */
+    private JSONObject requestHeader;
 }

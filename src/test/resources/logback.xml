@@ -16,6 +16,9 @@
         </encoder>
     </appender>
 
+    <logger name="com.google.common" level="ERROR"/>
+    <logger name="net.lightbody.bmp" level="ERROR"/>
+
     <!-- 基于INFO处理日志：具体控制台或者文件对日志级别的处理还要看所在appender配置的filter，如果没有配置filter，则使用root配置 -->
     <root level="${logLevel}">
         <appender-ref ref="STDOUT"/>
