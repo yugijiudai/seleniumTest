@@ -78,7 +78,7 @@ public class ChromeDriverProxy extends ChromeDriver {
      *
      * @param driver 对应的驱动
      */
-    public static List<ChromeResponseVo> saveHttpTransferDataIfNecessary(ChromeDriverProxy driver, String saveType) {
+    public static List<ChromeResponseVo> saveResponse(ChromeDriverProxy driver) {
         Logs logs = driver.manage().logs();
         Set<String> availableLogTypes = logs.getAvailableLogTypes();
         if (!availableLogTypes.contains(LogType.PERFORMANCE)) {
@@ -89,40 +89,16 @@ public class ChromeDriverProxy extends ChromeDriver {
         for (LogEntry entry : logEntries) {
             JSONObject jsonObj = JSONUtil.parseObj(entry.getMessage()).getJSONObject("message");
             String method = jsonObj.getStr("method");
-            System.out.println(method);
             if (!NETWORK_RESPONSE_RECEIVED.equals(method)) {
                 continue;
             }
             JSONObject params = jsonObj.getJSONObject("params");
             String url = JSONUtil.getByPath(params, "$.response.url").toString();
             if (!ParamUtil.isStaticResource(url) && "XHR".equals(params.getStr("type"))) {
-                responseVoList.add("all".equals(saveType) ? saveResponse(driver, params) : saveResponseUrl(params));
+                responseVoList.add(saveResponseAll(driver, params));
             }
         }
         return responseVoList;
-    }
-
-    public static void waitForLoading(ChromeDriverProxy driver) {
-        WebUtil.doWait(1000);
-        // int size = saveHttpTransferDataIfNecessary(driver, null).size();
-        while (saveHttpTransferDataIfNecessary(driver, null).size() > 0) {
-            // log.warn("等待ajax请求有:{}个", size);
-            WebUtil.doWait(WebUtil.getSetDto().getDoWait());
-            log.info("==========");
-        }
-        System.out.println();
-    }
-
-    /**
-     * 保存响应的url
-     *
-     * @param params driver获取的响应参数
-     * @return {@link ChromeResponseVo}
-     */
-    private static ChromeResponseVo saveResponseUrl(JSONObject params) {
-        ChromeResponseVo vo = new ChromeResponseVo();
-        String url = JSONUtil.getByPath(params, "$.response.url").toString();
-        return vo.setUrl(url);
     }
 
 
@@ -133,7 +109,7 @@ public class ChromeDriverProxy extends ChromeDriver {
      * @param params driver获取的响应参数
      * @return {@link ChromeResponseVo}
      */
-    private static ChromeResponseVo saveResponse(ChromeDriverProxy driver, JSONObject params) {
+    private static ChromeResponseVo saveResponseAll(ChromeDriverProxy driver, JSONObject params) {
         String url = JSONUtil.getByPath(params, "$.response.url").toString();
         ChromeResponseVo vo = new ChromeResponseVo();
         vo.setHeader(params.getJSONObject("response").getJSONObject("headers"));

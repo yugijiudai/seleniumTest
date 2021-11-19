@@ -44,7 +44,7 @@ public class ParamUtil {
      */
     public boolean isStaticResource(String url) {
         if (!url.startsWith(STATIC_PREFFIX)) {
-            return false;
+            return true;
         }
         return Pattern.matches(STATIC_REX, url);
     }

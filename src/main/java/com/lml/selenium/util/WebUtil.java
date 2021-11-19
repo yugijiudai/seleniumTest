@@ -87,6 +87,7 @@ public class WebUtil {
             service.start();
             ChromeOptions options = createChromeOption();
             driver = new ChromeDriverProxy(service, options);
+            driver.manage().window().maximize();
             if (setDto.getDebugMode()) {
                 // 如果是debug模式,则会开启隐式等待
                 driver.manage().timeouts().implicitlyWait(Duration.ofMillis(setDto.getMaxWaitTime()));
