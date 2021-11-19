@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import com.lml.selenium.util.ParamUtil;
 import com.lml.selenium.vo.BrowserVo;
 import io.netty.handler.codec.http.HttpMethod;
-import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.core.har.Har;
@@ -22,13 +22,14 @@ import org.openqa.selenium.Proxy;
 
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author yugi
  * @apiNote 基础的请求代理类, 用来获取请求参数和响应内容等信息
  * @since 2021-11-16
  */
-@Data
+@Slf4j
 public class RequestProxy {
 
     /**
@@ -74,8 +75,19 @@ public class RequestProxy {
             this.handleRequestByMethod(resultList, request, response);
         }
         this.browserMobProxy.endHar();
+        log.info("总请求{}", resultList.size());
         return Pair.of(resultList, har);
     }
+
+    /**
+     * 给bmp代理创建har
+     *
+     * @param harName har的名字
+     */
+    public void newHar(String harName) {
+        this.browserMobProxy.newHar(harName);
+    }
+
 
     /**
      * 根据requestMethod来设置请求参数和响应体,目前只获取post和get的

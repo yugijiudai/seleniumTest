@@ -5,7 +5,9 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.lml.selenium.exception.BizException;
 import com.lml.selenium.util.ParamUtil;
+import com.lml.selenium.util.WebUtil;
 import com.lml.selenium.vo.ChromeResponseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -76,33 +78,69 @@ public class ChromeDriverProxy extends ChromeDriver {
      *
      * @param driver 对应的驱动
      */
-    public static List<ChromeResponseVo> saveHttpTransferDataIfNecessary(ChromeDriverProxy driver) {
+    public static List<ChromeResponseVo> saveHttpTransferDataIfNecessary(ChromeDriverProxy driver, String saveType) {
         Logs logs = driver.manage().logs();
         Set<String> availableLogTypes = logs.getAvailableLogTypes();
         if (!availableLogTypes.contains(LogType.PERFORMANCE)) {
-            log.warn("没有记录到相关的请求");
-            return null;
+            throw new BizException("没有记录到相关的请求");
         }
         LogEntries logEntries = logs.get(LogType.PERFORMANCE);
         List<ChromeResponseVo> responseVoList = Lists.newArrayList();
         for (LogEntry entry : logEntries) {
             JSONObject jsonObj = JSONUtil.parseObj(entry.getMessage()).getJSONObject("message");
             String method = jsonObj.getStr("method");
+            System.out.println(method);
             if (!NETWORK_RESPONSE_RECEIVED.equals(method)) {
                 continue;
             }
             JSONObject params = jsonObj.getJSONObject("params");
             String url = JSONUtil.getByPath(params, "$.response.url").toString();
             if (!ParamUtil.isStaticResource(url) && "XHR".equals(params.getStr("type"))) {
-                ChromeResponseVo vo = new ChromeResponseVo();
-                vo.setHeader(params.getJSONObject("response").getJSONObject("headers"));
-                Map<String, Object> responseBody = driver.getResponseBody(params.getStr("requestId"));
-                vo.setUrl(url).setBody(responseBody.get("body")).setBase64Encoded(MapUtil.getBool(responseBody, "base64Encoded"));
-                responseVoList.add(vo);
+                responseVoList.add("all".equals(saveType) ? saveResponse(driver, params) : saveResponseUrl(params));
             }
         }
-        System.out.println(responseVoList.size());
         return responseVoList;
     }
+
+    public static void waitForLoading(ChromeDriverProxy driver) {
+        WebUtil.doWait(1000);
+        // int size = saveHttpTransferDataIfNecessary(driver, null).size();
+        while (saveHttpTransferDataIfNecessary(driver, null).size() > 0) {
+            // log.warn("等待ajax请求有:{}个", size);
+            WebUtil.doWait(WebUtil.getSetDto().getDoWait());
+            log.info("==========");
+        }
+        System.out.println();
+    }
+
+    /**
+     * 保存响应的url
+     *
+     * @param params driver获取的响应参数
+     * @return {@link ChromeResponseVo}
+     */
+    private static ChromeResponseVo saveResponseUrl(JSONObject params) {
+        ChromeResponseVo vo = new ChromeResponseVo();
+        String url = JSONUtil.getByPath(params, "$.response.url").toString();
+        return vo.setUrl(url);
+    }
+
+
+    /**
+     * 保存响应结果
+     *
+     * @param driver {@link ChromeDriverProxy}
+     * @param params driver获取的响应参数
+     * @return {@link ChromeResponseVo}
+     */
+    private static ChromeResponseVo saveResponse(ChromeDriverProxy driver, JSONObject params) {
+        String url = JSONUtil.getByPath(params, "$.response.url").toString();
+        ChromeResponseVo vo = new ChromeResponseVo();
+        vo.setHeader(params.getJSONObject("response").getJSONObject("headers"));
+        Map<String, Object> responseBody = driver.getResponseBody(params.getStr("requestId"));
+        vo.setUrl(url).setBody(responseBody.get("body")).setBase64Encoded(MapUtil.getBool(responseBody, "base64Encoded"));
+        return vo;
+    }
+
 
 }
