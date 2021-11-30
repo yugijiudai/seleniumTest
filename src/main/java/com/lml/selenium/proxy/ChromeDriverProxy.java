@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lml.selenium.exception.BizException;
 import com.lml.selenium.util.ParamUtil;
-import com.lml.selenium.util.WebUtil;
 import com.lml.selenium.vo.ChromeResponseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.chrome.ChromeDriver;

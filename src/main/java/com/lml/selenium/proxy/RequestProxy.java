@@ -22,7 +22,6 @@ import org.openqa.selenium.Proxy;
 
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author yugi
@@ -117,7 +116,7 @@ public class RequestProxy {
      * @param list get或者post的请求list
      * @param file 文件的路径
      */
-    public static void outPutFile(List<BrowserVo> list, String file) {
+    public void outPutFile(List<BrowserVo> list, String file) {
         FileUtil.writeString(JSONUtil.toJsonStr(list), FileUtil.file(file), Charset.defaultCharset());
     }
 

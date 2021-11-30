@@ -23,11 +23,24 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
 2. src/test/resources/demo/index.html 这个是demo的页面,可以放到服务器上启动,或者安装好nodejs,live-server, 直接在根目录下执行npm run live-server,启动demo的页面
 3. demo启动好之后到根目录执行mvn clean test
 4. 修改相关的配置,打开application.properties,
-    - (1) 修改driverPath,这个是自动化浏览器驱动的exe文件目录
-    - (2) 修改baseUrl, 这个是selenium初始化后需要打开的网页
-    - (3) 修改errorPic, 这个是selenium报错后屏幕截图的保存文件夹路径,debug模式不会保存
-    - (4) 修改useDb,如果是true,用例是维护在数据库的表里面,如果是false,用例是维护在excel里面
-    - (5) debug模式下默认开启显式和隐式等待,等待时间取最长的那个,开启隐式等待只是为了方便调试代码,driver.findElement()就可以直接使用
+   - (1) 修改driverPath,这个是自动化浏览器驱动的exe文件目录
+   - (2) 修改baseUrl, 这个是selenium初始化后需要打开的网页
+   - (3) 修改errorPic, 这个是selenium报错后屏幕截图的保存文件夹路径,debug模式不会保存
+   - (4) 修改useDb,如果是true,用例是维护在数据库的表里面,如果是false,用例是维护在excel里面
+   - (5) debug模式下默认开启显式和隐式等待,等待时间取最长的那个,开启隐式等待只是为了方便调试代码,driver.findElement()就可以直接使用
+   - (6) useBmpProxy如果为true，表示会开启代理去抓取对应的ajax请求，目前只会抓get和post的请求
+
+#### 特殊常用的类
+
+1. WebUtil.java 该类封装了一些selenium操作的通用方法，例如查找元素，点击元素等，当操作步骤太过复杂(excel or 数据库的步骤不适用)的时候可以使用此类来进行相关的操作
+2. ChromeDriverProxy.java() 该类继承了ChromeDriver，saveResponse()用来获取所有ajax请求的返回值，但这个方法有缺点，不能获取请求的参数，不建议使用(后续此类可能会废弃，由RequestProxy.java代替)
+3. RequestProxy.java 基础的请求代理类，基于bmp的代理，可以获取ajax的请求参数和返回内容，目前只抓取了get和post的请求，使用方法如下:
+   - (1)抓取请求前执行 ```RequestProxy requestProxy = WebUtil.getRequestProxy();```
+   - (2)开启新的har包```requestProxy.newHar("test");```
+   - (3)运行对应的业务代码,等待页面全部加载完,包括所有请求完成
+   - (4)结束抓包```Pair<List<BrowserVo>, Har> listHarPair = requestProxy.captureRequest();```
+   - (5)此时会返回一个pari对象，左边是解析好的参数响应体对象list，右边是原生抓取的har群文件，用户可以根据自己的需求拿这个list去操作或者拿这个har文件去操作
+   - (6)outPutFile()方法接受一个```List<BrowserVo>```的入参，用户输出到对应的文件
 
 #### 用例的表结构
 
