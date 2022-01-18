@@ -1,0 +1,16 @@
+[selenium]
+url=jdbc:mysql://localhost:3306/selenium?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT
+user=root
+pass=111111
+showSql=true
+formatSql=false
+showParams=true
+
+
+[oracle]
+url=jdbc:mysql://localhost:3306/hello?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT
+user=root
+pass=111111
+showSql=true
+formatSql=false
+showParams=true

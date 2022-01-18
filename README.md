@@ -62,17 +62,20 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
 |wait |int(5)     |是   |   |  自定义查询这个dom节点需要等待的时间(单位:秒) |
 |retry |int(5)     |是   |   |  自定义查询这个dom节点重试次数 |
 
+#### src/main/resources下相关配置文件的说明
+
+1. config文件夹: redis.setting 这个是用来存放redis的配置的
+2. sql文件夹: 这个是用来备份数据里的数据
+3. script文件夹: 用来存放通用的js脚本,有两个文件夹:
+   biz: 用来存放业务相关的脚本 common: 用来存放通用的一些脚本
+4. db.setting: 这个是数据源的配置文件,支持多数据源
+5. application.properties: 项目的通用配置文件
+
 #### src/test/resources下相关配置文件的说明
 
 1. case文件夹: 这个是用来存放用例执行顺序的excel模板,如果用例是通过数据库维护的,则不需要管这个#### src/test/resources下相关配置文件的说明
-2. config文件夹: redis.setting 这个是用来存放redis的配置的
-3. sql文件夹: 这个是用来备份数据里的数据
-4. script文件夹: 用来存放对应的js脚本,有两个文件夹:
-   biz: 用来存放业务相关的脚本 common: 用来存放通用的一些脚本
-5. modular文件夹: 用来存放testng的用例配置文件,可以按照模块的名字划分
-6. testNG.xml:  testng的总配置文件
-7. db.setting: 这个是数据源的配置文件,支持多数据源
-8. application.properties: 项目的通用配置文件
+2. modular文件夹: 用来存放testng的用例配置文件,可以按照模块的名字划分
+3. testNG.xml:  testng的总配置文件
 
 #### 注意事项
 

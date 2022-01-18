@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>selenium-core</module>
+        <module>selenium-web</module>
+    </modules>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.4.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>2.5.4</version>
+        <relativePath/>
     </parent>
+
+
     <groupId>com.lml</groupId>
     <artifactId>selenium</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -17,162 +26,111 @@
     <properties>
         <java.version>1.8</java.version>
         <selenium.version>4.0.0</selenium.version>
-        <!--        <selenium.version>3.141.59</selenium.version>-->
-        <testNg.version>6.14.3</testNg.version>
+        <testNg.version>7.4.0</testNg.version>
+        <browsermob.version>2.1.5</browsermob.version>
     </properties>
 
-    <dependencies>
+    <dependencyManagement>
+        <dependencies>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>2.0.1.Final</version>
+            </dependency>
 
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>${selenium.version}</version>
-        </dependency>
-
-        <!--        <dependency>-->
-        <!--            <groupId>org.seleniumhq.selenium</groupId>-->
-        <!--            <artifactId>selenium-server</artifactId>-->
-        <!--            <version>${selenium.version}</version>-->
-        <!--        </dependency>-->
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>7.0.2.Final</version>
+            </dependency>
 
 
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${testNg.version}</version>
-        </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-java</artifactId>
+                <version>${selenium.version}</version>
+            </dependency>
 
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>4.1.0</version>
-        </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testNg.version}</version>
+            </dependency>
 
-
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.7.16</version>
-
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-        </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>4.1.0</version>
+            </dependency>
 
 
-        <dependency>
-            <groupId>velocity</groupId>
-            <artifactId>velocity-dep</artifactId>
-            <version>1.4</version>
-        </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>5.7.16</version>
+            </dependency>
 
-        <!-- 依赖Guice -->
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>3.0</version>
-            <scope>test</scope>
-        </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.19</version>
+            </dependency>
 
-        <!-- 依赖reportNg 关联testNg -->
-        <dependency>
-            <groupId>org.uncommons</groupId>
-            <artifactId>reportng</artifactId>
-            <version>1.1.5</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/reportng-1.1.5.jar</systemPath>
-        </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>3.7.0</version>
+            </dependency>
 
 
-        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
-        </dependency>
+            <dependency>
+                <groupId>velocity</groupId>
+                <artifactId>velocity-dep</artifactId>
+                <version>1.4</version>
+            </dependency>
+
+            <!-- 依赖Guice -->
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>3.0</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.13</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.78</version>
+            </dependency>
 
 
-        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.78</version>
-        </dependency>
+            <dependency>
+                <groupId>net.lightbody.bmp</groupId>
+                <artifactId>browsermob-core</artifactId>
+                <version>${browsermob.version}</version>
+            </dependency>
 
+            <dependency>
+                <groupId>net.lightbody.bmp</groupId>
+                <artifactId>browsermob-legacy</artifactId>
+                <version>${browsermob.version}</version>
+            </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.moxproxy/moxproxy.core -->
-        <!--        <dependency>-->
-        <!--            <groupId>com.moxproxy</groupId>-->
-        <!--            <artifactId>moxproxy.core</artifactId>-->
-        <!--            <version>1.1.2</version>-->
-        <!--        </dependency>-->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>31.0.1-jre</version>
+            </dependency>
 
-
-        <dependency>
-            <groupId>net.lightbody.bmp</groupId>
-            <artifactId>browsermob-core</artifactId>
-            <version>2.1.5</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.lightbody.bmp</groupId>
-            <artifactId>browsermob-legacy</artifactId>
-            <version>2.1.5</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>31.0.1-jre</version>
-        </dependency>
-
-
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.1</version>
-                <configuration>
-                    <suiteXmlFiles>
-                        <suiteXmlFile>src/test/resources/testNG.xml</suiteXmlFile>
-                    </suiteXmlFiles>
-                    <properties>
-                        <property>
-                            <name>listener</name>
-                            <value>org.uncommons.reportng.HTMLReporter,org.uncommons.reportng.JUnitXMLReporter</value>
-                        </property>
-                    </properties>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+        </dependencies>
+    </dependencyManagement>
 
 
 </project>
