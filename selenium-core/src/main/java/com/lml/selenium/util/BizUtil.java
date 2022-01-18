@@ -5,7 +5,6 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
-import com.google.common.collect.Lists;
 import com.lml.selenium.client.HandlerClient;
 import com.lml.selenium.dto.RunMethodDto;
 import com.lml.selenium.entity.Selenium;
@@ -13,15 +12,12 @@ import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.handler.other.RunMethodHandler;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.ListUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
