@@ -1,5 +1,4 @@
 HELP.md
-/target/
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
@@ -27,3 +26,6 @@ HELP.md
 
 ### VS Code ###
 .vscode/
+/selenium-web/target/
+/selenium-core/target/
+/selenium-core/target
