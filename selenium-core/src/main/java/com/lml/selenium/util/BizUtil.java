@@ -9,6 +9,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.lml.selenium.client.HandlerClient;
 import com.lml.selenium.dto.RunMethodDto;
+import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.entity.Selenium;
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.handler.other.RunMethodHandler;
@@ -82,11 +83,12 @@ public class BizUtil {
      * 屏幕截图
      */
     private void savePic() {
-        if (WebUtil.getSetDto().getDebugMode()) {
+        SetDto setDto = SeleniumFactory.getSetDto();
+        if (setDto.getDebugMode()) {
             return;
         }
-        File file = ((TakesScreenshot) WebUtil.driver).getScreenshotAs(OutputType.FILE);
-        String name = WebUtil.getSetDto().getErrorPic() + "_" + DateUtil.format(new Date(), "yyyy-MM-dd-hh-mm-ss") + ".jpg";
+        File file = ((TakesScreenshot) SeleniumFactory.getDriver()).getScreenshotAs(OutputType.FILE);
+        String name = setDto.getErrorPic() + "_" + DateUtil.format(new Date(), "yyyy-MM-dd-hh-mm-ss") + ".jpg";
         File dest = new File(name);
         FileUtil.copy(file, dest, false);
     }

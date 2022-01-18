@@ -5,6 +5,7 @@ import com.lml.selenium.dto.BaseSeleniumDto;
 import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.enums.ClickActionEnum;
+import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.JsUtil;
 import com.lml.selenium.util.WebUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,8 @@ public class ClickHandler implements ElementHandler {
     @Override
     public boolean preHandle(EleHandlerDto handleDto) {
         WebElement element = handleDto.getElement();
-        JavascriptExecutor executor = (JavascriptExecutor) WebUtil.driver;
-        Object result = executor.executeScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value } return items;", element);
+        JavascriptExecutor executor = (JavascriptExecutor) SeleniumFactory.getDriver();
+        Object result = executor.executeScript("var items = {}; for (var index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value } return items;", element);
         log.debug("click element attributes:{}", result);
         String attribute = element.getAttribute("disabled");
         log.debug("disabled = {}", attribute);
@@ -92,7 +93,7 @@ public class ClickHandler implements ElementHandler {
      * @param webElement 要点击的元素
      */
     private void rightClick(WebElement webElement) {
-        Actions action = new Actions(WebUtil.driver);
+        Actions action = new Actions(SeleniumFactory.getDriver());
         action.moveToElement(webElement);
         action.contextClick(webElement).build().perform();
     }
@@ -103,7 +104,7 @@ public class ClickHandler implements ElementHandler {
      * @param webElement 要点击的元素
      */
     private void doubleClick(WebElement webElement) {
-        Actions action = new Actions(WebUtil.driver);
+        Actions action = new Actions(SeleniumFactory.getDriver());
         action.doubleClick(webElement).perform();
     }
 

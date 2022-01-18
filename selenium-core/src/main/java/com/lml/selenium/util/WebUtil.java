@@ -1,37 +1,27 @@
 package com.lml.selenium.util;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.thread.ThreadUtil;
-import cn.hutool.setting.dialect.Props;
-import com.google.common.collect.Maps;
 import com.lml.selenium.dto.EleHandlerDto;
+import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.enums.ClickActionEnum;
 import com.lml.selenium.exception.FindElementException;
 import com.lml.selenium.factory.EleHandlerDtoFactory;
 import com.lml.selenium.factory.HandlerFactory;
+import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.handler.element.ElementHandler;
-import com.lml.selenium.proxy.ChromeDriverProxy;
-import com.lml.selenium.proxy.RequestProxy;
-import lombok.Getter;
+import com.lml.selenium.handler.other.AlertHandler;
+import com.lml.selenium.handler.other.RefreshHandler;
+import com.lml.selenium.handler.other.SwitchWindowHandler;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriverService;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
 
-import java.io.File;
 import java.time.Duration;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * @author yugi
@@ -42,93 +32,6 @@ import java.util.logging.Level;
 @UtilityClass
 public class WebUtil {
 
-    private ChromeDriverService service;
-
-    public WebDriver driver;
-
-
-    /**
-     * 配置文件映射到的实体类
-     */
-    @Getter
-    private final SetDto setDto = new SetDto();
-
-
-    static {
-        // 初始化处理器
-        HandlerFactory.initAllHandler();
-        Props props = new Props("application.properties");
-        // 配置映射到对应的实体类中
-        BeanUtil.copyProperties(props, setDto);
-        log.info("初始化成功,配置是:{}", setDto);
-    }
-
-
-    /**
-     * 关闭驱动
-     */
-    public void quitDriver() {
-        RequestProxy.closeProxy();
-        driver.close();
-        service.stop();
-    }
-
-
-    /**
-     * 初始化
-     */
-    public void webDriverInit() {
-        try {
-            service = new ChromeDriverService.Builder().usingDriverExecutable(new File(setDto.getDriverPath())).usingAnyFreePort().build();
-            service.start();
-            ChromeOptions options = createChromeOption();
-            driver = new ChromeDriverProxy(service, options);
-            if (setDto.getUseMaxWindow()) {
-                driver.manage().window().maximize();
-            }
-            if (setDto.getDebugMode()) {
-                // 如果是debug模式,则会开启隐式等待
-                driver.manage().timeouts().implicitlyWait(Duration.ofMillis(setDto.getMaxWaitTime()));
-            }
-            JSWaiter.setDriver(driver);
-        }
-        catch (Exception e) {
-            Assert.fail("初始化失败", e);
-        }
-    }
-
-    /**
-     * 设置相关的options
-     */
-    private ChromeOptions createChromeOption() {
-        ChromeOptions options = new ChromeOptions();
-        LoggingPreferences logPrefs = new LoggingPreferences();
-        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
-        // 禁用阻止弹出窗口
-        options.addArguments("--disable-popup-blocking");
-        // 启动无沙盒模式运行
-        options.addArguments("no-sandbox");
-        // 禁用扩展
-        options.addArguments("disable-extensions");
-        // 默认浏览器检查
-        options.addArguments("no-default-browser-check");
-        Map<String, Object> prefs = Maps.newHashMap();
-        prefs.put("credentials_enable_service", false);
-        prefs.put("profile.password_manager_enabled", false);
-        // 禁用保存密码提示框
-        options.setExperimentalOption("prefs", prefs);
-        options.setExperimentalOption("w3c", false);
-        options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
-        options.setAcceptInsecureCerts(true);
-        options.setExperimentalOption("useAutomationExtension", false);
-        if (setDto.getUseBmpProxy()) {
-            options.setProxy(RequestProxy.createProxy());
-        }
-        if (setDto.getUseNoHead()) {
-            options.addArguments("-headless");
-        }
-        return options;
-    }
 
     /**
      * 重复查找获取控件的文本
@@ -154,7 +57,7 @@ public class WebUtil {
      *
      * @param by 对应的元素
      */
-    public void retryFindAndClickBySeleniumAPI(By by) {
+    public void retryFindAndClickBySeleniumApi(By by) {
         retryingFindAndDoAction(EleHandlerDtoFactory.buildClick(ClickActionEnum.API, EleHandlerDtoFactory.buildCommon(by)));
     }
 
@@ -181,7 +84,7 @@ public class WebUtil {
      *
      * @param by 对应的元素
      */
-    public void retryFindAndClickByJS(By by) {
+    public void retryFindAndClickByJs(By by) {
         retryingFindAndDoAction(EleHandlerDtoFactory.buildClick(ClickActionEnum.JS, EleHandlerDtoFactory.buildCommon(by)));
     }
 
@@ -228,7 +131,7 @@ public class WebUtil {
      * 点击alert弹窗
      */
     public void clickAlert() {
-        driver.switchTo().alert().accept();
+        new AlertHandler().doHandle(null);
     }
 
 
@@ -240,8 +143,9 @@ public class WebUtil {
      */
     public WebElement fluentWaitUntilFind(EleHandlerDto eleHandlerDto) {
         Integer timeWait = eleHandlerDto.getWaitTime();
+        SetDto setDto = SeleniumFactory.getSetDto();
         timeWait = timeWait != null ? timeWait : setDto.getTimeOutInSeconds();
-        WebDriverWait waitSetting = new WebDriverWait(driver, Duration.ofSeconds(timeWait), Duration.ofMillis(setDto.getSleepInMillis()));
+        WebDriverWait waitSetting = new WebDriverWait(SeleniumFactory.getDriver(), Duration.ofSeconds(timeWait), Duration.ofMillis(setDto.getSleepInMillis()));
         WebElement element = waitSetting.until(driver -> {
             // 等待页面状态加载完成
             // waitPageLoaded();
@@ -266,7 +170,7 @@ public class WebUtil {
      * 输出当前的frame
      */
     public void getCurrentFrame() {
-        if (!setDto.getDebugMode()) {
+        if (!SeleniumFactory.getSetDto().getDebugMode()) {
             return;
         }
         Object frame = JsUtil.runJs("return frameElement === null ? null : frameElement.src");
@@ -295,18 +199,19 @@ public class WebUtil {
      * @deprecated 改为调用JSWaiter的waitUntilJQueryReady()方法
      */
     public void waitPageLoaded() {
-        WebDriverWait waitSetting = new WebDriverWait(driver, setDto.getMaxWaitTime(), setDto.getInterval());
+        SetDto setDto = SeleniumFactory.getSetDto();
+        WebDriverWait waitSetting = new WebDriverWait(SeleniumFactory.getDriver(), setDto.getMaxWaitTime(), setDto.getInterval());
         waitSetting.until(driver -> "complete".equals(JsUtil.runJs("return document.readyState")));
-        // waitSetting.until((ExpectedCondition<Boolean>) driver -> "complete".equals(JsUtil.runJs("return document.readyState")));
     }
 
     /**
      * 等待页面加载完成(使用自己定义的脚本方式)
      *
-     * @see WebUtil#waitPageLoadedBySelfJS(String)
+     * @see WebUtil#waitPageLoadedBySelfJs(String)
      */
-    public void waitPageLoadedBySelfJS(String script) {
-        waitPageLoadedBySelfJS(script, setDto.getMaxWaitTime(), setDto.getInterval());
+    public void waitPageLoadedBySelfJs(String script) {
+        SetDto setDto = SeleniumFactory.getSetDto();
+        waitPageLoadedBySelfJs(script, setDto.getMaxWaitTime(), setDto.getInterval());
     }
 
 
@@ -316,9 +221,8 @@ public class WebUtil {
      * @param window window的名字
      */
     public void switchToWindow(String window) {
-        log.info("准备开始切换window:" + window);
-        driver.switchTo().window(window);
-        log.info("切换window:{}成功,当前url是:{}", window, driver.getCurrentUrl());
+        NoEleHandlerDto noEleHandlerDto = new NoEleHandlerDto().setExt(window);
+        new SwitchWindowHandler().doHandle(noEleHandlerDto);
     }
 
     /**
@@ -327,7 +231,7 @@ public class WebUtil {
      * @param time 要等待的时间
      */
     public void doWait(Integer time) {
-        time = time == null ? setDto.getDoWait() : time;
+        time = time == null ? SeleniumFactory.getSetDto().getDoWait() : time;
         // 休眠等待一下
         ThreadUtil.safeSleep(time);
     }
@@ -337,7 +241,7 @@ public class WebUtil {
      * 刷新页面
      */
     public void refresh() {
-        driver.navigate().refresh();
+        new RefreshHandler().doHandle(null);
     }
 
 
@@ -348,14 +252,15 @@ public class WebUtil {
      * @param url 要切换的frame的url
      */
     public void switchTheFrame(String url) {
-        WebUtil.driver.switchTo().defaultContent();
+        WebDriver driver = SeleniumFactory.getDriver();
+        driver.switchTo().defaultContent();
         // 切换到最顶级后需要等待一下,不然有可能页面没切换完,js脚本就注入到页面上,导致获取iframe不准确
         WebUtil.doWait(100);
         String script = JsUtil.loadCommonScript(JsUtil.DOM_SCRIPT);
         String handle = String.format("%s return frameHelper.frameObj.findTheFrame('%s');", script, url);
         List<WebElement> list = JsUtil.runJs(handle);
         for (WebElement element : list) {
-            WebUtil.driver.switchTo().frame(element);
+            driver.switchTo().frame(element);
         }
     }
 
@@ -366,7 +271,7 @@ public class WebUtil {
      * @param maxWaitTime 最长等待时间
      * @param interval    每次轮询间隔的时间
      */
-    private void waitPageLoadedBySelfJS(String script, long maxWaitTime, Integer interval) {
+    private void waitPageLoadedBySelfJs(String script, long maxWaitTime, Integer interval) {
         long start = System.currentTimeMillis();
         log.info("执行等待脚本:" + script);
         while (!(Boolean) JsUtil.runJs(script)) {

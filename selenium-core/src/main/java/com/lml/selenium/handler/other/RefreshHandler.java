@@ -2,7 +2,7 @@ package com.lml.selenium.handler.other;
 
 import com.lml.selenium.dto.BaseSeleniumDto;
 import com.lml.selenium.enums.ActionEnum;
-import com.lml.selenium.util.WebUtil;
+import com.lml.selenium.factory.SeleniumFactory;
 
 /**
  * @author yugi
@@ -19,6 +19,6 @@ public class RefreshHandler implements OtherHandler {
 
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
-        WebUtil.refresh();
+        SeleniumFactory.getDriver().navigate().refresh();
     }
 }

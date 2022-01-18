@@ -2,8 +2,8 @@ package com.lml.selenium.demo;
 
 import com.lml.selenium.BaseTest;
 import com.lml.selenium.dto.UserDto;
+import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.UserUtil;
-import com.lml.selenium.util.WebUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -27,7 +27,7 @@ public class DemoTest extends BaseTest {
     @BeforeMethod
     public void init() {
         webDriverInit();
-        WebUtil.driver.get(WebUtil.getSetDto().getBaseUrl());
+        SeleniumFactory.getDriver().get(SeleniumFactory.getSetDto().getBaseUrl());
     }
 
     @AfterMethod

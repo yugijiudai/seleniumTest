@@ -7,6 +7,7 @@ import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Lists;
 import com.lml.selenium.exception.InitException;
+import com.lml.selenium.factory.SeleniumFactory;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.JavascriptExecutor;
@@ -73,7 +74,7 @@ public class JsUtil {
      */
     public void addCommonScript(String fileName) {
         String domHelper = loadCommonScript(fileName);
-        ((JavascriptExecutor) WebUtil.driver).executeScript(domHelper);
+        ((JavascriptExecutor) SeleniumFactory.getDriver()).executeScript(domHelper);
     }
 
     /**
@@ -93,7 +94,7 @@ public class JsUtil {
      */
     public void addBizScript(String fileName) {
         String bizHelper = loadBizScript(fileName);
-        ((JavascriptExecutor) WebUtil.driver).executeScript(bizHelper);
+        ((JavascriptExecutor) SeleniumFactory.getDriver()).executeScript(bizHelper);
     }
 
 
@@ -102,7 +103,7 @@ public class JsUtil {
      */
     public void addJQuery() {
         String script = loadCommonScript("addJq");
-        runJs(String.format(script, WebUtil.getSetDto().getJqueryUrl()));
+        runJs(String.format(script, SeleniumFactory.getSetDto().getJqueryUrl()));
         JSWaiter.waitUntilJQueryReady();
     }
 
@@ -203,7 +204,7 @@ public class JsUtil {
     @SuppressWarnings("unchecked")
     public <T> T runJs(String script) {
         log.debug("预执行脚本:\n{}", script);
-        Object response = ((JavascriptExecutor) WebUtil.driver).executeScript(script);
+        Object response = ((JavascriptExecutor) SeleniumFactory.getDriver()).executeScript(script);
         log.debug("执行脚本成功:\n{}\n返回值:{}", script, response);
         return (T) response;
     }
@@ -217,7 +218,7 @@ public class JsUtil {
     @SuppressWarnings("unchecked")
     public <T> T runJs(String script, Object... args) {
         log.debug("预执行脚本:\n{}\n参数是:{}", script, args);
-        Object response = ((JavascriptExecutor) WebUtil.driver).executeScript(script, args);
+        Object response = ((JavascriptExecutor) SeleniumFactory.getDriver()).executeScript(script, args);
         log.debug("执行脚本成功:\n{}\n参数是:{}\n返回值是:{}", script, Lists.newArrayList(args), response);
         return (T) response;
     }

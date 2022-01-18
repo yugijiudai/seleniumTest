@@ -2,6 +2,7 @@ package com.lml.selenium.handler.other;
 
 import com.lml.selenium.dto.BaseSeleniumDto;
 import com.lml.selenium.enums.ActionEnum;
+import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.WebUtil;
 
 /**
@@ -21,6 +22,6 @@ public class AlertHandler implements OtherHandler {
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
         // 先等待一下
         WebUtil.doWait(500);
-        WebUtil.clickAlert();
+        SeleniumFactory.getDriver().switchTo().alert().accept();
     }
 }

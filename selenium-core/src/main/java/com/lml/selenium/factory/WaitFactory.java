@@ -1,6 +1,5 @@
 package com.lml.selenium.factory;
 
-import com.lml.selenium.util.WebUtil;
 import lombok.experimental.UtilityClass;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -24,20 +23,9 @@ public class WaitFactory {
      * @return {@link Wait}
      */
     public Wait<WebDriver> createDefaultWait() {
-        return createWait(15000, 600);
-    }
-
-    /**
-     * 创建wai对象
-     *
-     * @param withTimeout  超时的时间
-     * @param pollingEvery 轮询的间隔
-     * @return {@link Wait}
-     */
-    private Wait<WebDriver> createWait(int withTimeout, int pollingEvery) {
-        return new FluentWait<>(WebUtil.driver)
-                .withTimeout(Duration.ofMillis(withTimeout))
-                .pollingEvery(Duration.ofMillis(pollingEvery))
+        return new FluentWait<>(SeleniumFactory.getDriver())
+                .withTimeout(Duration.ofMillis(15000))
+                .pollingEvery(Duration.ofMillis(600))
                 .ignoring(NoSuchElementException.class)
                 .ignoring(StaleElementReferenceException.class)
                 .ignoring(NullPointerException.class);

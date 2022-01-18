@@ -3,7 +3,7 @@ package com.lml.selenium.handler.element;
 import com.lml.selenium.dto.BaseSeleniumDto;
 import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
-import com.lml.selenium.util.WebUtil;
+import com.lml.selenium.factory.SeleniumFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.interactions.Actions;
 
@@ -19,7 +19,7 @@ public class HoverHandler implements ElementHandler {
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
         EleHandlerDto handleDto = (EleHandlerDto) baseSeleniumDto;
-        Actions mouseHover = new Actions(WebUtil.driver);
+        Actions mouseHover = new Actions(SeleniumFactory.getDriver());
         mouseHover.moveToElement(handleDto.getElement()).perform();
     }
 

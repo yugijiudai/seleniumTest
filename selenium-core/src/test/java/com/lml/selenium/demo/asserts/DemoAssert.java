@@ -1,6 +1,7 @@
 package com.lml.selenium.demo.asserts;
 
 import com.lml.selenium.dto.UserDto;
+import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.JsUtil;
 import com.lml.selenium.util.UserUtil;
 import com.lml.selenium.util.WebUtil;
@@ -33,7 +34,7 @@ public class DemoAssert {
      * @param assertMsg 要断言的信息
      */
     public void assertTestLogin02(String assertMsg) {
-        Alert alert = WebUtil.driver.switchTo().alert();
+        Alert alert = SeleniumFactory.getDriver().switchTo().alert();
         Assert.assertEquals(alert.getText(), assertMsg);
         WebUtil.clickAlert();
     }
@@ -44,7 +45,7 @@ public class DemoAssert {
      * @param assertMsg 要断言的信息
      */
     public void assertTestLogin03(String assertMsg) {
-        Alert alert = WebUtil.driver.switchTo().alert();
+        Alert alert = SeleniumFactory.getDriver().switchTo().alert();
         Assert.assertEquals(alert.getText(), assertMsg);
         WebUtil.clickAlert();
         JsUtil.addCommonScript(JsUtil.DOM_SCRIPT);

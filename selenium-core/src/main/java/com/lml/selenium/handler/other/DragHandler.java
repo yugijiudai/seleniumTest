@@ -7,6 +7,7 @@ import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.factory.EleHandlerDtoFactory;
 import com.lml.selenium.factory.SelectFactory;
+import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.WebUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -61,7 +62,7 @@ public class DragHandler implements OtherHandler {
         By targetBy = SelectFactory.getSelector(toObj.getStr(FIND_TYPE), toObj.getStr(ELE));
         WebElement target = WebUtil.fluentWaitUntilFind(EleHandlerDtoFactory.buildCommon(targetBy));
 
-        Actions action = new Actions(WebUtil.driver);
+        Actions action = new Actions(SeleniumFactory.getDriver());
         action.dragAndDrop(source, target).build().perform();
     }
 }

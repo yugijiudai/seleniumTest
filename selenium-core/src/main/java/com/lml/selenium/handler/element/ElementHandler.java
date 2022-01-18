@@ -2,6 +2,7 @@ package com.lml.selenium.handler.element;
 
 import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.exception.FindElementException;
+import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.handler.SeleniumHandler;
 import com.lml.selenium.util.WebUtil;
 import org.openqa.selenium.By;
@@ -40,7 +41,7 @@ public interface ElementHandler extends SeleniumHandler {
         By by = handleDto.getBy();
         Integer retry = handleDto.getRetry();
         // 如果没有指定,用默认的
-        int attemptsTime = retry != null ? retry : WebUtil.getSetDto().getAttemptsTime();
+        int attemptsTime = retry != null ? retry : SeleniumFactory.getSetDto().getAttemptsTime();
         while (attempts++ < attemptsTime) {
             try {
                 element = WebUtil.fluentWaitUntilFind(handleDto);

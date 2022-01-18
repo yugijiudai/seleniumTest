@@ -6,6 +6,7 @@ import com.lml.selenium.dto.BaseSeleniumDto;
 import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.enums.SwitchFrameActionEnum;
+import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.WebUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,16 +36,13 @@ public class SwitchMyFrameHandler implements OtherHandler {
         WebUtil.getCurrentFrame();
         switch (actionEnum) {
             case PARENT:
-                WebUtil.driver.switchTo().parentFrame();
-                break;
-            case DEFAULT:
-                WebUtil.driver.switchTo().defaultContent();
+                SeleniumFactory.getDriver().switchTo().parentFrame();
                 break;
             case SELF:
                 WebUtil.switchTheFrame(json.getStr(URL));
                 break;
             default:
-                WebUtil.driver.switchTo().defaultContent();
+                SeleniumFactory.getDriver().switchTo().defaultContent();
                 break;
         }
         WebUtil.getCurrentFrame();

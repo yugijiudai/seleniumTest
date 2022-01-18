@@ -1,5 +1,6 @@
 package com.lml.selenium;
 
+import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.BizUtil;
 import com.lml.selenium.util.UserUtil;
 import com.lml.selenium.util.WebUtil;
@@ -21,7 +22,7 @@ public abstract class BaseTest {
      * 关闭驱动
      */
     protected void quitDriver() {
-        WebUtil.quitDriver();
+        SeleniumFactory.quitDriver();
         // 退出登录,清除登陆了用户
         UserUtil.deleteUser();
     }
@@ -31,9 +32,7 @@ public abstract class BaseTest {
      * 初始化
      */
     protected void webDriverInit() {
-        WebUtil.webDriverInit();
-        // 清除cookie
-        // driver.manage().deleteAllCookies();
+        SeleniumFactory.webDriverInit();
     }
 
     /**
