@@ -1,6 +1,6 @@
 package com.lml.selenium.handler.element;
 
-import com.lml.selenium.dto.EleHandleDto;
+import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.exception.FindElementException;
 import com.lml.selenium.handler.SeleniumHandler;
 import com.lml.selenium.util.WebUtil;
@@ -22,19 +22,19 @@ public interface ElementHandler extends SeleniumHandler {
     /**
      * 处理前的一些条件
      *
-     * @param handleDto {@link EleHandleDto}
+     * @param handleDto {@link EleHandlerDto}
      * @return 如果是true表示可以往下执行
      */
-    boolean preHandle(EleHandleDto handleDto);
+    boolean preHandle(EleHandlerDto handleDto);
 
 
     /**
      * 重复查找和执行动作（click或sendKeys等），当出现引用的element过时后，重新查找该element
      *
-     * @param handleDto {@link EleHandleDto}
+     * @param handleDto {@link EleHandlerDto}
      * @return {@link WebElement}
      */
-    default WebElement retryingFindAndDoAction(EleHandleDto handleDto) {
+    default WebElement retryingFindAndDoAction(EleHandlerDto handleDto) {
         WebElement element = null;
         int attempts = 0;
         By by = handleDto.getBy();

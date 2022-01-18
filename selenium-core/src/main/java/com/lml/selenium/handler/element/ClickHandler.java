@@ -2,7 +2,7 @@ package com.lml.selenium.handler.element;
 
 import cn.hutool.core.util.ArrayUtil;
 import com.lml.selenium.dto.BaseSeleniumDto;
-import com.lml.selenium.dto.EleHandleDto;
+import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.enums.ClickActionEnum;
 import com.lml.selenium.util.JsUtil;
@@ -29,10 +29,10 @@ public class ClickHandler implements ElementHandler {
     private static final String DISABLED_FLAG = "true";
 
     @Override
-    public boolean preHandle(EleHandleDto handleDto) {
+    public boolean preHandle(EleHandlerDto handleDto) {
         WebElement element = handleDto.getElement();
         JavascriptExecutor executor = (JavascriptExecutor) WebUtil.driver;
-        Object result = executor.executeScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", element);
+        Object result = executor.executeScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value } return items;", element);
         log.debug("click element attributes:{}", result);
         String attribute = element.getAttribute("disabled");
         log.debug("disabled = {}", attribute);
@@ -46,7 +46,7 @@ public class ClickHandler implements ElementHandler {
 
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
-        EleHandleDto handleDto = (EleHandleDto) baseSeleniumDto;
+        EleHandlerDto handleDto = (EleHandlerDto) baseSeleniumDto;
         By by = handleDto.getBy();
         WebElement element = handleDto.getElement();
         ClickActionEnum actionExecuteMethod = handleDto.getActionExecuteMethod();

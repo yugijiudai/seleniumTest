@@ -3,7 +3,7 @@ package com.lml.selenium.handler.other;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.lml.selenium.dto.BaseSeleniumDto;
-import com.lml.selenium.dto.NoEleHandleDto;
+import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.enums.SwitchFrameActionEnum;
 import com.lml.selenium.util.WebUtil;
@@ -29,8 +29,8 @@ public class SwitchMyFrameHandler implements OtherHandler {
 
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
-        NoEleHandleDto noEleHandleDto = (NoEleHandleDto) baseSeleniumDto;
-        JSONObject json = JSONUtil.parseObj(noEleHandleDto.getExt());
+        NoEleHandlerDto noEleHandlerDto = (NoEleHandlerDto) baseSeleniumDto;
+        JSONObject json = JSONUtil.parseObj(noEleHandlerDto.getExt());
         SwitchFrameActionEnum actionEnum = SwitchFrameActionEnum.parse(json.getStr(TYPE));
         WebUtil.getCurrentFrame();
         switch (actionEnum) {

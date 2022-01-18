@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)
-public class NoEleHandleDto extends BaseSeleniumDto {
+public class NoEleHandlerDto extends BaseSeleniumDto {
 
     /**
      * 等待的时间

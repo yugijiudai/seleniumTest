@@ -4,7 +4,7 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.lml.selenium.dto.BaseSeleniumDto;
-import com.lml.selenium.dto.EleHandleDto;
+import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
 
 /**
@@ -27,7 +27,7 @@ public class SendKeyHandler implements ElementHandler {
 
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
-        EleHandleDto handleDto = (EleHandleDto) baseSeleniumDto;
+        EleHandlerDto handleDto = (EleHandlerDto) baseSeleniumDto;
         // 先点击选中,然后再清空
         handleDto.getElement().click();
         String keys = handleDto.getKeys();
@@ -47,7 +47,7 @@ public class SendKeyHandler implements ElementHandler {
     }
 
     @Override
-    public boolean preHandle(EleHandleDto handleDto) {
+    public boolean preHandle(EleHandlerDto handleDto) {
         return true;
     }
 

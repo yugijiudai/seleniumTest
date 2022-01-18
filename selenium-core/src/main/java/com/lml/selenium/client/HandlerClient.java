@@ -1,12 +1,12 @@
 package com.lml.selenium.client;
 
-import com.lml.selenium.dto.EleHandleDto;
-import com.lml.selenium.dto.NoEleHandleDto;
+import com.lml.selenium.dto.EleHandlerDto;
+import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.entity.Selenium;
 import com.lml.selenium.enums.ActionEnum;
-import com.lml.selenium.factory.EleHandleDtoFactory;
+import com.lml.selenium.factory.EleHandlerDtoFactory;
 import com.lml.selenium.factory.HandlerFactory;
-import com.lml.selenium.factory.NoEleHandleDtoFactory;
+import com.lml.selenium.factory.NoEleHandlerDtoFactory;
 import com.lml.selenium.handler.element.ElementHandler;
 import com.lml.selenium.handler.other.OtherHandler;
 import com.lml.selenium.util.WebUtil;
@@ -35,12 +35,12 @@ public class HandlerClient {
         WebUtil.getCurrentFrame();
         if (action.isNeedToFindDom()) {
             ElementHandler handler = HandlerFactory.getElementHandler(action);
-            EleHandleDto eleHandleDto = EleHandleDtoFactory.buildDto(selenium);
-            return handler.retryingFindAndDoAction(eleHandleDto);
+            EleHandlerDto eleHandlerDto = EleHandlerDtoFactory.buildDto(selenium);
+            return handler.retryingFindAndDoAction(eleHandlerDto);
         }
         OtherHandler otherHandler = HandlerFactory.getOtherHandler(action);
-        NoEleHandleDto noEleHandleDto = NoEleHandleDtoFactory.buildDto(selenium);
-        otherHandler.doHandle(noEleHandleDto);
+        NoEleHandlerDto noEleHandlerDto = NoEleHandlerDtoFactory.buildDto(selenium);
+        otherHandler.doHandle(noEleHandlerDto);
         return null;
     }
 

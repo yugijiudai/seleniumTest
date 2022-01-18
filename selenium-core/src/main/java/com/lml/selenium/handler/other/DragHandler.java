@@ -3,9 +3,9 @@ package com.lml.selenium.handler.other;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.lml.selenium.dto.BaseSeleniumDto;
-import com.lml.selenium.dto.NoEleHandleDto;
+import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
-import com.lml.selenium.factory.EleHandleDtoFactory;
+import com.lml.selenium.factory.EleHandlerDtoFactory;
 import com.lml.selenium.factory.SelectFactory;
 import com.lml.selenium.util.WebUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -49,17 +49,17 @@ public class DragHandler implements OtherHandler {
 
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
-        NoEleHandleDto noEleHandleDto = (NoEleHandleDto) baseSeleniumDto;
-        JSONObject json = JSONUtil.parseObj(noEleHandleDto.getExt());
+        NoEleHandlerDto noEleHandlerDto = (NoEleHandlerDto) baseSeleniumDto;
+        JSONObject json = JSONUtil.parseObj(noEleHandlerDto.getExt());
         // 查询需要拖动的元素
         JSONObject fromObj = json.getJSONObject(FROM);
         By sourceBy = SelectFactory.getSelector(fromObj.getStr(FIND_TYPE), fromObj.getStr(ELE));
-        WebElement source = WebUtil.fluentWaitUntilFind(EleHandleDtoFactory.buildCommon(sourceBy));
+        WebElement source = WebUtil.fluentWaitUntilFind(EleHandlerDtoFactory.buildCommon(sourceBy));
 
         // 查询需要拖到的地方
         JSONObject toObj = json.getJSONObject(TO);
         By targetBy = SelectFactory.getSelector(toObj.getStr(FIND_TYPE), toObj.getStr(ELE));
-        WebElement target = WebUtil.fluentWaitUntilFind(EleHandleDtoFactory.buildCommon(targetBy));
+        WebElement target = WebUtil.fluentWaitUntilFind(EleHandlerDtoFactory.buildCommon(targetBy));
 
         Actions action = new Actions(WebUtil.driver);
         action.dragAndDrop(source, target).build().perform();

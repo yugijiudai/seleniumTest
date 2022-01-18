@@ -4,11 +4,11 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.setting.dialect.Props;
 import com.google.common.collect.Maps;
-import com.lml.selenium.dto.EleHandleDto;
+import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.enums.ClickActionEnum;
 import com.lml.selenium.exception.FindElementException;
-import com.lml.selenium.factory.EleHandleDtoFactory;
+import com.lml.selenium.factory.EleHandlerDtoFactory;
 import com.lml.selenium.factory.HandlerFactory;
 import com.lml.selenium.handler.element.ElementHandler;
 import com.lml.selenium.proxy.ChromeDriverProxy;
@@ -137,7 +137,7 @@ public class WebUtil {
      * @return {@link WebElement}
      */
     public WebElement retryFindAndGetText(By by) {
-        return retryingFindAndDoAction(EleHandleDtoFactory.buildGetText(EleHandleDtoFactory.buildCommon(by)));
+        return retryingFindAndDoAction(EleHandlerDtoFactory.buildGetText(EleHandlerDtoFactory.buildCommon(by)));
     }
 
     /**
@@ -146,7 +146,7 @@ public class WebUtil {
      * @param by 对应的元素
      */
     public void retryFindAndClick(By by) {
-        retryingFindAndDoAction(EleHandleDtoFactory.buildClick(ClickActionEnum.BY_TAG_TYPE, EleHandleDtoFactory.buildCommon(by)));
+        retryingFindAndDoAction(EleHandlerDtoFactory.buildClick(ClickActionEnum.BY_TAG_TYPE, EleHandlerDtoFactory.buildCommon(by)));
     }
 
     /**
@@ -155,7 +155,7 @@ public class WebUtil {
      * @param by 对应的元素
      */
     public void retryFindAndClickBySeleniumAPI(By by) {
-        retryingFindAndDoAction(EleHandleDtoFactory.buildClick(ClickActionEnum.API, EleHandleDtoFactory.buildCommon(by)));
+        retryingFindAndDoAction(EleHandlerDtoFactory.buildClick(ClickActionEnum.API, EleHandlerDtoFactory.buildCommon(by)));
     }
 
     /**
@@ -164,7 +164,7 @@ public class WebUtil {
      * @param by 对应的元素
      */
     public void retryFindAndDoubleClick(By by) {
-        retryingFindAndDoAction(EleHandleDtoFactory.buildClick(ClickActionEnum.DOUBLE_CLICK, EleHandleDtoFactory.buildCommon(by)));
+        retryingFindAndDoAction(EleHandlerDtoFactory.buildClick(ClickActionEnum.DOUBLE_CLICK, EleHandlerDtoFactory.buildCommon(by)));
     }
 
     /**
@@ -173,7 +173,7 @@ public class WebUtil {
      * @param by 对应的元素
      */
     public void retryFindAndRightClick(By by) {
-        retryingFindAndDoAction(EleHandleDtoFactory.buildClick(ClickActionEnum.RIGHT_CLICK, EleHandleDtoFactory.buildCommon(by)));
+        retryingFindAndDoAction(EleHandlerDtoFactory.buildClick(ClickActionEnum.RIGHT_CLICK, EleHandlerDtoFactory.buildCommon(by)));
     }
 
     /**
@@ -182,7 +182,7 @@ public class WebUtil {
      * @param by 对应的元素
      */
     public void retryFindAndClickByJS(By by) {
-        retryingFindAndDoAction(EleHandleDtoFactory.buildClick(ClickActionEnum.JS, EleHandleDtoFactory.buildCommon(by)));
+        retryingFindAndDoAction(EleHandlerDtoFactory.buildClick(ClickActionEnum.JS, EleHandlerDtoFactory.buildCommon(by)));
     }
 
 
@@ -192,7 +192,7 @@ public class WebUtil {
      * @param by 对应的元素
      */
     public void retryFindAndHover(By by) {
-        retryingFindAndDoAction(EleHandleDtoFactory.buildHover(EleHandleDtoFactory.buildCommon(by)));
+        retryingFindAndDoAction(EleHandlerDtoFactory.buildHover(EleHandlerDtoFactory.buildCommon(by)));
     }
 
     /**
@@ -201,7 +201,7 @@ public class WebUtil {
      * @param by 对应的元素
      */
     public void retryingFindAndClear(By by) {
-        retryingFindAndDoAction(EleHandleDtoFactory.buildClear(EleHandleDtoFactory.buildCommon(by)));
+        retryingFindAndDoAction(EleHandlerDtoFactory.buildClear(EleHandlerDtoFactory.buildCommon(by)));
     }
 
     /**
@@ -211,7 +211,7 @@ public class WebUtil {
      * @param keys 要发送的key
      */
     public void retryFindAndSendKeys(By by, String keys) {
-        retryingFindAndDoAction(EleHandleDtoFactory.buildSendKeys(keys, EleHandleDtoFactory.buildCommon(by)));
+        retryingFindAndDoAction(EleHandlerDtoFactory.buildSendKeys(keys, EleHandlerDtoFactory.buildCommon(by)));
     }
 
     /**
@@ -220,7 +220,7 @@ public class WebUtil {
      * @param by 对应的元素
      */
     public void retryFindAndSwitchToFrame(By by) {
-        retryingFindAndDoAction(EleHandleDtoFactory.buildSwitchToFrame(EleHandleDtoFactory.buildCommon(by)));
+        retryingFindAndDoAction(EleHandlerDtoFactory.buildSwitchToFrame(EleHandlerDtoFactory.buildCommon(by)));
     }
 
 
@@ -235,17 +235,17 @@ public class WebUtil {
     /**
      * 流畅等待，查找页面元素
      *
-     * @param eleHandleDto {@link EleHandleDto}
+     * @param eleHandlerDto {@link EleHandlerDto}
      * @return {@link WebElement}
      */
-    public WebElement fluentWaitUntilFind(EleHandleDto eleHandleDto) {
-        Integer timeWait = eleHandleDto.getWaitTime();
+    public WebElement fluentWaitUntilFind(EleHandlerDto eleHandlerDto) {
+        Integer timeWait = eleHandlerDto.getWaitTime();
         timeWait = timeWait != null ? timeWait : setDto.getTimeOutInSeconds();
         WebDriverWait waitSetting = new WebDriverWait(driver, Duration.ofSeconds(timeWait), Duration.ofMillis(setDto.getSleepInMillis()));
         WebElement element = waitSetting.until(driver -> {
             // 等待页面状态加载完成
             // waitPageLoaded();
-            return driver.findElement(eleHandleDto.getBy());
+            return driver.findElement(eleHandlerDto.getBy());
         });
         log.debug("元素:{},存在:{}", element, isFind(element));
         return element;
@@ -381,12 +381,12 @@ public class WebUtil {
     /**
      * 重复查找和执行动作（click或sendKeys等），当出现引用的element过时后，重新查找该element
      *
-     * @param eleHandleDto {@link EleHandleDto}
+     * @param eleHandlerDto {@link EleHandlerDto}
      * @return {@link WebElement}
      */
-    private WebElement retryingFindAndDoAction(EleHandleDto eleHandleDto) {
-        ElementHandler handler = HandlerFactory.getElementHandler(eleHandleDto.getActionEnum());
-        return handler.retryingFindAndDoAction(eleHandleDto);
+    private WebElement retryingFindAndDoAction(EleHandlerDto eleHandlerDto) {
+        ElementHandler handler = HandlerFactory.getElementHandler(eleHandlerDto.getActionEnum());
+        return handler.retryingFindAndDoAction(eleHandlerDto);
     }
 
 }

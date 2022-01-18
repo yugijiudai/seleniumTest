@@ -1,7 +1,7 @@
 package com.lml.selenium.handler.element;
 
 import com.lml.selenium.dto.BaseSeleniumDto;
-import com.lml.selenium.dto.EleHandleDto;
+import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +15,7 @@ public class ClearHandler implements ElementHandler {
 
 
     @Override
-    public boolean preHandle(EleHandleDto handleDto) {
+    public boolean preHandle(EleHandlerDto handleDto) {
         return true;
     }
 
@@ -26,7 +26,7 @@ public class ClearHandler implements ElementHandler {
 
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
-        EleHandleDto dto = (EleHandleDto) baseSeleniumDto;
+        EleHandlerDto dto = (EleHandlerDto) baseSeleniumDto;
         dto.getElement().clear();
     }
 }

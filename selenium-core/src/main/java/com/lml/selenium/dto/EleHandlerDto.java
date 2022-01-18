@@ -17,7 +17,7 @@ import org.openqa.selenium.WebElement;
 @Data
 @Accessors(chain = true)
 @Builder
-public class EleHandleDto extends BaseSeleniumDto {
+public class EleHandlerDto extends BaseSeleniumDto {
 
     /**
      * 查找的方法

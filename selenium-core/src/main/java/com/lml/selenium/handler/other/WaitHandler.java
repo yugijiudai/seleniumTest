@@ -1,7 +1,7 @@
 package com.lml.selenium.handler.other;
 
 import com.lml.selenium.dto.BaseSeleniumDto;
-import com.lml.selenium.dto.NoEleHandleDto;
+import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.util.WebUtil;
 
@@ -20,7 +20,7 @@ public class WaitHandler implements OtherHandler {
 
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
-        NoEleHandleDto noEleHandleDto = (NoEleHandleDto) baseSeleniumDto;
-        WebUtil.doWait(noEleHandleDto.getWaitTime());
+        NoEleHandlerDto noEleHandlerDto = (NoEleHandlerDto) baseSeleniumDto;
+        WebUtil.doWait(noEleHandlerDto.getWaitTime());
     }
 }

@@ -1,7 +1,7 @@
 package com.lml.selenium.handler.element;
 
 import com.lml.selenium.dto.BaseSeleniumDto;
-import com.lml.selenium.dto.EleHandleDto;
+import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.factory.WaitFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -20,15 +20,14 @@ public class SwitchToFrameHandler implements ElementHandler {
 
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
-        EleHandleDto handleDto = (EleHandleDto) baseSeleniumDto;
+        EleHandlerDto handleDto = (EleHandlerDto) baseSeleniumDto;
         Wait<WebDriver> wait = WaitFactory.createDefaultWait();
         wait.until(webDriver -> ExpectedConditions.frameToBeAvailableAndSwitchToIt(handleDto.getElement()));
-        // wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(handleDto.getElement()));
         log.debug("切换[" + handleDto.getBy() + "],frame成功");
     }
 
     @Override
-    public boolean preHandle(EleHandleDto handleDto) {
+    public boolean preHandle(EleHandlerDto handleDto) {
         return true;
     }
 

@@ -2,7 +2,7 @@ package com.lml.selenium.handler.other;
 
 import com.google.common.collect.Lists;
 import com.lml.selenium.dto.BaseSeleniumDto;
-import com.lml.selenium.dto.NoEleHandleDto;
+import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.util.WebUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +20,11 @@ public class SwitchWindowHandler implements OtherHandler {
 
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
-        NoEleHandleDto noEleHandleDto = (NoEleHandleDto) baseSeleniumDto;
+        NoEleHandlerDto noEleHandlerDto = (NoEleHandlerDto) baseSeleniumDto;
         Set<String> windowHandles = WebUtil.driver.getWindowHandles();
         List<String> list = Lists.newArrayList(windowHandles);
         log.info("当前窗口有:{}", list);
-        String window = list.get(Integer.parseInt(noEleHandleDto.getExt()));
+        String window = list.get(Integer.parseInt(noEleHandlerDto.getExt()));
         WebUtil.switchToWindow(window);
     }
 

@@ -4,7 +4,7 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.json.JSONUtil;
 import com.lml.selenium.dto.BaseSeleniumDto;
-import com.lml.selenium.dto.NoEleHandleDto;
+import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.dto.RunMethodDto;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.exception.BizException;
@@ -24,8 +24,8 @@ public class RunMethodHandler implements OtherHandler {
 
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
-        NoEleHandleDto noEleHandleDto = (NoEleHandleDto) baseSeleniumDto;
-        String ext = noEleHandleDto.getExt();
+        NoEleHandlerDto noEleHandlerDto = (NoEleHandlerDto) baseSeleniumDto;
+        String ext = noEleHandlerDto.getExt();
         if (!JSONUtil.isJson(ext)) {
             throw new BizException("请检查调用方法的格式!");
         }
