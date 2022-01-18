@@ -82,4 +82,14 @@ public class SetDto {
      * 是否使用bmp代理来获取请求参数和响应结果
      */
     private Boolean useBmpProxy;
+
+    /**
+     * 是否最大化窗口
+     */
+    private Boolean useMaxWindow;
+
+    /**
+     * 是否使用无头
+     */
+    private Boolean useNoHead;
 }

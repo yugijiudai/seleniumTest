@@ -16,7 +16,6 @@ import com.lml.selenium.proxy.RequestProxy;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import net.lightbody.bmp.BrowserMobProxyServer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -47,8 +46,6 @@ public class WebUtil {
 
     public WebDriver driver;
 
-    @Getter
-    private final RequestProxy requestProxy = new RequestProxy(new BrowserMobProxyServer());
 
     /**
      * 配置文件映射到的实体类
@@ -71,8 +68,8 @@ public class WebUtil {
      * 关闭驱动
      */
     public void quitDriver() {
-        // ChromeDriverProxy.saveHttpTransferDataIfNecessary((ChromeDriverProxy) driver);
-        driver.quit();
+        RequestProxy.closeProxy();
+        driver.close();
         service.stop();
     }
 
@@ -86,7 +83,9 @@ public class WebUtil {
             service.start();
             ChromeOptions options = createChromeOption();
             driver = new ChromeDriverProxy(service, options);
-            // driver.manage().window().maximize();
+            if (setDto.getUseMaxWindow()) {
+                driver.manage().window().maximize();
+            }
             if (setDto.getDebugMode()) {
                 // 如果是debug模式,则会开启隐式等待
                 driver.manage().timeouts().implicitlyWait(Duration.ofMillis(setDto.getMaxWaitTime()));
@@ -123,7 +122,10 @@ public class WebUtil {
         options.setAcceptInsecureCerts(true);
         options.setExperimentalOption("useAutomationExtension", false);
         if (setDto.getUseBmpProxy()) {
-            options.setProxy(requestProxy.createProxy());
+            options.setProxy(RequestProxy.createProxy());
+        }
+        if (setDto.getUseNoHead()) {
+            options.addArguments("-headless");
         }
         return options;
     }

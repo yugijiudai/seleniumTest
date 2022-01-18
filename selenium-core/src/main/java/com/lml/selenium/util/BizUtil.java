@@ -3,6 +3,8 @@ package com.lml.selenium.util;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ClassLoaderUtil;
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.lml.selenium.client.HandlerClient;
@@ -18,6 +20,7 @@ import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 
@@ -68,8 +71,8 @@ public class BizUtil {
                 log.info("处理:{}成功", selenium);
             }
             catch (Throwable e) {
-                BizUtil.savePic();
                 log.error("处理元素:{}出错,错误原因如下:{}", selenium, e);
+                BizUtil.savePic();
                 Assert.fail();
             }
         }
@@ -95,8 +98,12 @@ public class BizUtil {
      */
     private void handleCallbackMethod(String callBackContent, WebElement webElement) {
         RunMethodDto runMethodDto = JSONUtil.toBean(callBackContent, RunMethodDto.class);
-        // 回调函数第一个参数补上查找到的元素
-        runMethodDto.setArgs(ArrayUtil.insert(runMethodDto.getArgs(), 0, webElement));
+        Method method = ReflectUtil.getMethodByName(ClassLoaderUtil.loadClass(runMethodDto.getClassName()), runMethodDto.getMethodName());
+        Object[] args = runMethodDto.getArgs();
+        if (method.getParameterCount() > args.length) {
+            // 利用反射获得需要调用的方法参数,如果参数比设定的要多,则默认在第一个参数补上查找到的元素,作为查找的元素返回给回调方法
+            runMethodDto.setArgs(ArrayUtil.insert(args, 0, webElement));
+        }
         RunMethodHandler runMethodHandler = new RunMethodHandler();
         runMethodHandler.invokeMethod(runMethodDto);
     }

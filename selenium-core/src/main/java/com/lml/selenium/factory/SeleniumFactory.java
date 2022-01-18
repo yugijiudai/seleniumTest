@@ -3,7 +3,6 @@ package com.lml.selenium.factory;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.db.Entity;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.lml.selenium.dto.SetDto;
@@ -93,19 +92,6 @@ public class SeleniumFactory {
         }
     }
 
-    /**
-     * 将结果集转成selenium对象的list
-     *
-     * @param query 结果集
-     * @return selenium的列表
-     */
-    private static List<Selenium> covertToSelenium(List<Entity> query) {
-        return query.stream().map(entity -> {
-            Selenium selenium = new Selenium();
-            BeanUtil.copyProperties(entity, selenium);
-            return selenium;
-        }).collect(Collectors.toList());
-    }
 
     /**
      * 从excel里面加载相关的数据,指定开始行数,初始化SeleniumBo业务对象

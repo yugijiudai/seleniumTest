@@ -19,7 +19,7 @@ public class ObjUtil {
      * @param clz 父类
      * @return 子类集合
      */
-    public Set<Class<?>> getSubclass(Class clz) {
+    public Set<Class<?>> getSubclass(Class<?> clz) {
         return ClassUtil.scanPackageBySuper(clz.getPackage().getName(), clz);
     }
 }
