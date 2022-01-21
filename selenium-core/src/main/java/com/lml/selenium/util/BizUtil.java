@@ -15,6 +15,7 @@ import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.handler.other.RunMethodHandler;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
@@ -36,19 +37,22 @@ public class BizUtil {
 
 
     /**
-     * 传入需要处理的表来做处理
+     * 传入需要处理的表和步骤来执行用例(灵活性低,必须保证要运行的步骤递增)
      *
-     * @param name  要处理的表或者excel名字
-     * @param array 二维数组,记录从第几条到第几条需要处理的
+     * @param name 要处理的表或者excel名字
+     * @param step 左边是开始的步骤,右边是结束的步骤,如果右边小于等于,则直接从左边的步骤运行到结束
      */
-    public void doHandle(String name, Integer[][] array) {
-        for (Integer[] arr : array) {
-            int i = 0;
-            List<Selenium> list = LoadTestCaseUtil.loadTestCase(name, arr[i++], arr[i]);
-            handleSeleniumBoList(list);
-        }
+    public void doHandle(String name, Pair<Integer, Integer> step) {
+        List<Selenium> list = LoadTestCaseUtil.loadTestCase(name, step.getLeft(), step.getRight());
+        handleSeleniumBoList(list);
     }
 
+    /**
+     * 传入需要处理的表和对应的模块来执行用例(灵活性高,优先推荐使用)
+     *
+     * @param name  要处理的表或者excel名字
+     * @param array 要运行的模块
+     */
     public void doHandle(String name, String[] array) {
         List<Selenium> list = LoadTestCaseUtil.loadDbCase(name, array);
         handleSeleniumBoList(list);

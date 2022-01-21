@@ -4,6 +4,7 @@ import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.BizUtil;
 import com.lml.selenium.util.UserUtil;
 import com.lml.selenium.util.WebUtil;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * @author yugi
@@ -43,12 +44,12 @@ public abstract class BaseTest {
     public abstract String getCaseTemplate();
 
     /**
-     * 根据传进来的二维数组来执行用例
+     * 根据传进来的步骤来运行用例,支持数据或者excel
      *
-     * @param stepArray 要执行的二维数组,这个是用例执行的步骤,支持数据或者excel
+     * @param step 左边是开始的步骤,右边是结束的步骤,如果右边小于等于,则直接从左边的步骤运行到结束
      */
-    protected void doHandle(Integer[][] stepArray) {
-        BizUtil.doHandle(this.getCaseTemplate(), stepArray);
+    protected void doHandle(Pair<Integer, Integer> step) {
+        BizUtil.doHandle(this.getCaseTemplate(), step);
         WebUtil.doWait(WAIT);
     }
 
