@@ -6,6 +6,8 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Lists;
+import com.lml.selenium.dto.SetDto;
+import com.lml.selenium.exception.FindElementException;
 import com.lml.selenium.exception.InitException;
 import com.lml.selenium.factory.SeleniumFactory;
 import lombok.experimental.UtilityClass;
@@ -52,6 +54,11 @@ public class JsUtil {
     public final static String DOM_SCRIPT = "domHelper";
 
     /**
+     * 等待ajax加载的最大时间
+     */
+    private static final Long WAIT_JS_TIME = 120000L;
+
+    /**
      * 用于存放脚本的缓存,减少io流读取文件的开销
      */
     private final static TimedCache<String, String> SCRIPT_CACHE = CacheUtil.newTimedCache(TIME_OUT);
@@ -63,7 +70,7 @@ public class JsUtil {
      * @param fileName 通用文件夹下的js脚本名字
      * @return 加载好的脚本
      */
-    String loadCommonScript(String fileName) {
+    public String loadCommonScript(String fileName) {
         return loadScript(COMMON, fileName);
     }
 
@@ -97,14 +104,86 @@ public class JsUtil {
         ((JavascriptExecutor) SeleniumFactory.getDriver()).executeScript(bizHelper);
     }
 
-
     /**
      * 向页面添加JQuery
      */
-    public void addJQuery() {
+    public void addJquery() {
         String script = loadCommonScript("addJq");
         runJs(String.format(script, SeleniumFactory.getSetDto().getJqueryUrl()));
-        JSWaiter.waitUntilJQueryReady();
+        WebUtil.doWait(100);
+        if (!checkJqueryIsExist()) {
+            throw new InitException("添加jquery失败!");
+        }
+        log.debug("网页添加query成功");
+    }
+
+    /**
+     * 校验页面是否有jquery对象
+     *
+     * @return true表示有
+     */
+    public boolean checkJqueryIsExist() {
+        return runJs("return typeof jQuery != 'undefined'");
+    }
+
+
+    /**
+     * 等待页面加载完成(使用自己定义的脚本方式)
+     *
+     * @see JsUtil#waitPageLoadedBySelfJs(String)
+     */
+    public void waitPageLoadedBySelfJs(String script) {
+        SetDto setDto = SeleniumFactory.getSetDto();
+        waitPageLoadedBySelfJs(script, setDto.getMaxWaitTime(), setDto.getInterval());
+    }
+
+    /**
+     * 等待页面的某些元素或者某些东西加载完成(通过使用脚本来判断这些是否加载完成)
+     *
+     * @param script      要执行判断的脚本
+     * @param maxWaitTime 最长等待时间(毫秒)
+     * @param interval    每次轮询间隔的时间
+     */
+    public void waitPageLoadedBySelfJs(String script, long maxWaitTime, Integer interval) {
+        long start = System.currentTimeMillis();
+        log.info("执行等待脚本:" + script);
+        while (!(Boolean) JsUtil.runJs(script)) {
+            if (System.currentTimeMillis() - start > maxWaitTime) {
+                log.warn("超出最长等待时间{},跳出循环", maxWaitTime);
+                throw new FindElementException("超出最长等待时间:" + maxWaitTime);
+            }
+            WebUtil.doWait(interval);
+        }
+    }
+
+    /**
+     * Wait Until JQuery and JS Ready
+     */
+    public static void waitPageLoad() {
+        // 先等待JS加载完成
+        waitUntilJsReady();
+        WebUtil.doWait(100);
+        if (JsUtil.checkJqueryIsExist()) {
+            waitForJqueryLoad();
+            return;
+        }
+        log.warn("没有jquery对象,尝试往页面添加");
+        addJquery();
+    }
+
+    /**
+     * Wait for JQuery Load
+     */
+    private static void waitForJqueryLoad() {
+        SetDto setDto = SeleniumFactory.getSetDto();
+        waitPageLoadedBySelfJs("return jQuery.active==0", WAIT_JS_TIME, setDto.getInterval());
+    }
+
+    /**
+     * Wait Until JS Ready
+     */
+    private static void waitUntilJsReady() {
+        waitPageLoadedBySelfJs("return document.readyState=='complete'", WAIT_JS_TIME, SeleniumFactory.getSetDto().getInterval());
     }
 
     /**
@@ -117,7 +196,6 @@ public class JsUtil {
     public String getFirstCustomAttributeDom(String fnName) {
         return getCustomAttributeDom(fnName, true);
     }
-
 
 
     /**

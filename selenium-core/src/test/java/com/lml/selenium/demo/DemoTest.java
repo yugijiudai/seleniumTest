@@ -26,7 +26,7 @@ public class DemoTest extends BaseTest {
 
     @BeforeMethod
     public void init() {
-        webDriverInit();
+        initWebDriver();
         SeleniumFactory.getDriver().get(SeleniumFactory.getSetDto().getBaseUrl());
     }
 

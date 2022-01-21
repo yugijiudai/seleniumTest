@@ -44,16 +44,14 @@ public class BizUtil {
     public void doHandle(String name, Integer[][] array) {
         for (Integer[] arr : array) {
             int i = 0;
-            List<Selenium> list = SeleniumFactory.initSelenium(name, arr[i++], arr[i]);
+            List<Selenium> list = LoadTestCaseUtil.loadTestCase(name, arr[i++], arr[i]);
             handleSeleniumBoList(list);
         }
     }
 
     public void doHandle(String name, String[] array) {
-        for (String arr : array) {
-            List<Selenium> list = SeleniumFactory.initSeleniumByDb(name, arr);
-            handleSeleniumBoList(list);
-        }
+        List<Selenium> list = LoadTestCaseUtil.loadDbCase(name, array);
+        handleSeleniumBoList(list);
     }
 
     /**

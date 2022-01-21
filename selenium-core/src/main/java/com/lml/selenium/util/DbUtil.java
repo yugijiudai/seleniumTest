@@ -18,7 +18,6 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -64,8 +63,8 @@ public class DbUtil {
         try {
             getDb(DataSourceEnum.SELENIUM).insert(records);
         }
-        catch (SQLException e) {
-            log.error("插入发生异常,{}", e);
+        catch (Exception e) {
+            log.error("插入发生异常", e);
         }
     }
 
@@ -90,7 +89,7 @@ public class DbUtil {
             }
         }
         catch (Exception e) {
-            log.error("插入发生异常,{}", e);
+            log.error("插入发生异常", e);
             throw new BizException(e);
         }
     }
@@ -125,7 +124,7 @@ public class DbUtil {
             }
         }
         catch (Exception e) {
-            log.error("导出到excel发生异常,{}", e);
+            log.error("导出到excel发生异常", e);
         }
     }
 

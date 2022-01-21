@@ -5,7 +5,6 @@ import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.enums.ClickActionEnum;
-import com.lml.selenium.exception.FindElementException;
 import com.lml.selenium.factory.EleHandlerDtoFactory;
 import com.lml.selenium.factory.HandlerFactory;
 import com.lml.selenium.factory.SeleniumFactory;
@@ -193,27 +192,6 @@ public class WebUtil {
         log.info(JsUtil.runJs("return document.documentElement.innerHTML;"));
     }
 
-    /**
-     * 等待页面加载完成(使用document.readyState的方法)
-     *
-     * @deprecated 改为调用JSWaiter的waitUntilJQueryReady()方法
-     */
-    public void waitPageLoaded() {
-        SetDto setDto = SeleniumFactory.getSetDto();
-        WebDriverWait waitSetting = new WebDriverWait(SeleniumFactory.getDriver(), setDto.getMaxWaitTime(), setDto.getInterval());
-        waitSetting.until(driver -> "complete".equals(JsUtil.runJs("return document.readyState")));
-    }
-
-    /**
-     * 等待页面加载完成(使用自己定义的脚本方式)
-     *
-     * @see WebUtil#waitPageLoadedBySelfJs(String)
-     */
-    public void waitPageLoadedBySelfJs(String script) {
-        SetDto setDto = SeleniumFactory.getSetDto();
-        waitPageLoadedBySelfJs(script, setDto.getMaxWaitTime(), setDto.getInterval());
-    }
-
 
     /**
      * 切换到指定的window
@@ -264,24 +242,6 @@ public class WebUtil {
         }
     }
 
-    /**
-     * 等待页面的某些元素或者某些东西加载完成(通过使用脚本来判断这些是否加载完成)
-     *
-     * @param script      要执行判断的脚本
-     * @param maxWaitTime 最长等待时间
-     * @param interval    每次轮询间隔的时间
-     */
-    private void waitPageLoadedBySelfJs(String script, long maxWaitTime, Integer interval) {
-        long start = System.currentTimeMillis();
-        log.info("执行等待脚本:" + script);
-        while (!(Boolean) JsUtil.runJs(script)) {
-            if (System.currentTimeMillis() - start > maxWaitTime) {
-                log.warn("超出最长等待时间" + maxWaitTime + ",跳出循环");
-                throw new FindElementException("超出最长等待时间:" + maxWaitTime);
-            }
-            doWait(interval);
-        }
-    }
 
     /**
      * 重复查找和执行动作（click或sendKeys等），当出现引用的element过时后，重新查找该element

@@ -31,8 +31,8 @@ public abstract class BaseTest {
     /**
      * 初始化
      */
-    protected void webDriverInit() {
-        SeleniumFactory.webDriverInit();
+    protected void initWebDriver() {
+        SeleniumFactory.initWebDriver();
     }
 
     /**
