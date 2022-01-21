@@ -41,7 +41,9 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
    - (4)结束抓包```Pair<List<BrowserVo>, Har> listHarPair = requestProxy.captureRequest();```
    - (5)此时会返回一个pari对象，左边是解析好的参数响应体对象list，右边是原生抓取的har群文件，用户可以根据自己的需求拿这个list去操作或者拿这个har文件去操作
    - (6)outPutFile()方法接受一个```List<BrowserVo>```的入参，用户输出到对应的文件
-
+4. SeleniumFactory.java selenium的初始化类,用来初始化driver和各种事件handler
+5. JsUtil.java 用来执行和加载js脚本的工具类,里面提供了等待页面元素加载和等待ajax请求的方法
+6. LoadTestCaseUtil.java 用于加载用例的工具类,目前支持从excel和数据库里加载,推荐优先从数据库加载
 #### 用例的表结构
 
 - 详细的参照com.lml.selenium.entity.Selenium这个类,里面有对应的枚举类型说明
