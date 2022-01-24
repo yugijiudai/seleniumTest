@@ -50,7 +50,7 @@ public class SeleniumFactory {
     private SetDto initSettingAndHandler() {
         // 初始化处理器
         HandlerFactory.initAllHandler();
-        Props props = new Props("application.properties");
+        Props props = new Props("selenium.properties");
         // 配置映射到对应的实体类中
         SetDto setting = new SetDto();
         BeanUtil.copyProperties(props, setting);

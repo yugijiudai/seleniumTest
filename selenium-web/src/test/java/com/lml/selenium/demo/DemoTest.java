@@ -1,6 +1,6 @@
 package com.lml.selenium.demo;
 
-import com.lml.selenium.BaseTest;
+import com.lml.selenium.common.SeleniumBaseTest;
 import com.lml.selenium.dto.UserDto;
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.UserUtil;
@@ -17,7 +17,7 @@ import org.testng.annotations.Test;
  * @since 2019-05-05
  */
 @Slf4j
-public class DemoTest extends BaseTest {
+public class DemoTest extends SeleniumBaseTest {
 
 
     @Override

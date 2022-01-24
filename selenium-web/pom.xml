@@ -27,6 +27,19 @@
         </dependency>
 
         <dependency>
+            <groupId>com.lml</groupId>
+            <artifactId>selenium-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
@@ -39,6 +52,15 @@
             <artifactId>testng</artifactId>
         </dependency>
 
+        <!-- 依赖reportNg 关联testNg -->
+        <dependency>
+            <groupId>org.uncommons</groupId>
+            <artifactId>reportng</artifactId>
+            <version>reportng-2.6.4</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/reportng-2.6.4.jar</systemPath>
+        </dependency>
+
 
     </dependencies>
 
@@ -48,6 +70,29 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testNG.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <properties>
+                        <property>
+                            <name>listener</name>
+                            <value>org.uncommons.reportng.HTMLReporter,org.uncommons.reportng.JUnitXMLReporter</value>
+                        </property>
+                        <property>
+                            <name>usedefaultlisteners</name>
+                            <value>false</value>
+                        </property>
+                        <workingDirectory>target/</workingDirectory>
+                        <forkMode>never</forkMode>
+                    </properties>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 

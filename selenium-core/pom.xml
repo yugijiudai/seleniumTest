@@ -11,6 +11,14 @@
 
     <artifactId>selenium-core</artifactId>
     <description>selenium自动化测试核心</description>
+    <packaging>jar</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+
+
+    <properties>
+        <java.version>1.8</java.version>
+        <testNg.version>7.4.0</testNg.version>
+    </properties>
 
 
     <dependencies>
@@ -61,6 +69,7 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
+            <version>5.7.19</version>
         </dependency>
 
         <dependency>
@@ -83,17 +92,8 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <scope>test</scope>
         </dependency>
 
-        <!-- 依赖reportNg 关联testNg -->
-        <dependency>
-            <groupId>org.uncommons</groupId>
-            <artifactId>reportng</artifactId>
-            <version>reportng-2.6.4</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/reportng-2.6.4.jar</systemPath>
-        </dependency>
 
 
         <dependency>
@@ -125,27 +125,6 @@
 
 
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.1</version>
-                <configuration>
-                    <suiteXmlFiles>
-                        <suiteXmlFile>src/test/resources/testNG.xml</suiteXmlFile>
-                    </suiteXmlFiles>
-                    <properties>
-                        <property>
-                            <name>listener</name>
-                            <value>org.uncommons.reportng.HTMLReporter,org.uncommons.reportng.JUnitXMLReporter</value>
-                        </property>
-                    </properties>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 
 </project>

@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "live-server": "cd selenium-core/src/test/resources/demo && live-server",
+    "live-server": "cd selenium-web/src/test/resources/demo && live-server",
     "test": "mvn clean test"
   }
 }

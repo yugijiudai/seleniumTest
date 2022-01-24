@@ -1,4 +1,4 @@
-package com.lml.selenium;
+package com.lml.selenium.common;
 
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.BizUtil;
@@ -9,9 +9,9 @@ import org.apache.commons.lang3.tuple.Pair;
 /**
  * @author yugi
  * @apiNote 测试的基类
- * @since 2019-04-30
+ * @since 2021-01-24
  */
-public abstract class BaseTest {
+public abstract class SeleniumBaseTest {
 
 
     /**

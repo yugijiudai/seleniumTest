@@ -44,6 +44,7 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
 4. SeleniumFactory.java selenium的初始化类,用来初始化driver和各种事件handler
 5. JsUtil.java 用来执行和加载js脚本的工具类,里面提供了等待页面元素加载和等待ajax请求的方法
 6. LoadTestCaseUtil.java 用于加载用例的工具类,目前支持从excel和数据库里加载,推荐优先从数据库加载
+7. SeleniumBaseTest.java 基础测试类,测试类可以继承此类，然后重写getCaseTemplate()方法,返回值就是对应要加载用例的表或者excel
 #### 用例的表结构
 
 - 详细的参照com.lml.selenium.entity.Selenium这个类,里面有对应的枚举类型说明
@@ -71,17 +72,59 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
 3. script文件夹: 用来存放通用的js脚本,有两个文件夹:
    biz: 用来存放业务相关的脚本 common: 用来存放通用的一些脚本
 4. db.setting: 这个是数据源的配置文件,支持多数据源
-5. application.properties: 项目的通用配置文件
+5. selenium.properties: 项目的通用配置文件
 
 #### src/test/resources下相关配置文件的说明
 
-1. case文件夹: 这个是用来存放用例执行顺序的excel模板,如果用例是通过数据库维护的,则不需要管这个#### src/test/resources下相关配置文件的说明
+1. case文件夹: 这个是用来存放用例执行顺序的excel模板,如果用例是通过数据库维护的,则不需要管这个
 2. modular文件夹: 用来存放testng的用例配置文件,可以按照模块的名字划分
 3. testNG.xml:  testng的总配置文件
 
+#### 如何使用此项目
+
+##### 项目的使用方法有两种:
+
+1. 直接在这个项目下,在selenium-web模块编写对应的用例,用例类直接继承SeleniumBaseTest.java
+2. 通过引入的方式到其他项目使用,利用maven对selenium-core模块打包后,在其他项目直接引入core的依赖,然后需要引入以下依赖
+
+```xml
+
+<dependency>
+   <groupId>org.testng</groupId>
+   <artifactId>testng</artifactId>
+</dependency>
+````
+
+```xml
+
+<dependency>
+   <groupId>org.uncommons</groupId>
+   <artifactId>reportng</artifactId>
+   <version>reportng-2.6.4</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/lib/reportng-2.6.4.jar</systemPath>
+</dependency>
+```
+
+```xml
+
+<dependency>
+   <groupId>org.projectlombok</groupId>
+   <artifactId>lombok</artifactId>
+   <optional>true</optional>
+</dependency>
+```
+
 #### 注意事项
 
-1. 测试报告使用了reportng来实现的,如果出现乱码,可以把lib文件夹下的testng包覆盖的本地的maven仓库
+1. reportng-2.6.4.jar需要放到对应的路径才能使用,这个是改了官方的包,因为官方的包输出测试报告不支持中文
+2. 如果不想使用system级的引入,可以把这个包手动安装到本地的仓库中
+
+#### 运行测试
+
+1. 到项目根目录下执行mvn clean test即可,待执行完成会在target文件夹生成对应的测试报告surefire-reports
+2. 进入里面的html文件夹，把html文件夹丢到http的服务器中,打开index.html即可
+3. index.html如果不放到http服务器,则无法正常加载测试报告
 
 #### 改进的地方
 
