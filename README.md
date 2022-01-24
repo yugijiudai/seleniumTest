@@ -115,6 +115,26 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
 </dependency>
 ```
 
+3. pom里面指定hutool-all的版本是5.7.19
+
+```xml
+
+<dependency>
+   <groupId>cn.hutool</groupId>
+   <artifactId>hutool-all</artifactId>
+   <version>5.7.19</version>
+</dependency>
+```
+
+4. pom里面指定selenium-java版本是4.0.0
+
+```xml
+
+<properties>
+   <selenium.version>4.0.0</selenium.version>
+</properties>
+```
+
 #### 注意事项
 
 1. reportng-2.6.4.jar需要放到对应的路径才能使用,这个是改了官方的包,因为官方的包输出测试报告不支持中文
