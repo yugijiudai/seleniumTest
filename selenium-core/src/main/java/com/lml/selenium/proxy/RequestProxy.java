@@ -5,7 +5,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Pair;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
-import com.lml.selenium.util.ParamUtil;
+import com.lml.selenium.util.NetUtil;
 import com.lml.selenium.vo.BrowserVo;
 import io.netty.handler.codec.http.HttpMethod;
 import lombok.experimental.UtilityClass;
@@ -75,7 +75,7 @@ public class RequestProxy {
             HarRequest request = harEntry.getRequest();
             HarResponse response = harEntry.getResponse();
             // 这里用包含json来判断，因为有些content-type不按正常格式来写
-            if (!response.getContent().getMimeType().contains("json") || ParamUtil.isStaticResource(request.getUrl())) {
+            if (!response.getContent().getMimeType().contains("json") || NetUtil.isStaticResource(request.getUrl())) {
                 continue;
             }
             handleRequestByMethod(resultList, request, response);

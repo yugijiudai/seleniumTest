@@ -1,9 +1,15 @@
 package com.lml.selenium.util;
 
 import cn.hutool.core.util.ClassUtil;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import com.google.common.collect.Lists;
 import lombok.experimental.UtilityClass;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author yugi
@@ -22,4 +28,23 @@ public class ObjUtil {
     public Set<Class<?>> getSubclass(Class<?> clz) {
         return ClassUtil.scanPackageBySuper(clz.getPackage().getName(), clz);
     }
+
+
+    /**
+     * 根据路径提取里面的数组,并且转换成List的json对象
+     *
+     * @param result   查询的结果
+     * @param jsonPath 要提取的路径
+     * @return 返回数组结果
+     */
+    public List<JSONObject> getBucketList(JSONObject result, String jsonPath) {
+        Object pathObj = JSONUtil.getByPath(result, jsonPath);
+        if (pathObj == null) {
+            // 如果提取不到返回空列表
+            return Lists.newArrayList();
+        }
+        JSONArray arr = (JSONArray) pathObj;
+        return arr.stream().map(obj -> (JSONObject) obj).collect(Collectors.toList());
+    }
+
 }

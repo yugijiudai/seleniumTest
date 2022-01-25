@@ -6,7 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lml.selenium.exception.BizException;
-import com.lml.selenium.util.ParamUtil;
+import com.lml.selenium.util.NetUtil;
 import com.lml.selenium.vo.ChromeResponseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -93,7 +93,7 @@ public class ChromeDriverProxy extends ChromeDriver {
             }
             JSONObject params = jsonObj.getJSONObject("params");
             String url = JSONUtil.getByPath(params, "$.response.url").toString();
-            if (!ParamUtil.isStaticResource(url) && "XHR".equals(params.getStr("type"))) {
+            if (!NetUtil.isStaticResource(url) && "XHR".equals(params.getStr("type"))) {
                 responseVoList.add(saveResponseAll(driver, params));
             }
         }

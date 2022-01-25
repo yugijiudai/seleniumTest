@@ -31,4 +31,9 @@ public class BrowserVo {
      * 请求的类型
      */
     private String method;
+
+    /**
+     * 请求的头部
+     */
+    private Object requestHeader;
 }
