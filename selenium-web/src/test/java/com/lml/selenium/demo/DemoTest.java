@@ -1,8 +1,10 @@
 package com.lml.selenium.demo;
 
 import com.lml.selenium.common.SeleniumBaseTest;
+import com.lml.selenium.dto.RunMethodDto;
 import com.lml.selenium.dto.UserDto;
 import com.lml.selenium.factory.SeleniumFactory;
+import com.lml.selenium.handler.other.RunMethodHandler;
 import com.lml.selenium.util.UserUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -71,4 +73,11 @@ public class DemoTest extends SeleniumBaseTest {
     }
 
 
+    @Test
+    public void testRunScript() {
+        RunMethodHandler runMethodHandler = new RunMethodHandler();
+        RunMethodDto runMethodDto = new RunMethodDto();
+        runMethodDto.setClassName("com.lml.selenium.util.JsUtil").setMethodName("addCommonScript").setArgs(new Object[]{"domHelper"});
+        System.out.println(runMethodHandler.invokeMethod(runMethodDto));
+    }
 }

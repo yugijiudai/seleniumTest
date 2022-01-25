@@ -2,7 +2,6 @@ package com.lml.selenium.util;
 
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Lists;
@@ -15,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -221,11 +218,7 @@ public class JsUtil {
         if (StrUtil.isNotBlank(cache)) {
             return cache;
         }
-        URL resource = ResourceUtil.getResource(file);
-        if (resource == null) {
-            throw new InitException("找不到要加载的脚本 " + file);
-        }
-        String script = FileUtil.readString(FileUtil.file(resource), StandardCharsets.UTF_8);
+        String script = ResourceUtil.readUtf8Str(file);
         // 放入缓存
         SCRIPT_CACHE.put(file, script);
         return script;
