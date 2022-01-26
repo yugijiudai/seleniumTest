@@ -1,11 +1,8 @@
 package com.lml.selenium.handler.element;
 
 import com.lml.selenium.dto.EleHandlerDto;
-import com.lml.selenium.exception.FindElementException;
-import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.handler.SeleniumHandler;
 import com.lml.selenium.util.WebUtil;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,36 +29,18 @@ public interface ElementHandler extends SeleniumHandler {
 
 
     /**
-     * 重复查找和执行动作（click或sendKeys等），当出现引用的element过时后，重新查找该element
+     * 先查找元素,然后查找到元素后对其进行处理
      *
      * @param handleDto {@link EleHandlerDto}
      * @return {@link WebElement}
      */
     default List<WebElement> retryingFindAndDoAction(EleHandlerDto handleDto) {
-        List<WebElement> elements = null;
-        int attempts = 0;
-        By by = handleDto.getBy();
-        Integer retry = handleDto.getRetry();
-        // 如果没有指定,用默认的
-        int attemptsTime = retry != null ? retry : SeleniumFactory.getSetDto().getAttemptsTime();
-        while (attempts++ < attemptsTime) {
-            try {
-                elements = WebUtil.fluentWaitUntilFind(handleDto);
-                handleDto.setElements(elements);
-                if (this.preHandle(handleDto)) {
-                    this.doHandle(handleDto);
-                    break;
-                }
-            }
-            catch (Exception e) {
-                if (attempts == attemptsTime) {
-                    String message = e.getMessage();
-                    log.error("执行{}时尝试{}次仍然发生错误:{}", by, attemptsTime, message);
-                    throw new FindElementException(message);
-                }
-                log.warn("执行动作:{}操作节点{}时,发生错误,重试第{}次,异常如下:{}", handleDto.getActionEnum(), by, attempts, e.getMessage());
-            }
+        List<WebElement> webElements = WebUtil.fluentWaitUntilFind(handleDto);
+        handleDto.setElements(webElements);
+        if (this.preHandle(handleDto)) {
+            this.doHandle(handleDto);
         }
-        return elements;
+        return webElements;
     }
+
 }

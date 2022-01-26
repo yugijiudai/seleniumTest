@@ -1,6 +1,7 @@
 package com.lml.selenium.util;
 
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.lml.selenium.client.HandlerClient;
@@ -10,6 +11,7 @@ import com.lml.selenium.entity.Selenium;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.enums.ClickActionEnum;
 import com.lml.selenium.enums.SwitchFrameActionEnum;
+import com.lml.selenium.exception.FindElementException;
 import com.lml.selenium.factory.EleHandlerDtoFactory;
 import com.lml.selenium.factory.HandlerFactory;
 import com.lml.selenium.factory.SeleniumFactory;
@@ -136,21 +138,64 @@ public class WebUtil {
 
 
     /**
-     * 流畅等待，查找页面元素
+     * 流畅等待，查找页面元素,采用重试机制
      *
      * @param eleHandlerDto {@link EleHandlerDto}
      * @return {@link WebElement}
      */
     public List<WebElement> fluentWaitUntilFind(EleHandlerDto eleHandlerDto) {
+        int attempts = 0;
+        By by = eleHandlerDto.getBy();
+        Integer retry = eleHandlerDto.getRetry();
+        List<WebElement> elements = null;
+        // 如果没有指定,用默认的
+        int attemptsTime = retry != null ? retry : SeleniumFactory.getSetDto().getAttemptsTime();
+        while (attempts++ < attemptsTime) {
+            elements = findElement(eleHandlerDto);
+            if (checkElementAllFind(elements)) {
+                break;
+            }
+            if (attempts == attemptsTime) {
+                throw new FindElementException(StrUtil.format("执行{}时尝试{}次仍然发生错误", by, attempts));
+            }
+            doWait(SeleniumFactory.getSetDto().getInterval());
+            log.warn("执行动作:{}操作节点{}时,发生错误,重试第{}次", eleHandlerDto.getActionEnum(), by, attempts);
+        }
+        return elements;
+    }
+
+    /**
+     * 校验元素是否全部可用
+     *
+     * @param elements 元素列表
+     * @return true表示可用
+     */
+    private boolean checkElementAllFind(List<WebElement> elements) {
+        if (elements.size() == 0) {
+            // 如果是空列表,则表示没找到元素
+            return false;
+        }
+        for (WebElement element : elements) {
+            if (!isFind(element)) {
+                log.debug("元素:{},不可用", element);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 查找元素
+     *
+     * @param eleHandlerDto {@link EleHandlerDto}
+     * @return 如果找不到会返回空列表
+     */
+    public List<WebElement> findElement(EleHandlerDto eleHandlerDto) {
         Integer timeWait = eleHandlerDto.getWaitTime();
         SetDto setDto = SeleniumFactory.getSetDto();
         timeWait = timeWait != null ? timeWait : setDto.getTimeOutInSeconds();
         WebDriverWait waitSetting = new WebDriverWait(SeleniumFactory.getDriver(), Duration.ofSeconds(timeWait), Duration.ofMillis(setDto.getSleepInMillis()));
-        List<WebElement> elements = waitSetting.until(driver -> driver.findElements(eleHandlerDto.getBy()));
-        for (WebElement element : elements) {
-            log.debug("元素:{},存在:{}", element, isFind(element));
-        }
-        return elements;
+        return waitSetting.until(driver -> driver.findElements(eleHandlerDto.getBy()));
     }
 
 
@@ -204,7 +249,7 @@ public class WebUtil {
     /**
      * 休眠等待一下
      *
-     * @param time 要等待的时间
+     * @param time 要等待的时间(毫秒)
      */
     public void doWait(Integer time) {
         time = time == null ? SeleniumFactory.getSetDto().getDoWait() : time;
