@@ -3,19 +3,17 @@ package com.lml.selenium.util;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.lml.selenium.client.HandlerClient;
 import com.lml.selenium.dto.EleHandlerDto;
-import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.dto.SetDto;
+import com.lml.selenium.entity.Selenium;
+import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.enums.ClickActionEnum;
 import com.lml.selenium.enums.SwitchFrameActionEnum;
 import com.lml.selenium.factory.EleHandlerDtoFactory;
 import com.lml.selenium.factory.HandlerFactory;
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.handler.element.ElementHandler;
-import com.lml.selenium.handler.other.AlertHandler;
-import com.lml.selenium.handler.other.RefreshHandler;
-import com.lml.selenium.handler.other.SwitchMyFrameHandler;
-import com.lml.selenium.handler.other.SwitchWindowHandler;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -133,7 +131,7 @@ public class WebUtil {
      * 点击alert弹窗
      */
     public void clickAlert() {
-        new AlertHandler().doHandle(null);
+        HandlerClient.doAction(new Selenium().setElementAction(ActionEnum.ALERT));
     }
 
 
@@ -200,8 +198,7 @@ public class WebUtil {
      * @param window window的名字
      */
     public void switchToWindow(String window) {
-        NoEleHandlerDto noEleHandlerDto = new NoEleHandlerDto().setExt(window);
-        new SwitchWindowHandler().doHandle(noEleHandlerDto);
+        HandlerClient.doAction(new Selenium().setExt(window).setElementAction(ActionEnum.SWITCH_WINDOW));
     }
 
     /**
@@ -220,7 +217,7 @@ public class WebUtil {
      * 刷新页面
      */
     public void refresh() {
-        new RefreshHandler().doHandle(null);
+        HandlerClient.doAction(new Selenium().setElementAction(ActionEnum.REFRESH));
     }
 
 
@@ -232,8 +229,7 @@ public class WebUtil {
      */
     public void switchTheFrame(String url) {
         JSONObject ext = JSONUtil.createObj().set("url", url).set("type", SwitchFrameActionEnum.SELF);
-        NoEleHandlerDto noEleHandlerDto = new NoEleHandlerDto().setExt(ext.toString());
-        new SwitchMyFrameHandler().doHandle(noEleHandlerDto);
+        HandlerClient.doAction(new Selenium().setExt(ext.toString()).setElementAction(ActionEnum.SWITCH_MY_FRAME));
     }
 
 
