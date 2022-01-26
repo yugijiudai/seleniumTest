@@ -6,6 +6,9 @@ import cn.hutool.json.JSONUtil;
 import com.lml.selenium.dto.BaseSeleniumDto;
 import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
 
 /**
  * @author yugi
@@ -28,21 +31,24 @@ public class SendKeyHandler implements ElementHandler {
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
         EleHandlerDto handleDto = (EleHandlerDto) baseSeleniumDto;
-        // 先点击选中,然后再清空
-        handleDto.getElement().click();
-        String keys = handleDto.getKeys();
-        // 为了兼容两种格式,旧的格式key是字符串,新的格式是{needClear: true, keys: []}
-        if (!JSONUtil.isJson(keys)) {
-            handleDto.getElement().clear();
-            handleDto.getElement().sendKeys(keys);
-            return;
+        List<WebElement> elements = handleDto.getElements();
+        for (WebElement element : elements) {
+            // 先点击选中,然后再清空
+            element.click();
+            String keys = handleDto.getKeys();
+            // 为了兼容两种格式,旧的格式key是字符串,新的格式是{needClear: true, keys: []}
+            if (!JSONUtil.isJson(keys)) {
+                element.clear();
+                element.sendKeys(keys);
+                return;
+            }
+            JSONObject obj = JSONUtil.parseObj(keys);
+            if (obj.getBool(NEED_CLEAR)) {
+                // 先清除再输入
+                element.clear();
+            }
+            element.sendKeys(ArrayUtil.toArray(obj.getJSONArray(KEYS).toList(String.class), String.class));
         }
-        JSONObject obj = JSONUtil.parseObj(keys);
-        if (obj.getBool(NEED_CLEAR)) {
-            // 先清除再输入
-            handleDto.getElement().clear();
-        }
-        handleDto.getElement().sendKeys(ArrayUtil.toArray(obj.getJSONArray(KEYS).toList(String.class), String.class));
 
     }
 

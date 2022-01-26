@@ -14,6 +14,8 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
+
 /**
  * @author yugi
  * @apiNote 处理器调用者
@@ -30,7 +32,7 @@ public class HandlerClient {
      * @param selenium {@link Selenium}
      * @return 如果是需要查找节点的操作则返回查找到的节点, 否则返回null
      */
-    public WebElement doAction(Selenium selenium) {
+    public List<WebElement> doAction(Selenium selenium) {
         ActionEnum action = selenium.getElementAction();
         WebUtil.getCurrentFrame();
         if (action.isNeedToFindDom()) {

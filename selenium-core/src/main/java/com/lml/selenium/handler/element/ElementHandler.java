@@ -10,6 +10,8 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
  * @author yugi
  * @apiNote 元素处理器
@@ -35,8 +37,8 @@ public interface ElementHandler extends SeleniumHandler {
      * @param handleDto {@link EleHandlerDto}
      * @return {@link WebElement}
      */
-    default WebElement retryingFindAndDoAction(EleHandlerDto handleDto) {
-        WebElement element = null;
+    default List<WebElement> retryingFindAndDoAction(EleHandlerDto handleDto) {
+        List<WebElement> elements = null;
         int attempts = 0;
         By by = handleDto.getBy();
         Integer retry = handleDto.getRetry();
@@ -44,8 +46,8 @@ public interface ElementHandler extends SeleniumHandler {
         int attemptsTime = retry != null ? retry : SeleniumFactory.getSetDto().getAttemptsTime();
         while (attempts++ < attemptsTime) {
             try {
-                element = WebUtil.fluentWaitUntilFind(handleDto);
-                handleDto.setElement(element);
+                elements = WebUtil.fluentWaitUntilFind(handleDto);
+                handleDto.setElements(elements);
                 if (this.preHandle(handleDto)) {
                     this.doHandle(handleDto);
                     break;
@@ -60,6 +62,6 @@ public interface ElementHandler extends SeleniumHandler {
                 log.warn("执行动作:{}操作节点{}时,发生错误,重试第{}次,异常如下:{}", handleDto.getActionEnum(), by, attempts, e.getMessage());
             }
         }
-        return element;
+        return elements;
     }
 }

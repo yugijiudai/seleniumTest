@@ -66,7 +66,7 @@ public class BizUtil {
     private void handleSeleniumBoList(List<Selenium> list) {
         for (Selenium selenium : list) {
             try {
-                WebElement webElement = HandlerClient.doAction(selenium);
+                List<WebElement> webElement = HandlerClient.doAction(selenium);
                 String assertContent = selenium.getCallBack();
                 if (StrUtil.isNotBlank(assertContent)) {
                     handleCallbackMethod(assertContent, webElement);
@@ -100,7 +100,7 @@ public class BizUtil {
      *
      * @param callBackContent 回调的参数,json格式
      */
-    private void handleCallbackMethod(String callBackContent, WebElement webElement) {
+    private void handleCallbackMethod(String callBackContent, List<WebElement> webElement) {
         RunMethodDto runMethodDto = JSONUtil.toBean(callBackContent, RunMethodDto.class);
         Method method = ReflectUtil.getMethodByName(ClassLoaderUtil.loadClass(runMethodDto.getClassName()), runMethodDto.getMethodName());
         Object[] args = runMethodDto.getArgs();

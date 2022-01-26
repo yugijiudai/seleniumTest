@@ -38,7 +38,7 @@ public class WebUtil {
      * @param by 对应的元素
      * @return {@link WebElement}
      */
-    public WebElement retryFindAndGetText(By by) {
+    public List<WebElement> retryFindAndGetText(By by) {
         return retryingFindAndDoAction(EleHandlerDtoFactory.buildGetText(EleHandlerDtoFactory.buildCommon(by)));
     }
 
@@ -140,18 +140,16 @@ public class WebUtil {
      * @param eleHandlerDto {@link EleHandlerDto}
      * @return {@link WebElement}
      */
-    public WebElement fluentWaitUntilFind(EleHandlerDto eleHandlerDto) {
+    public List<WebElement> fluentWaitUntilFind(EleHandlerDto eleHandlerDto) {
         Integer timeWait = eleHandlerDto.getWaitTime();
         SetDto setDto = SeleniumFactory.getSetDto();
         timeWait = timeWait != null ? timeWait : setDto.getTimeOutInSeconds();
         WebDriverWait waitSetting = new WebDriverWait(SeleniumFactory.getDriver(), Duration.ofSeconds(timeWait), Duration.ofMillis(setDto.getSleepInMillis()));
-        WebElement element = waitSetting.until(driver -> {
-            // 等待页面状态加载完成
-            // waitPageLoaded();
-            return driver.findElement(eleHandlerDto.getBy());
-        });
-        log.debug("元素:{},存在:{}", element, isFind(element));
-        return element;
+        List<WebElement> elements = waitSetting.until(driver -> driver.findElements(eleHandlerDto.getBy()));
+        for (WebElement element : elements) {
+            log.debug("元素:{},存在:{}", element, isFind(element));
+        }
+        return elements;
     }
 
 
@@ -249,7 +247,7 @@ public class WebUtil {
      * @param eleHandlerDto {@link EleHandlerDto}
      * @return {@link WebElement}
      */
-    private WebElement retryingFindAndDoAction(EleHandlerDto eleHandlerDto) {
+    private List<WebElement> retryingFindAndDoAction(EleHandlerDto eleHandlerDto) {
         ElementHandler handler = HandlerFactory.getElementHandler(eleHandlerDto.getActionEnum());
         return handler.retryingFindAndDoAction(eleHandlerDto);
     }

@@ -5,7 +5,10 @@ import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.factory.SeleniumFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+
+import java.util.List;
 
 /**
  * @author yugi
@@ -20,7 +23,10 @@ public class HoverHandler implements ElementHandler {
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
         EleHandlerDto handleDto = (EleHandlerDto) baseSeleniumDto;
         Actions mouseHover = new Actions(SeleniumFactory.getDriver());
-        mouseHover.moveToElement(handleDto.getElement()).perform();
+        List<WebElement> elements = handleDto.getElements();
+        for (WebElement element : elements) {
+            mouseHover.moveToElement(element).perform();
+        }
     }
 
     @Override

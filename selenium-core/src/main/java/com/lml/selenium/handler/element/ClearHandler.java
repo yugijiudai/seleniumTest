@@ -4,6 +4,9 @@ import com.lml.selenium.dto.BaseSeleniumDto;
 import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
 
 /**
  * @author yugi
@@ -27,6 +30,9 @@ public class ClearHandler implements ElementHandler {
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
         EleHandlerDto dto = (EleHandlerDto) baseSeleniumDto;
-        dto.getElement().clear();
+        List<WebElement> elements = dto.getElements();
+        for (WebElement element : elements) {
+            element.clear();
+        }
     }
 }

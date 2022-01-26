@@ -8,6 +8,8 @@ import lombok.experimental.Accessors;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
+
 /**
  * @author yugi
  * @apiNote 处理元素的数据传输类
@@ -33,7 +35,7 @@ public class EleHandlerDto extends BaseSeleniumDto {
     /**
      * 找到的的元素
      */
-    private WebElement element;
+    private List<WebElement> elements;
 
     /**
      * 输入框要输入的东西
