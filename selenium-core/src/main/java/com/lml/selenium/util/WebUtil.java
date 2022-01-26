@@ -1,21 +1,24 @@
 package com.lml.selenium.util;
 
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.lml.selenium.dto.EleHandlerDto;
 import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.enums.ClickActionEnum;
+import com.lml.selenium.enums.SwitchFrameActionEnum;
 import com.lml.selenium.factory.EleHandlerDtoFactory;
 import com.lml.selenium.factory.HandlerFactory;
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.handler.element.ElementHandler;
 import com.lml.selenium.handler.other.AlertHandler;
 import com.lml.selenium.handler.other.RefreshHandler;
+import com.lml.selenium.handler.other.SwitchMyFrameHandler;
 import com.lml.selenium.handler.other.SwitchWindowHandler;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -228,16 +231,9 @@ public class WebUtil {
      * @param url 要切换的frame的url
      */
     public void switchTheFrame(String url) {
-        WebDriver driver = SeleniumFactory.getDriver();
-        driver.switchTo().defaultContent();
-        // 切换到最顶级后需要等待一下,不然有可能页面没切换完,js脚本就注入到页面上,导致获取iframe不准确
-        WebUtil.doWait(100);
-        String script = JsUtil.loadCommonScript(JsUtil.DOM_SCRIPT);
-        String handle = String.format("%s return frameHelper.frameObj.findTheFrame('%s');", script, url);
-        List<WebElement> list = JsUtil.runJs(handle);
-        for (WebElement element : list) {
-            driver.switchTo().frame(element);
-        }
+        JSONObject ext = JSONUtil.createObj().set("url", url).set("type", SwitchFrameActionEnum.SELF);
+        NoEleHandlerDto noEleHandlerDto = new NoEleHandlerDto().setExt(ext.toString());
+        new SwitchMyFrameHandler().doHandle(noEleHandlerDto);
     }
 
 
