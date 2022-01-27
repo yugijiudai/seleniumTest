@@ -1,6 +1,5 @@
 package com.lml.selenium.factory;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.lml.selenium.dto.NoEleHandlerDto;
@@ -8,6 +7,7 @@ import com.lml.selenium.entity.Selenium;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.exception.BizException;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author yugi
@@ -23,9 +23,14 @@ public class NoEleHandlerDtoFactory {
     private static final String ARGS = "args";
 
     /**
+     * js脚本的key
+     */
+    private static final String SCRIPT = "script";
+
+    /**
      * js脚本回调函数的key
      */
-    private static final String FN = "fn";
+    private static final String CALL_FN = "callFn";
 
     /**
      * 构建NoEleHandleDto
@@ -59,6 +64,12 @@ public class NoEleHandlerDtoFactory {
 
     /**
      * 构建script需要用的参数
+     * ext的格式如下:
+     * {
+     * 'args': ['123'], js运行所需要的参数，非必填
+     * 'script': 'console.log(111)', 要运行的js脚本
+     * 'callFn': {} js运行完要执行的回调方法,可以把js的返回值作为参数带给这个回调方法, 格式和RunMethodHandler的ext一样
+     * }
      *
      * @param selenium {@link Selenium}
      * @return {@link NoEleHandlerDto}
@@ -66,15 +77,19 @@ public class NoEleHandlerDtoFactory {
     private NoEleHandlerDto buildScript(Selenium selenium) {
         NoEleHandlerDto noEleHandlerDto = buildCommon();
         String ext = selenium.getExt();
-        if (StrUtil.isNotBlank(ext)) {
-            // 设置这个脚本需要的参数和回调函数
-            JSONObject obj = JSONUtil.parseObj(ext);
-            String str = obj.getStr(ARGS);
-            noEleHandlerDto.setArgs(JSONUtil.parseArray(str).toArray());
-            String callBack = obj.getStr(FN);
-            noEleHandlerDto.setCallFn(callBack);
+        if (StringUtils.isBlank(ext) || !JSONUtil.isJsonObj(ext)) {
+            throw new IllegalArgumentException("执行脚本的格式不对或者空了!");
         }
-        return noEleHandlerDto.setScript(selenium.getScript());
+        JSONObject obj = JSONUtil.parseObj(ext);
+        String script = obj.getStr(SCRIPT);
+        if (StringUtils.isBlank(script)) {
+            throw new IllegalArgumentException("要执行的脚本不能是空!");
+        }
+        String args = obj.getStr(ARGS);
+        if (StringUtils.isNotBlank(args)) {
+            noEleHandlerDto.setArgs(JSONUtil.parseArray(args).toArray());
+        }
+        return noEleHandlerDto.setCallFn(obj.getStr(CALL_FN)).setScript(script);
     }
 
     /**

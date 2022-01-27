@@ -1,5 +1,6 @@
 package com.lml.selenium.handler.other;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.lml.selenium.dto.BaseSeleniumDto;
@@ -21,24 +22,23 @@ public class RunScriptHandler implements OtherHandler {
         NoEleHandlerDto noEleHandlerDto = (NoEleHandlerDto) baseSeleniumDto;
         Object[] args = noEleHandlerDto.getArgs();
         String script = noEleHandlerDto.getScript();
-        if (StrUtil.isBlank(script)) {
-            throw new IllegalArgumentException("要执行的脚本不能为空!");
-        }
-        Object obj = args != null && args.length > 0 ? JsUtil.runJs(script, args) : JsUtil.runJs(script);
-        this.handleCallBack(noEleHandlerDto, obj);
+        Object jsReturnVal = ArrayUtil.isEmpty(args) ? JsUtil.runJs(script) : JsUtil.runJs(script, args);
+        this.handleCallBack(noEleHandlerDto, jsReturnVal);
     }
 
     /**
      * 如果有定义回调函数,则处理回调函数
      *
      * @param noEleHandlerDto {@link NoEleHandlerDto}
-     * @param obj             执行js脚本返回来的结果
+     * @param jsReturnVal     执行js脚本返回来的结果
      */
-    private void handleCallBack(NoEleHandlerDto noEleHandlerDto, Object obj) {
+    private void handleCallBack(NoEleHandlerDto noEleHandlerDto, Object jsReturnVal) {
         String callFn = noEleHandlerDto.getCallFn();
         if (StrUtil.isNotBlank(callFn)) {
             RunMethodDto dto = JSONUtil.toBean(callFn, RunMethodDto.class);
-            dto.setArgs(new Object[]{obj});
+            if (jsReturnVal != null) {
+                dto.setArgs(new Object[]{jsReturnVal});
+            }
             RunMethodHandler handler = new RunMethodHandler();
             handler.invokeMethod(dto);
         }

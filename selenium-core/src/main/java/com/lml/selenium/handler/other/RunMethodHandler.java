@@ -25,6 +25,12 @@ public class RunMethodHandler implements OtherHandler {
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
         NoEleHandlerDto noEleHandlerDto = (NoEleHandlerDto) baseSeleniumDto;
+        /* ext的格式如下:
+        {
+            'className': 'com.lml.selenium.Hello', 对应的类路径名字
+            'methodName': 'testHi', 需要调用的方法名
+            'args': ['名字', '呵呵'] 这个方法需要用到的参数
+        }*/
         String ext = noEleHandlerDto.getExt();
         if (!JSONUtil.isJson(ext)) {
             throw new BizException("请检查调用方法的格式!");

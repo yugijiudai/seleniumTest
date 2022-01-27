@@ -1,0 +1,40 @@
+[
+  {
+    "script": "function getTest(name, value){return name + ',' + value} return getTest(arguments[0], arguments[1])",
+    "args": [
+      "我是name",
+      "我是value"
+    ],
+    "callFn": {
+      "className": "com.lml.selenium.RunScriptTest",
+      "methodName": "scriptRun"
+    },
+    "tag": "有参数的js",
+    "expect": "我是name,我是value"
+  },
+  {
+    "script": "function getTest(word){return word} return getTest('无参数传递的js')",
+    "callFn": {
+      "className": "com.lml.selenium.RunScriptTest",
+      "methodName": "scriptRun"
+    },
+    "tag": "无参数传递的js",
+    "expect": "无参数传递的js"
+  },
+  {
+    "script": "function getTest(word){return word} getTest('没有回调方法')",
+    "tag": "没有回调方法"
+  },
+  {
+    "script": "function getTest(word){return word} getTest('js的脚本没有返回值')",
+    "callFn": {
+      "className": "com.lml.selenium.RunScriptTest",
+      "methodName": "scriptRun",
+      "args": [
+        "js的脚本没有返回值"
+      ]
+    },
+    "tag": "js的脚本没有返回值",
+    "expect": "js的脚本没有返回值"
+  }
+]
