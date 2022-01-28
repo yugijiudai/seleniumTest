@@ -1,12 +1,16 @@
 package com.lml.selenium.util;
 
+import cn.hutool.core.util.ClassLoaderUtil;
 import cn.hutool.core.util.ClassUtil;
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
+import com.lml.selenium.dto.RunMethodDto;
 import lombok.experimental.UtilityClass;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,4 +51,14 @@ public class ObjUtil {
         return arr.stream().map(obj -> (JSONObject) obj).collect(Collectors.toList());
     }
 
+    /**
+     * 利用反射获取需要调用的方法的参数个数
+     *
+     * @param runMethodDto {@link RunMethodDto}
+     * @return 方法的参数个数
+     */
+    public int getClassMethodParamCnt(RunMethodDto runMethodDto) {
+        Method method = ReflectUtil.getMethodByName(ClassLoaderUtil.loadClass(runMethodDto.getClassName()), runMethodDto.getMethodName());
+        return method.getParameterCount();
+    }
 }

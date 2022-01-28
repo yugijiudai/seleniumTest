@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <link rel="stylesheet" href="">
+</head>
+<body>
+
+操作:<span id="name"></span><br/>
+<input type="button" id="iframeBtn" onclick="iframeClick()" value="iframe按钮"/><br/>
+<input type="button" id="dbClick" value="双击按钮" ondblclick="dbClick()"/><br/>
+<div class="clzDiv">我是div1</div>
+<div class="clzDiv">我是div2</div>
+<script>
+    function dbClick() {
+        document.getElementById("name").innerHTML = '双击了'
+    }
+
+    function iframeClick() {
+        alert('切换iframe成功')
+    }
+</script>
+</body>
+</html>

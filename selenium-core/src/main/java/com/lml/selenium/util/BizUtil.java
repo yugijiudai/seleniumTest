@@ -3,8 +3,6 @@ package com.lml.selenium.util;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ClassLoaderUtil;
-import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.lml.selenium.client.HandlerClient;
@@ -15,6 +13,7 @@ import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.handler.other.RunMethodHandler;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -22,7 +21,6 @@ import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 
@@ -102,13 +100,24 @@ public class BizUtil {
      */
     private void handleCallbackMethod(String callBackContent, List<WebElement> webElement) {
         RunMethodDto runMethodDto = JSONUtil.toBean(callBackContent, RunMethodDto.class);
-        Method method = ReflectUtil.getMethodByName(ClassLoaderUtil.loadClass(runMethodDto.getClassName()), runMethodDto.getMethodName());
+        RunMethodHandler runMethodHandler = new RunMethodHandler();
         Object[] args = runMethodDto.getArgs();
-        if (method.getParameterCount() > args.length) {
-            // 利用反射获得需要调用的方法参数,如果参数比设定的要多,则默认在第一个参数补上查找到的元素,作为查找的元素返回给回调方法
+        if (CollectionUtils.isNotEmpty(webElement) && appendCallbackMethodArgs(runMethodDto)) {
+            // 如果给的回调方法参数是空的或者回调方法参数个数比设定的要多, 则默认在第一个参数补上查找到的元素,作为查找的元素返回给回调方法
             runMethodDto.setArgs(ArrayUtil.insert(args, 0, webElement));
         }
-        RunMethodHandler runMethodHandler = new RunMethodHandler();
         runMethodHandler.invokeMethod(runMethodDto);
+    }
+
+    /**
+     * 利用反射获取需要调用的方法的参数个数
+     *
+     * @param runMethodDto {@link RunMethodDto}
+     * @return 方法的参数个数
+     */
+    public boolean appendCallbackMethodArgs(RunMethodDto runMethodDto) {
+        int methodParamCnt = ObjUtil.getClassMethodParamCnt(runMethodDto);
+        // 利用反射获得需要调用的方法参数,如果参数比设定的要多,即需要在第一个参数插入新的参数
+        return runMethodDto.getArgs() == null || methodParamCnt > runMethodDto.getArgs().length;
     }
 }

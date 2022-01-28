@@ -60,7 +60,7 @@ public class DemoTest extends SeleniumBaseTest {
      * 什么都不填直接点登录
      */
     @Test(testName = "什么都不填直接点登录")
-    public void testLogin01() {
+    public void testDemo1() {
         this.doHandle(Pair.of(0, 1));
     }
 
@@ -69,7 +69,7 @@ public class DemoTest extends SeleniumBaseTest {
      * 输入错密码
      */
     @Test(testName = "输入错密码")
-    public void testLogin02() {
+    public void testDemo02() {
         this.doHandle(Pair.of(2, 4));
     }
 
@@ -77,7 +77,7 @@ public class DemoTest extends SeleniumBaseTest {
      * 登录成功
      */
     @Test(testName = "登录成功,从第五步直接执行到最后")
-    public void testLogin03() {
+    public void testDemo03() {
         this.doHandle(Pair.of(5, 0));
         UserDto user = UserUtil.getUser();
         Assert.assertNotNull(user);
@@ -86,8 +86,13 @@ public class DemoTest extends SeleniumBaseTest {
     }
 
     @Test(testName = "登录成功,使用模块执行")
-    public void testLogin04() {
+    public void testDemo04() {
         this.doHandleByModel(new String[]{"登录成功"});
+    }
+
+    @Test(testName = "iframe")
+    public void testDemo5() {
+        this.doHandleByModel(new String[]{"iframeSelf"});
     }
 
 
@@ -98,7 +103,12 @@ public class DemoTest extends SeleniumBaseTest {
         for (Object ext : array) {
             expect = JSONUtil.parseObj(ext).getStr("expect");
             NoEleHandlerDto noEleHandlerDto = NoEleHandlerDtoFactory.buildDto(new Selenium().setExt(ext.toString()).setElementAction(ActionEnum.RUN_SCRIPT));
-            new RunScriptHandler().doHandle(noEleHandlerDto);
+            try {
+                new RunScriptHandler().doHandle(noEleHandlerDto);
+            }
+            catch (Throwable e) {
+                Assert.fail(JSONUtil.parseObj(ext).getStr("tag"), e);
+            }
         }
     }
 }

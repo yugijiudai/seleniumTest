@@ -10,6 +10,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
+import java.util.List;
+
 /**
  * @author yugi
  * @apiNote demo的断言
@@ -19,35 +21,35 @@ public class DemoAssert {
 
 
     /**
-     * 断言testLogin01
+     * 断言testDemo01
      *
      * @param assertMsg 要断言的信息
      */
-    public void assertTestLogin01(String assertMsg) {
+    public void assertTestDemo01(String assertMsg) {
         WebElement tip = WebUtil.retryFindAndGetText(By.id("tip")).get(0);
         Assert.assertEquals(tip.getText(), assertMsg);
     }
 
     /**
-     * 断言testLogin02
+     * 断言testDemo02
      *
      * @param assertMsg 要断言的信息
      */
-    public void assertTestLogin02(String assertMsg) {
+    public void assertTestDemo02(String assertMsg) {
         Alert alert = SeleniumFactory.getDriver().switchTo().alert();
         Assert.assertEquals(alert.getText(), assertMsg);
         WebUtil.clickAlert();
     }
 
     /**
-     * 断言testLogin03
+     * 断言testDemo03
      *
-     * @param assertMsg 要断言的信息
+     * @param webElements 登录按钮
      */
-    public void assertTestLogin03(String assertMsg) {
-        Alert alert = SeleniumFactory.getDriver().switchTo().alert();
-        Assert.assertEquals(alert.getText(), assertMsg);
+    public void assertTestDemo03(List<WebElement> webElements) {
         WebUtil.clickAlert();
+        Assert.assertEquals(webElements.size(), 1);
+        Assert.assertEquals(webElements.get(0).getAttribute("type"), "button");
         JsUtil.addCommonScript(JsUtil.DOM_SCRIPT);
         String name = JsUtil.runJs(String.format("return domHelper.domObj.getDomValue(%s)", "$('#name')"));
         String pass = JsUtil.runJs(String.format("return domHelper.domObj.getDomValue(%s)", "$('#pass')"));
@@ -55,4 +57,17 @@ public class DemoAssert {
         UserUtil.setUser(userDto);
     }
 
+    /**
+     * 断言testDemo04
+     *
+     * @param list      js脚本返回来的元素dom列表
+     * @param expectMsg 要断言的信息
+     */
+    public void assertTestDemo04(List<WebElement> list, String expectMsg) {
+        StringBuilder actualMsg = new StringBuilder();
+        for (WebElement webElement : list) {
+            actualMsg.append(webElement.getText()).append(",");
+        }
+        Assert.assertEquals(actualMsg.substring(0, actualMsg.length() - 1), expectMsg);
+    }
 }

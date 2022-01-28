@@ -51,6 +51,11 @@ public class JsUtil {
     public final static String DOM_SCRIPT = "domHelper";
 
     /**
+     * frame的js脚本
+     */
+    public final static String FRAME_SCRIPT = "frameHelper";
+
+    /**
      * 等待ajax加载的最大时间
      */
     private static final Long WAIT_JS_TIME = 120000L;
@@ -276,7 +281,7 @@ public class JsUtil {
     public <T> T runJs(String script) {
         log.debug("预执行脚本:\n{}", script);
         Object response = ((JavascriptExecutor) SeleniumFactory.getDriver()).executeScript(script);
-        log.debug("执行脚本成功:\n{}\n返回值:{}", script, response);
+        log.debug("执行脚本成功!返回值:{}", response);
         return (T) response;
     }
 

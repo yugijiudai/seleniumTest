@@ -8,6 +8,7 @@ import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.dto.RunMethodDto;
 import com.lml.selenium.dto.RunScriptDto;
 import com.lml.selenium.enums.ActionEnum;
+import com.lml.selenium.util.BizUtil;
 import com.lml.selenium.util.JsUtil;
 
 /**
@@ -17,6 +18,7 @@ import com.lml.selenium.util.JsUtil;
  */
 public class RunScriptHandler implements OtherHandler {
 
+    private final static RunMethodHandler RUN_METHOD_HANDLER = new RunMethodHandler();
 
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
@@ -36,14 +38,16 @@ public class RunScriptHandler implements OtherHandler {
      */
     private void handleCallBack(RunScriptDto runScriptDto, Object jsReturnVal) {
         String callFn = runScriptDto.getCallFn();
-        if (StrUtil.isNotBlank(callFn)) {
-            RunMethodDto dto = JSONUtil.toBean(callFn, RunMethodDto.class);
-            if (jsReturnVal != null) {
-                dto.setArgs(new Object[]{jsReturnVal});
-            }
-            RunMethodHandler handler = new RunMethodHandler();
-            handler.invokeMethod(dto);
+        if (StrUtil.isBlank(callFn)) {
+            return;
         }
+        RunMethodDto dto = JSONUtil.toBean(callFn, RunMethodDto.class);
+        if (jsReturnVal != null) {
+            // 如果js有返回值,再查看回调函数的参数个数,如果比RunMethodDto的args个数要多,则表示需要把js返回的结果也要作为入参带给回调函数
+            Object[] params = BizUtil.appendCallbackMethodArgs(dto) ? ArrayUtil.insert(dto.getArgs(), 0, jsReturnVal) : new Object[]{jsReturnVal};
+            dto.setArgs(params);
+        }
+        RUN_METHOD_HANDLER.invokeMethod(dto);
     }
 
 

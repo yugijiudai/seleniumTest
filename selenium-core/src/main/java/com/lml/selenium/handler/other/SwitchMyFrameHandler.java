@@ -48,7 +48,7 @@ public class SwitchMyFrameHandler implements OtherHandler {
                 driver.switchTo().defaultContent();
                 // 切换到最顶级后需要等待一下,不然有可能页面没切换完,js脚本就注入到页面上,导致获取iframe不准确
                 WebUtil.doWait(100);
-                String script = JsUtil.loadCommonScript(JsUtil.DOM_SCRIPT);
+                String script = JsUtil.loadCommonScript(JsUtil.FRAME_SCRIPT);
                 String handle = String.format("%s return frameHelper.frameObj.findTheFrame('%s');", script, json.getStr(URL));
                 List<WebElement> list = JsUtil.runJs(handle);
                 for (WebElement element : list) {

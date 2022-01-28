@@ -3,7 +3,7 @@
 <configuration>
 
     <!-- 日志级别 -->
-    <property name="logLevel" value="INFO"/>
+    <property name="logLevel" value="DEBUG"/>
     <!--控制台输出格式-->
     <property name="consoleLogFormat" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %logger{50}  - %m%n"/>
 <!--    <property name="consoleLogFormat" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p - %m%n"/>-->
@@ -18,6 +18,12 @@
 
     <logger name="com.google.common" level="ERROR"/>
     <logger name="net.lightbody.bmp" level="ERROR"/>
+    <logger name="io.netty.util" level="INFO"/>
+    <logger name="io.netty.channel" level="INFO"/>
+    <logger name="io.netty.buffer" level="INFO"/>
+    <logger name="org.littleshoot.proxy" level="ERROR"/>
+    <logger name="org.asynchttpclient" level="INFO"/>
+    <logger name="io.netty.handler" level="INFO"/>
 
     <!-- 基于INFO处理日志：具体控制台或者文件对日志级别的处理还要看所在appender配置的filter，如果没有配置filter，则使用root配置 -->
     <root level="${logLevel}">
