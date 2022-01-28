@@ -119,15 +119,6 @@ public class WebUtil {
         retryingFindAndDoAction(EleHandlerDtoFactory.buildSendKeys(keys, EleHandlerDtoFactory.buildCommon(by)));
     }
 
-    /**
-     * 查找并切换到IFrame
-     *
-     * @param by 对应的元素
-     */
-    public void retryFindAndSwitchToFrame(By by) {
-        retryingFindAndDoAction(EleHandlerDtoFactory.buildSwitchToFrame(EleHandlerDtoFactory.buildCommon(by)));
-    }
-
 
     /**
      * 点击alert弹窗

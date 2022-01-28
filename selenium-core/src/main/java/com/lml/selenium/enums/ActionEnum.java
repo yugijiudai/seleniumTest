@@ -30,10 +30,6 @@ public enum ActionEnum {
      */
     SEND_KEYS("sendKeys", "填写需要的东西", true),
 
-    /**
-     * 切换frame
-     */
-    SWITCH_TO_FRAME("switchToFrame", "切换frame", true),
 
     /**
      * 清空输入栏

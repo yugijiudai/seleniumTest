@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50640
 File Encoding         : 65001
 
-Date: 2022-01-29 00:57:20
+Date: 2022-01-29 01:18:26
 */
 
 SET
@@ -25,7 +25,7 @@ CREATE TABLE `demo_test`
     `id`            int(11) NOT NULL AUTO_INCREMENT COMMENT '编号(必填,相当于步骤,默认从1开始)',
     `description`   varchar(255) NOT NULL COMMENT '相关描述(必填)',
     `model`         varchar(255) NOT NULL COMMENT '步骤模块(必填)',
-    `elementAction` enum('CLICK','SEND_KEYS','SWITCH_TO_FRAME','CLEAR','HOVER','GET_TEXT','ALERT','WAIT','RUN_SCRIPT','REFRESH','SWITCH_WINDOW','SWITCH_MY_FRAME','RUN_METHOD','DRAG') NOT NULL COMMENT '查找这个元素后操作的动作(必填)',
+    `elementAction` enum('CLICK','SEND_KEYS','CLEAR','HOVER','GET_TEXT','ALERT','WAIT','RUN_SCRIPT','REFRESH','SWITCH_WINDOW','SWITCH_MY_FRAME','RUN_METHOD','DRAG') NOT NULL COMMENT '查找这个元素后操作的动作(必填)',
     `clickAction`   enum('JS','API','BY_TAG_TYPE','RIGHT_CLICK','DOUBLE_CLICK','') DEFAULT NULL COMMENT '点击使用的方法',
     `element`       varchar(2000) DEFAULT NULL COMMENT '要查找的元素(非必填)',
     `findType`      enum('ID','NAME','CLASS_NAME','TAG_NAME','XPATH','LINK_TEXT','CSS_SELECTOR') DEFAULT NULL COMMENT '元素查询的方式(非必填)',

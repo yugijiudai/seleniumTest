@@ -37,8 +37,6 @@ public class EleHandlerDtoFactory {
                 return buildHover(eleHandlerDto);
             case GET_TEXT:
                 return buildGetText(eleHandlerDto);
-            case SWITCH_TO_FRAME:
-                return buildSwitchToFrame(eleHandlerDto);
             default:
                 throw new BizException("找不到对应的构建器!");
         }
@@ -75,17 +73,6 @@ public class EleHandlerDtoFactory {
      */
     public EleHandlerDto buildClear(EleHandlerDto eleHandlerDto) {
         eleHandlerDto.setActionEnum(ActionEnum.CLEAR);
-        return eleHandlerDto;
-    }
-
-    /**
-     * 构建switchToFrame所需要的参数
-     *
-     * @param eleHandlerDto {@link EleHandlerDto}
-     * @return {@link EleHandlerDto}
-     */
-    public EleHandlerDto buildSwitchToFrame(EleHandlerDto eleHandlerDto) {
-        eleHandlerDto.setActionEnum(ActionEnum.SWITCH_TO_FRAME);
         return eleHandlerDto;
     }
 

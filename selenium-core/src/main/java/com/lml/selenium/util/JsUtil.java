@@ -56,7 +56,7 @@ public class JsUtil {
     public final static String FRAME_SCRIPT = "frameHelper";
 
     /**
-     * 等待ajax加载的最大时间
+     * 等待ajax加载的最大时间(毫秒)
      */
     private static final Long WAIT_JS_TIME = 120000L;
 
@@ -144,7 +144,7 @@ public class JsUtil {
      *
      * @param script      要执行判断的脚本
      * @param maxWaitTime 最长等待时间(毫秒)
-     * @param interval    每次轮询间隔的时间
+     * @param interval    每次轮询间隔的时间(毫秒)
      */
     public void waitPageLoadedBySelfJs(String script, long maxWaitTime, Integer interval) {
         long start = System.currentTimeMillis();
@@ -171,6 +171,7 @@ public class JsUtil {
         }
         log.warn("没有jquery对象,尝试往页面添加");
         addJquery();
+        waitForJqueryLoad();
     }
 
     /**
