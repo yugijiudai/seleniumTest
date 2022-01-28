@@ -55,10 +55,6 @@ public class Selenium {
      */
     private FindTypeEnum findType;
 
-    /**
-     * 自己定义需要执行的脚本(非必填)
-     */
-    private String script;
 
     /**
      * 自定义查询这个dom节点需要等待的时间(非必填,单位:秒)

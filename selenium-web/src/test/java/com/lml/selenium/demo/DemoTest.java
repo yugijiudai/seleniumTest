@@ -1,10 +1,16 @@
 package com.lml.selenium.demo;
 
+import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONUtil;
 import com.lml.selenium.common.SeleniumBaseTest;
-import com.lml.selenium.dto.RunMethodDto;
+import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.dto.UserDto;
+import com.lml.selenium.entity.Selenium;
+import com.lml.selenium.enums.ActionEnum;
+import com.lml.selenium.factory.NoEleHandlerDtoFactory;
 import com.lml.selenium.factory.SeleniumFactory;
-import com.lml.selenium.handler.other.RunMethodHandler;
+import com.lml.selenium.handler.other.RunScriptHandler;
 import com.lml.selenium.util.UserUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -20,6 +26,18 @@ import org.testng.annotations.Test;
  */
 @Slf4j
 public class DemoTest extends SeleniumBaseTest {
+
+    private static String expect;
+
+    /**
+     * 回调用的方法
+     */
+    public void scriptRun(String nameAndValue) {
+        System.out.println(nameAndValue);
+        if (expect != null) {
+            Assert.assertEquals(nameAndValue, expect);
+        }
+    }
 
 
     @Override
@@ -73,11 +91,14 @@ public class DemoTest extends SeleniumBaseTest {
     }
 
 
-    @Test
-    public void testRunScript() {
-        RunMethodHandler runMethodHandler = new RunMethodHandler();
-        RunMethodDto runMethodDto = new RunMethodDto();
-        runMethodDto.setClassName("com.lml.selenium.util.JsUtil").setMethodName("addCommonScript").setArgs(new Object[]{"domHelper"});
-        System.out.println(runMethodHandler.invokeMethod(runMethodDto));
+    @Test(testName = "测试脚本运行")
+    public void testScriptHandler() {
+        String file = ResourceUtil.readUtf8Str("script/runScript.json");
+        JSONArray array = JSONUtil.parseArray(file);
+        for (Object ext : array) {
+            expect = JSONUtil.parseObj(ext).getStr("expect");
+            NoEleHandlerDto noEleHandlerDto = NoEleHandlerDtoFactory.buildDto(new Selenium().setExt(ext.toString()).setElementAction(ActionEnum.RUN_SCRIPT));
+            new RunScriptHandler().doHandle(noEleHandlerDto);
+        }
     }
 }

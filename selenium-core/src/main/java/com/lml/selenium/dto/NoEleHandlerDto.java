@@ -22,27 +22,19 @@ public class NoEleHandlerDto extends BaseSeleniumDto {
 
 
     /**
-     * 要执行的js脚本
-     */
-    private String script;
-
-
-    /**
-     * 要执行的脚本的参数
-     */
-    private Object[] args;
-
-    /**
      * 预留扩展字段
      */
     private String ext;
 
     /**
-     * 执行脚本后的回调函数(json格式),格式参考:
-     *
-     * @see RunMethodDto
+     * 处理js脚本的dto
      */
-    private String callFn;
+    private RunScriptDto runScriptDto;
+
+    /**
+     * 处理调用方法的dto
+     */
+    private RunMethodDto runMethodDto;
 
     /**
      * 切换到父级或者default的frame

@@ -2,12 +2,10 @@ package com.lml.selenium.handler.other;
 
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ClassUtil;
-import cn.hutool.json.JSONUtil;
 import com.lml.selenium.dto.BaseSeleniumDto;
 import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.dto.RunMethodDto;
 import com.lml.selenium.enums.ActionEnum;
-import com.lml.selenium.exception.BizException;
 
 /**
  * @author yugi
@@ -25,18 +23,7 @@ public class RunMethodHandler implements OtherHandler {
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
         NoEleHandlerDto noEleHandlerDto = (NoEleHandlerDto) baseSeleniumDto;
-        /* ext的格式如下:
-        {
-            'className': 'com.lml.selenium.Hello', 对应的类路径名字
-            'methodName': 'testHi', 需要调用的方法名
-            'args': ['名字', '呵呵'] 这个方法需要用到的参数
-        }*/
-        String ext = noEleHandlerDto.getExt();
-        if (!JSONUtil.isJson(ext)) {
-            throw new BizException("请检查调用方法的格式!");
-        }
-        RunMethodDto runMethodDto = JSONUtil.toBean(ext, RunMethodDto.class);
-        this.invokeMethod(runMethodDto);
+        this.invokeMethod(noEleHandlerDto.getRunMethodDto());
     }
 
     /**

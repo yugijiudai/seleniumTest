@@ -6,7 +6,7 @@
       "我是value"
     ],
     "callFn": {
-      "className": "com.lml.selenium.RunScriptTest",
+      "className": "com.lml.selenium.demo.DemoTest",
       "methodName": "scriptRun"
     },
     "tag": "有参数的js",
@@ -15,7 +15,7 @@
   {
     "script": "function getTest(word){return word} return getTest('无参数传递的js')",
     "callFn": {
-      "className": "com.lml.selenium.RunScriptTest",
+      "className": "com.lml.selenium.demo.DemoTest",
       "methodName": "scriptRun"
     },
     "tag": "无参数传递的js",
@@ -28,7 +28,7 @@
   {
     "script": "function getTest(word){return word} getTest('js的脚本没有返回值')",
     "callFn": {
-      "className": "com.lml.selenium.RunScriptTest",
+      "className": "com.lml.selenium.demo.DemoTest",
       "methodName": "scriptRun",
       "args": [
         "js的脚本没有返回值"

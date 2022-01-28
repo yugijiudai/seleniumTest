@@ -3,6 +3,8 @@ package com.lml.selenium.factory;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.lml.selenium.dto.NoEleHandlerDto;
+import com.lml.selenium.dto.RunMethodDto;
+import com.lml.selenium.dto.RunScriptDto;
 import com.lml.selenium.entity.Selenium;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.exception.BizException;
@@ -68,7 +70,7 @@ public class NoEleHandlerDtoFactory {
      * {
      * 'args': ['123'], js运行所需要的参数，非必填
      * 'script': 'console.log(111)', 要运行的js脚本
-     * 'callFn': {} js运行完要执行的回调方法,可以把js的返回值作为参数带给这个回调方法, 格式和RunMethodHandler的ext一样
+     * 'callFn': {} js运行完要执行的回调方法,可以把js的返回值作为参数带给这个回调方法, 格式参考下面buildRunMethod方法
      * }
      *
      * @param selenium {@link Selenium}
@@ -85,11 +87,12 @@ public class NoEleHandlerDtoFactory {
         if (StringUtils.isBlank(script)) {
             throw new IllegalArgumentException("要执行的脚本不能是空!");
         }
+        RunScriptDto runScriptDto = new RunScriptDto().setScript(script).setCallFn(obj.getStr(CALL_FN));
         String args = obj.getStr(ARGS);
         if (StringUtils.isNotBlank(args)) {
-            noEleHandlerDto.setArgs(JSONUtil.parseArray(args).toArray());
+            runScriptDto.setArgs(JSONUtil.parseArray(args).toArray());
         }
-        return noEleHandlerDto.setCallFn(obj.getStr(CALL_FN)).setScript(script);
+        return noEleHandlerDto.setRunScriptDto(runScriptDto);
     }
 
     /**
@@ -104,12 +107,24 @@ public class NoEleHandlerDtoFactory {
 
     /**
      * 构建runMethod需要用的参数
+     * ext的格式如下:
+     * {
+     * 'className': 'com.lml.selenium.Hello', 对应的类路径名字
+     * 'methodName': 'testHi', 需要调用的方法名
+     * 'args': ['名字', '呵呵'] 这个方法需要用到的参数
+     * }
      *
      * @param selenium {@link Selenium}
      * @return {@link NoEleHandlerDto}
      */
     private NoEleHandlerDto buildRunMethod(Selenium selenium) {
-        return buildCommon().setExt(selenium.getExt());
+        NoEleHandlerDto noEleHandlerDto = buildCommon();
+        String ext = selenium.getExt();
+        if (StringUtils.isBlank(ext) || !JSONUtil.isJsonObj(ext)) {
+            throw new IllegalArgumentException("执行方法的格式不对或者空了!");
+        }
+        RunMethodDto runMethodDto = JSONUtil.toBean(ext, RunMethodDto.class);
+        return noEleHandlerDto.setRunMethodDto(runMethodDto);
     }
 
     /**
