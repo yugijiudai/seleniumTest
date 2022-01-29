@@ -18,6 +18,7 @@ import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.logging.Level;
@@ -31,10 +32,6 @@ import java.util.logging.Level;
 @Slf4j
 public class SeleniumFactory {
 
-    /**
-     * service全局就初始化一次,如果每个用例都初始化service,driver,关闭driver和service,在调用doubleClick的时候会触发classNotFound,目前取消关闭service来解决╮(╯▽╰)╭
-     */
-    private ChromeDriverService service;
 
     @Getter
     private WebDriver driver;
@@ -43,14 +40,19 @@ public class SeleniumFactory {
      * 配置文件映射到的实体类
      */
     @Getter
-    private final SetDto setDto = initSettingAndHandler();
+    private final SetDto setDto = initGlobal();
 
     /**
-     * 最开始的初始化工作,全局只会执行一次, 读取配置文件并且存放到setDto里面,初始化所有handler
+     * service全局就初始化一次,如果每个用例都初始化service,driver,关闭driver和service,在调用doubleClick的时候会触发classNotFound,目前取消关闭service来解决╮(╯▽╰)╭
+     */
+    private ChromeDriverService service;
+
+    /**
+     * 最开始的初始化工作,全局只会执行一次, 读取配置文件并且存放到setDto里面,初始化所有handler和service
      *
      * @return {@link SetDto}
      */
-    private SetDto initSettingAndHandler() {
+    private SetDto initGlobal() {
         // 初始化处理器
         HandlerFactory.initAllHandler();
         Props props = new Props("selenium.properties");
@@ -58,9 +60,22 @@ public class SeleniumFactory {
         SetDto setting = new SetDto();
         BeanUtil.copyProperties(props, setting);
         log.info("初始化成功,配置是:{}", setting);
+        initService(setting);
         return setting;
     }
 
+    /**
+     * 初始化驱动的service
+     */
+    private void initService(SetDto setting) {
+        try {
+            service = new ChromeDriverService.Builder().usingDriverExecutable(new File(setting.getDriverPath())).usingAnyFreePort().build();
+            service.start();
+        }
+        catch (IOException e) {
+            throw new InitException("初始化service失败", e);
+        }
+    }
 
     /**
      * 关闭驱动,可以用在afterMethod
@@ -72,10 +87,10 @@ public class SeleniumFactory {
     }
 
     /**
-     * 最好全局引用一个，最后再关闭
+     * 所有用例执行完成才调用,全局只执行一次,慎用！
      */
-    public void closeSerivce() {
-        // FIXME yugi: 2022/1/29  暂时先不关闭这个
+    public void closeService() {
+        driver.quit();
         service.close();
     }
 
@@ -84,8 +99,6 @@ public class SeleniumFactory {
      */
     public void initWebDriver() {
         try {
-            service = new ChromeDriverService.Builder().usingDriverExecutable(new File(setDto.getDriverPath())).usingAnyFreePort().build();
-            service.start();
             ChromeOptions options = createChromeOption();
             driver = new ChromeDriverProxy(service, options);
             if (setDto.getUseMaxWindow()) {
