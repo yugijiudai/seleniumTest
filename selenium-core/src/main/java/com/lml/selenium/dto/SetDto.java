@@ -28,25 +28,20 @@ public class SetDto {
     private Integer doWait;
 
     /**
-     * 等待页面或者js脚本加载完成的最长时间(单位:毫秒)
+     * 显式等待的时间(单位:毫秒)
      */
     private Long maxWaitTime;
 
-
     /**
-     * 等待页面加载每次轮询间隔的时间(单位:毫秒)
+     * 等待次轮询间隔的时间,因为轮训不适宜设置过长，这里使用int(单位:毫秒)
      */
     private Integer interval;
 
     /**
-     * fluentWaitUntil,显式等待超时时间(单位:秒)
+     * 隐式等待时间(单位:毫秒)
      */
-    private Integer timeOutInSeconds;
+    private Long implicitlyWait;
 
-    /**
-     * fluentWaitUntil显式等待时间(单位:毫秒)
-     */
-    private Long sleepInMillis;
 
     /**
      * 查找元素最大尝试次数

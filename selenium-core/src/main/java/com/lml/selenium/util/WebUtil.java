@@ -182,10 +182,10 @@ public class WebUtil {
      * @return 如果找不到会返回空列表
      */
     public List<WebElement> findElement(EleHandlerDto eleHandlerDto) {
-        Integer timeWait = eleHandlerDto.getWaitTime();
+        Long timeWait = eleHandlerDto.getWaitTime();
         SetDto setDto = SeleniumFactory.getSetDto();
-        timeWait = timeWait != null ? timeWait : setDto.getTimeOutInSeconds();
-        WebDriverWait waitSetting = new WebDriverWait(SeleniumFactory.getDriver(), Duration.ofSeconds(timeWait), Duration.ofMillis(setDto.getSleepInMillis()));
+        timeWait = timeWait != null ? timeWait : setDto.getMaxWaitTime();
+        WebDriverWait waitSetting = new WebDriverWait(SeleniumFactory.getDriver(), Duration.ofMillis(timeWait), Duration.ofMillis(setDto.getInterval()));
         return waitSetting.until(driver -> driver.findElements(eleHandlerDto.getBy()));
     }
 

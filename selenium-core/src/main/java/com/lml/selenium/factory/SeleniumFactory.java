@@ -83,7 +83,7 @@ public class SeleniumFactory {
             }
             if (setDto.getDebugMode()) {
                 // 如果是debug模式,则会开启隐式等待
-                driver.manage().timeouts().implicitlyWait(Duration.ofMillis(setDto.getMaxWaitTime()));
+                driver.manage().timeouts().implicitlyWait(Duration.ofMillis(setDto.getImplicitlyWait()));
             }
         }
         catch (Exception e) {

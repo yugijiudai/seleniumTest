@@ -48,8 +48,8 @@ public class EleHandlerDto extends BaseSeleniumDto {
     private Integer retry;
 
     /**
-     * 查询元素等待的时间(秒)
+     * 查询元素等待的时间(毫秒)
      */
-    private Integer waitTime;
+    private Long waitTime;
 
 }

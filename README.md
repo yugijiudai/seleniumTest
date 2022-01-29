@@ -62,7 +62,7 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
 |valid |enum     |否   | Y  |  是否有效(Y:有效,N:无效) |
 |callBack |varchar(255)     |是   |   |  动作完成执行回调 |
 |script |varchar(2000)     |是   |   |  要自定义运行的脚本 |
-|wait |int(5)     |是   |   |  自定义查询这个dom节点需要等待的时间(单位:秒) |
+|wait |int(8)     |是   |   |  自定义查询这个dom节点需要等待的时间(单位:毫秒) |
 |retry |int(5)     |是   |   |  自定义查询这个dom节点重试次数 |
 
 #### src/main/resources下相关配置文件的说明

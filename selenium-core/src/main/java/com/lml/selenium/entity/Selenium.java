@@ -57,10 +57,10 @@ public class Selenium {
 
 
     /**
-     * 自定义查询这个dom节点需要等待的时间(非必填,单位:秒)
+     * 自定义查询这个dom节点需要等待的时间(非必填,单位:毫秒)
      */
-    @Min(value = 1, message = "等待时间不能小于{value}秒")
-    private Integer wait;
+    @Min(value = 1, message = "等待时间不能小于{value}毫秒")
+    private Long wait;
 
     /**
      * 自定义查询这个dom节点重试次数(非必填)
