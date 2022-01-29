@@ -111,7 +111,7 @@ public class ClickHandler implements ElementHandler {
      */
     private void doubleClick(WebElement webElement) {
         Actions action = new Actions(SeleniumFactory.getDriver());
-        action.doubleClick(webElement).perform();
+        action.doubleClick(webElement).build().perform();
     }
 
     /**

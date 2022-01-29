@@ -150,3 +150,4 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
 
 1. 暂时没有添加日志去记录错误情况,日后应该会把日志持久化到本地,通过查看日志来定位报错问题
 2. 默认driver使用chrome,暂不支持其他浏览器,google上面说新版的firefox双击好像有问题???
+3. 如果连续运行用例,每次在@BeforeMethod执行SeleniumFactory.initWebDriver();每次在@AfterMethod执行service.close(),则doubleClick的操作会发生异常,暂时没想到解决方案,先不关闭这个service

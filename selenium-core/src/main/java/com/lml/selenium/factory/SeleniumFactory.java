@@ -31,6 +31,9 @@ import java.util.logging.Level;
 @Slf4j
 public class SeleniumFactory {
 
+    /**
+     * service全局就初始化一次,如果每个用例都初始化service,driver,关闭driver和service,在调用doubleClick的时候会触发classNotFound,目前取消关闭service来解决╮(╯▽╰)╭
+     */
     private ChromeDriverService service;
 
     @Getter
@@ -60,14 +63,21 @@ public class SeleniumFactory {
 
 
     /**
-     * 关闭驱动
+     * 关闭驱动,可以用在afterMethod
      */
     public void quitDriver() {
+        // 先关闭代理再关闭driver
         RequestProxy.closeProxy();
         driver.close();
-        service.stop();
     }
 
+    /**
+     * 最好全局引用一个，最后再关闭
+     */
+    public void closeSerivce() {
+        // FIXME yugi: 2022/1/29  暂时先不关闭这个
+        service.close();
+    }
 
     /**
      * 初始化webDriver
