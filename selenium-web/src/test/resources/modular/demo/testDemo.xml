@@ -4,6 +4,7 @@
     <test name="demo相关功能">
         <classes>
             <class name="com.lml.selenium.demo.DemoTest"/>
+            <class name="com.lml.selenium.demo.DemoTest2"/>
         </classes>
     </test>
 </suite>

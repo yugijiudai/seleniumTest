@@ -15,7 +15,6 @@ import com.lml.selenium.util.UserUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -57,11 +56,6 @@ public class DemoTest extends SeleniumBaseTest {
         quitDriver();
     }
 
-    @AfterClass
-    public void afterClass() {
-        SeleniumFactory.closeService();
-    }
-
     /**
      * 什么都不填直接点登录
      */
@@ -91,13 +85,8 @@ public class DemoTest extends SeleniumBaseTest {
         Assert.assertEquals(user.getUsername(), "lml");
     }
 
-    @Test(testName = "登录成功,使用模块执行")
-    public void testDemo04() {
-        this.doHandleByModel(new String[]{"登录成功"});
-    }
-
     @Test(testName = "iframe")
-    public void testDemo5() {
+    public void testDemo4() {
         this.doHandleByModel(new String[]{"iframeSelf"});
     }
 

@@ -1,20 +1,21 @@
 /*
-Navicat MySQL Data Transfer
+ Navicat Premium Data Transfer
 
-Source Server         : yugi
-Source Server Version : 50640
-Source Host           : localhost:3306
-Source Database       : selenium
+ Source Server         : 本地环境
+ Source Server Type    : MySQL
+ Source Server Version : 80018
+ Source Host           : localhost:3306
+ Source Schema         : selenium
 
-Target Server Type    : MYSQL
-Target Server Version : 50640
-File Encoding         : 65001
+ Target Server Type    : MySQL
+ Target Server Version : 80018
+ File Encoding         : 65001
 
-Date: 2022-01-29 01:18:26
+ Date: 29/01/2022 13:02:03
 */
 
-SET
-FOREIGN_KEY_CHECKS=0;
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
 -- Table structure for demo_test
@@ -35,38 +36,43 @@ CREATE TABLE `demo_test`
     `wait`          int(8)                                                                                                                                                     DEFAULT NULL COMMENT '自定义查询这个dom节点需要等待的时间(非必填,单位:毫秒)',
     `retry`         int(5)                                                                                                                                                     DEFAULT NULL COMMENT '自定义查询这个dom节点重试次数(非必填)',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='demo';
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 15
+  DEFAULT CHARSET = utf8
+  ROW_FORMAT = DYNAMIC COMMENT ='demo';
 
 -- ----------------------------
 -- Records of demo_test
 -- ----------------------------
+BEGIN;
 INSERT INTO `demo_test`
-VALUES ('1', '点击登录', '什么都不做直接点登录', 'CLICK', 'API', 'btn', 'ID', null, 'Y',
-        '{className: \'com.lml.selenium.demo.asserts.DemoAssert\', methodName: \'assertTestDemo01\', args:[\'用户不存在\']}', null, null);
+VALUES (1, '点击登录', '什么都不做直接点登录', 'CLICK', 'API', 'btn', 'ID', NULL, 'Y',
+        '{className: \'com.lml.selenium.demo.asserts.DemoAssert\', methodName: \'assertTestDemo01\', args:[\'用户不存在\']}', NULL, NULL);
 INSERT INTO `demo_test`
-VALUES ('2', '输入用户名haha', '输入错密码', 'SEND_KEYS', null, 'name', 'ID', 'haha', 'Y', null, null, null);
+VALUES (2, '输入用户名haha', '输入错密码', 'SEND_KEYS', NULL, 'name', 'ID', 'haha', 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
-VALUES ('3', '输入密码1', '输入错密码', 'SEND_KEYS', null, 'pass', 'ID', '1', 'Y', null, null, null);
+VALUES (3, '输入密码1', '输入错密码', 'SEND_KEYS', NULL, 'pass', 'ID', '1', 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
-VALUES ('4', '点击登录', '输入错密码', 'CLICK', 'API', 'btn', 'ID', null, 'Y',
-        '{className: \'com.lml.selenium.demo.asserts.DemoAssert\', methodName: \'assertTestDemo02\', args:[\'密码错误\']}', null, null);
+VALUES (4, '点击登录', '输入错密码', 'CLICK', 'API', 'btn', 'ID', NULL, 'Y', '{className: \'com.lml.selenium.demo.asserts.DemoAssert\', methodName: \'assertTestDemo02\', args:[\'密码错误\']}',
+        NULL, NULL);
 INSERT INTO `demo_test`
-VALUES ('5', '输入用户名', '登录成功', 'SEND_KEYS', null, '#name', 'CSS_SELECTOR', 'lml', 'Y', null, null, null);
+VALUES (5, '输入用户名', '登录成功', 'SEND_KEYS', NULL, '#name', 'CSS_SELECTOR', 'lml', 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
-VALUES ('6', '输入密码', '登录成功', 'SEND_KEYS', null, '//input[@id=\'pass\']', 'XPATH', '111111', 'Y', null, null, null);
+VALUES (6, '输入密码', '登录成功', 'SEND_KEYS', NULL, '//input[@id=\'pass\']', 'XPATH', '111111', 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
-VALUES ('7', '点击登录', '登录成功', 'CLICK', 'API', 'btn', 'ID', null, 'Y', '{className: \'com.lml.selenium.demo.asserts.DemoAssert\', methodName: \'assertTestDemo03\'}', null, null);
+VALUES (7, '点击登录', '登录成功', 'CLICK', 'API', 'btn', 'ID', NULL, 'Y', '{className: \'com.lml.selenium.demo.asserts.DemoAssert\', methodName: \'assertTestDemo03\'}', NULL, NULL);
 INSERT INTO `demo_test`
-VALUES ('8', '输入alert脚本', '登录成功', 'RUN_SCRIPT', null, null, null, '{\'script\': \'alert(111)\'}', 'Y', null, '2000', null);
+VALUES (8, '输入alert脚本', '登录成功', 'RUN_SCRIPT', NULL, NULL, NULL, '{\'script\': \'alert(111)\'}', 'Y', NULL, 2000, NULL);
 INSERT INTO `demo_test`
-VALUES ('9', '点击alert', '登录成功', 'ALERT', null, null, null, null, 'Y', null, null, null);
+VALUES (9, '点击alert', '登录成功', 'ALERT', NULL, NULL, NULL, NULL, 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
-VALUES ('10', '切换到iframe', 'iframeSelf', 'SWITCH_MY_FRAME', null, '', null, '{\"type\": \"self\", \"url\": \"http://127.0.0.1:8080/iframe.html\"}', 'Y', null, null, null);
+VALUES (10, '切换到iframe', 'iframeSelf', 'SWITCH_MY_FRAME', NULL, '', NULL, '{\"type\": \"self\", \"url\": \"http://127.0.0.1:8080/iframe.html\"}', 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
-VALUES ('12', '双击iframe里的按钮', 'iframeSelf', 'CLICK', 'DOUBLE_CLICK', 'dbClick', 'ID', null, 'Y', null, null, null);
+VALUES (12, '双击iframe里的按钮', 'iframeSelf', 'CLICK', 'DOUBLE_CLICK', 'dbClick', 'ID', NULL, 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
-VALUES ('13', '运行js脚本把dom带回去', 'iframeSelf', 'RUN_SCRIPT', null, null, null,
+VALUES (13, '运行js脚本把dom带回去', 'iframeSelf', 'RUN_SCRIPT', NULL, NULL, NULL,
         '{\"script\": \"return document.getElementsByClassName(\'clzDiv\')\", \"callFn\": {\"className\": \"com.lml.selenium.demo.asserts.DemoAssert\", \"methodName\": \"assertTestDemo04\", \"args\":[\"我是div1,我是div2\"]}} }',
-        'Y', null, null, null);
-INSERT INTO `demo_test`
-VALUES ('14', '点击alert', 'iframe', 'RUN_SCRIPT', null, null, null, '{\'script\': \'return document.getElementById(\"iframeBtn\")\'}', 'N', null, null, null);
+        'Y', NULL, NULL, NULL);
+COMMIT;
+
+SET FOREIGN_KEY_CHECKS = 1;
