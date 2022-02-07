@@ -16,9 +16,9 @@ import lombok.experimental.Accessors;
 public class NoEleHandlerDto extends BaseSeleniumDto {
 
     /**
-     * 等待的时间
+     * 等待的时间(单位:毫秒)
      */
-    private Integer waitTime;
+    private Long waitTime;
 
 
     /**

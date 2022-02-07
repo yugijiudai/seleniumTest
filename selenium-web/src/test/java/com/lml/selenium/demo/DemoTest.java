@@ -76,9 +76,9 @@ public class DemoTest extends SeleniumBaseTest {
     /**
      * 登录成功
      */
-    @Test(testName = "登录成功,从第五步直接执行到最后")
+    @Test(testName = "登录成功,从第五步直接执行到最后(第九步)")
     public void testDemo03() {
-        this.doHandle(Pair.of(5, 0));
+        this.doHandle(Pair.of(5, 9));
         UserDto user = UserUtil.getUser();
         Assert.assertNotNull(user);
         Assert.assertEquals(user.getPass(), "111111");

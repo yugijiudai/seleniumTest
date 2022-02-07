@@ -13,6 +13,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 
 import java.util.List;
@@ -111,7 +112,8 @@ public class ClickHandler implements ElementHandler {
      */
     private void doubleClick(WebElement webElement) {
         Actions action = new Actions(SeleniumFactory.getDriver());
-        action.doubleClick(webElement).build().perform();
+        Action build = action.doubleClick(webElement).build();
+        build.perform();
     }
 
     /**

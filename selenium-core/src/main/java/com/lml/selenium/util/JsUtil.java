@@ -116,7 +116,7 @@ public class JsUtil {
         if (!checkJqueryIsExist()) {
             throw new InitException("添加jquery失败!");
         }
-        log.debug("网页添加query成功");
+        log.debug("网页添加jquery成功");
     }
 
     /**
@@ -158,28 +158,35 @@ public class JsUtil {
         }
     }
 
+
     /**
-     * Wait Until JQuery and JS Ready
+     * 等待页面加载完成,先等待页面的js加载完成,然后利用jquery的属性来判断ajax的请求是否加载完成,如果页面没有jquery对象,会尝试往里面添加,如果添加还是失败则会报异常
+     *
+     * @param requestWaitTime 请求最大的等待时间，如果没有，则使用等待页面脚本加载的时间
      */
-    public static void waitPageLoad() {
+    public static void waitPageLoad(Long requestWaitTime) {
         // 先等待JS加载完成
         waitUntilJsReady();
         WebUtil.doWait(100);
         if (JsUtil.checkJqueryIsExist()) {
-            waitForJqueryLoad();
+            waitForJqueryLoad(requestWaitTime);
             return;
         }
         log.warn("没有jquery对象,尝试往页面添加");
         addJquery();
-        waitForJqueryLoad();
+        waitForJqueryLoad(requestWaitTime);
     }
 
+
     /**
-     * Wait for JQuery Load
+     * 利用jquery的active属性等待请求加载
+     *
+     * @param requestWaitTime 请求最大的等待时间，如果没有，则使用等待页面脚本加载的时间
      */
-    private static void waitForJqueryLoad() {
+    private static void waitForJqueryLoad(Long requestWaitTime) {
         SetDto setDto = SeleniumFactory.getSetDto();
-        waitPageLoadedBySelfJs("return jQuery.active==0", WAIT_JS_TIME, setDto.getInterval());
+        requestWaitTime = requestWaitTime == null ? WAIT_JS_TIME : requestWaitTime;
+        waitPageLoadedBySelfJs("return jQuery.active==0", requestWaitTime, setDto.getInterval());
     }
 
     /**

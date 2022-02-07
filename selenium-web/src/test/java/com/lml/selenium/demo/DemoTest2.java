@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 
 /**
  * @author yugi
- * @apiNote demo的测试用例
+ * @apiNote demo2的测试用例, 执行完demo1后再执行这个, 确保selenium的初始化和销毁工作能正常执行
  * @since 2019-05-05
  */
 @Slf4j
@@ -42,6 +42,11 @@ public class DemoTest2 extends SeleniumBaseTest {
     @Test(testName = "iframe")
     public void testDemo2() {
         this.doHandleByModel(new String[]{"iframeSelf"});
+    }
+
+    @Test(testName = "打开新窗口")
+    public void testDemo3() {
+        this.doHandleByModel(new String[]{"新窗口"});
     }
 
 

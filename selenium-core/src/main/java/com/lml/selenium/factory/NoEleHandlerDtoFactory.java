@@ -102,7 +102,7 @@ public class NoEleHandlerDtoFactory {
      * @return {@link NoEleHandlerDto}
      */
     private NoEleHandlerDto buildWait(Selenium selenium) {
-        return buildCommon().setWaitTime(Integer.parseInt(selenium.getExt()));
+        return buildCommon().setWaitTime(Long.parseLong(selenium.getExt()));
     }
 
     /**

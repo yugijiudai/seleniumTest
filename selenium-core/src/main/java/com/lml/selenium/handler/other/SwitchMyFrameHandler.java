@@ -36,6 +36,7 @@ public class SwitchMyFrameHandler implements OtherHandler {
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
         NoEleHandlerDto noEleHandlerDto = (NoEleHandlerDto) baseSeleniumDto;
+        // ext的格式:{"type": "self", "url": "http://127.0.0.1:8080/iframe.html"}
         JSONObject json = JSONUtil.parseObj(noEleHandlerDto.getExt());
         SwitchFrameActionEnum actionEnum = SwitchFrameActionEnum.parse(json.getStr(TYPE));
         WebUtil.getCurrentFrame();

@@ -59,9 +59,9 @@ public enum ActionEnum {
     ALERT("alert", "点击alert框", false),
 
     /**
-     * 显式等待
+     * 等待页面加载
      */
-    WAIT("waitTime", "显式等待", false),
+    WAIT("waitTime", "等待页面加载", false),
 
 
     /**
