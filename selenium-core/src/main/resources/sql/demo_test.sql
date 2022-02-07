@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 29/01/2022 13:02:03
+ Date: 07/02/2022 18:28:21
 */
 
 SET NAMES utf8mb4;
@@ -37,7 +37,7 @@ CREATE TABLE `demo_test`
     `retry`         int(5)                                                                                                                                                     DEFAULT NULL COMMENT '自定义查询这个dom节点重试次数(非必填)',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 15
+  AUTO_INCREMENT = 16
   DEFAULT CHARSET = utf8
   ROW_FORMAT = DYNAMIC COMMENT ='demo';
 
@@ -73,6 +73,10 @@ INSERT INTO `demo_test`
 VALUES (13, '运行js脚本把dom带回去', 'iframeSelf', 'RUN_SCRIPT', NULL, NULL, NULL,
         '{\"script\": \"return document.getElementsByClassName(\'clzDiv\')\", \"callFn\": {\"className\": \"com.lml.selenium.demo.asserts.DemoAssert\", \"methodName\": \"assertTestDemo04\", \"args\":[\"我是div1,我是div2\"]}} }',
         'Y', NULL, NULL, NULL);
+INSERT INTO `demo_test`
+VALUES (14, '打开新窗口', '新窗口', 'CLICK', 'API', 'newWindow', 'ID', NULL, 'Y', NULL, NULL, NULL);
+INSERT INTO `demo_test`
+VALUES (15, '切换到新窗口', '新窗口', 'SWITCH_WINDOW', NULL, NULL, NULL, '1', 'Y', NULL, NULL, NULL);
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
