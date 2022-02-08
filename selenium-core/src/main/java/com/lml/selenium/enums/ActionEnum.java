@@ -43,10 +43,6 @@ public enum ActionEnum {
     HOVER("hover", "鼠标停留在控件上", true),
 
 
-    /**
-     * 获取文本框上的内容
-     */
-    GET_TEXT("getText", "获取文本框上的内容", true),
 
     /**
      * 拖拉

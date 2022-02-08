@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 07/02/2022 18:28:21
+ Date: 08/02/2022 11:39:58
 */
 
 SET NAMES utf8mb4;
@@ -23,21 +23,21 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `demo_test`;
 CREATE TABLE `demo_test`
 (
-    `id`            int(11)                                                                                                                                           NOT NULL AUTO_INCREMENT COMMENT '编号(必填,相当于步骤,默认从1开始)',
-    `description`   varchar(255)                                                                                                                                      NOT NULL COMMENT '相关描述(必填)',
-    `model`         varchar(255)                                                                                                                                      NOT NULL COMMENT '步骤模块(必填)',
-    `elementAction` enum ('CLICK','SEND_KEYS','CLEAR','HOVER','GET_TEXT','ALERT','WAIT','RUN_SCRIPT','REFRESH','SWITCH_WINDOW','SWITCH_MY_FRAME','RUN_METHOD','DRAG') NOT NULL COMMENT '查找这个元素后操作的动作(必填)',
-    `clickAction`   enum ('JS','API','BY_TAG_TYPE','RIGHT_CLICK','DOUBLE_CLICK','')                                                                                            DEFAULT NULL COMMENT '点击使用的方法',
-    `element`       varchar(2000)                                                                                                                                              DEFAULT NULL COMMENT '要查找的元素(非必填)',
-    `findType`      enum ('ID','NAME','CLASS_NAME','TAG_NAME','XPATH','LINK_TEXT','CSS_SELECTOR')                                                                              DEFAULT NULL COMMENT '元素查询的方式(非必填)',
-    `ext`           varchar(2000)                                                                                                                                              DEFAULT NULL COMMENT '预留字段',
-    `valid`         enum ('Y','N')                                                                                                                                    NOT NULL DEFAULT 'Y' COMMENT '是否有效(必填)',
-    `callBack`      varchar(255)                                                                                                                                               DEFAULT NULL COMMENT '执行回调',
-    `wait`          int(8)                                                                                                                                                     DEFAULT NULL COMMENT '自定义查询这个dom节点需要等待的时间(非必填,单位:毫秒)',
-    `retry`         int(5)                                                                                                                                                     DEFAULT NULL COMMENT '自定义查询这个dom节点重试次数(非必填)',
+    `id`            int(11)                                                                                                                                                                           NOT NULL AUTO_INCREMENT COMMENT '编号(必填,相当于步骤,默认从1开始)',
+    `description`   varchar(255)                                                                                                                                                                      NOT NULL COMMENT '相关描述(必填)',
+    `model`         varchar(255)                                                                                                                                                                      NOT NULL COMMENT '步骤模块(必填)',
+    `elementAction` enum ('CLICK','SEND_KEYS','CLEAR','HOVER','ALERT','WAIT','RUN_SCRIPT','REFRESH','SWITCH_WINDOW','SWITCH_MY_FRAME','RUN_METHOD','DRAG') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '查找这个元素后操作的动作(必填)',
+    `clickAction`   enum ('JS','API','BY_TAG_TYPE','RIGHT_CLICK','DOUBLE_CLICK','')                                                                                                                            DEFAULT NULL COMMENT '点击使用的方法',
+    `element`       varchar(2000)                                                                                                                                                                              DEFAULT NULL COMMENT '要查找的元素(非必填)',
+    `findType`      enum ('ID','NAME','CLASS_NAME','TAG_NAME','XPATH','LINK_TEXT','CSS_SELECTOR')                                                                                                              DEFAULT NULL COMMENT '元素查询的方式(非必填)',
+    `ext`           varchar(2000)                                                                                                                                                                              DEFAULT NULL COMMENT '预留字段',
+    `valid`         enum ('Y','N')                                                                                                                                                                    NOT NULL DEFAULT 'Y' COMMENT '是否有效(必填)',
+    `callBack`      varchar(255)                                                                                                                                                                               DEFAULT NULL COMMENT '执行回调',
+    `wait`          int(8)                                                                                                                                                                                     DEFAULT NULL COMMENT '自定义查询这个dom节点需要等待的时间(非必填,单位:毫秒)',
+    `retry`         int(5)                                                                                                                                                                                     DEFAULT NULL COMMENT '自定义查询这个dom节点重试次数(非必填)',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 16
+  AUTO_INCREMENT = 17
   DEFAULT CHARSET = utf8
   ROW_FORMAT = DYNAMIC COMMENT ='demo';
 
@@ -77,6 +77,8 @@ INSERT INTO `demo_test`
 VALUES (14, '打开新窗口', '新窗口', 'CLICK', 'API', 'newWindow', 'ID', NULL, 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
 VALUES (15, '切换到新窗口', '新窗口', 'SWITCH_WINDOW', NULL, NULL, NULL, '1', 'Y', NULL, NULL, NULL);
+INSERT INTO `demo_test`
+VALUES (16, '所有输入框输入内容', '新窗口', 'SEND_KEYS', NULL, 'ipt', 'CLASS_NAME', 'hello', 'Y', NULL, NULL, NULL);
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

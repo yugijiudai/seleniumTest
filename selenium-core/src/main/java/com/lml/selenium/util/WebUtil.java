@@ -36,13 +36,13 @@ public class WebUtil {
 
 
     /**
-     * 重复查找获取控件的文本
+     * 根据by来查找需要的元素列表
      *
      * @param by 对应的元素
      * @return {@link WebElement}
      */
-    public List<WebElement> retryFindAndGetText(By by) {
-        return retryingFindAndDoAction(EleHandlerDtoFactory.buildGetText(EleHandlerDtoFactory.buildCommon(by)));
+    public List<WebElement> retryFindElements(By by) {
+        return WebUtil.fluentWaitUntilFind(EleHandlerDtoFactory.buildCommon(by));
     }
 
     /**
@@ -139,6 +139,8 @@ public class WebUtil {
         By by = eleHandlerDto.getBy();
         Integer retry = eleHandlerDto.getRetry();
         List<WebElement> elements = null;
+        ActionEnum actionEnum = eleHandlerDto.getActionEnum();
+        String action = actionEnum == null ? "查找元素" : actionEnum.getDesc();
         // 如果没有指定,用默认的
         int attemptsTime = retry != null ? retry : SeleniumFactory.getSetDto().getAttemptsTime();
         while (attempts++ < attemptsTime) {
@@ -150,7 +152,7 @@ public class WebUtil {
                 throw new FindElementException(StrUtil.format("执行{}时尝试{}次仍然发生错误", by, attempts));
             }
             doWait(SeleniumFactory.getSetDto().getInterval());
-            log.warn("执行动作:{}操作节点{}时,发生错误,重试第{}次", eleHandlerDto.getActionEnum(), by, attempts);
+            log.warn("执行动作:【{}】操作节点【{}】时,发生错误,重试第{}次", action, by, attempts);
         }
         return elements;
     }

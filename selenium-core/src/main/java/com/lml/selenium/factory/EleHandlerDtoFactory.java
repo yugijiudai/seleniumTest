@@ -35,8 +35,6 @@ public class EleHandlerDtoFactory {
                 return buildSendKeys(selenium.getExt(), eleHandlerDto);
             case HOVER:
                 return buildHover(eleHandlerDto);
-            case GET_TEXT:
-                return buildGetText(eleHandlerDto);
             default:
                 throw new BizException("找不到对应的构建器!");
         }
@@ -85,17 +83,6 @@ public class EleHandlerDtoFactory {
      */
     public EleHandlerDto buildHover(EleHandlerDto eleHandlerDto) {
         eleHandlerDto.setActionEnum(ActionEnum.HOVER);
-        return eleHandlerDto;
-    }
-
-    /**
-     * 构建getText所需要的参数
-     *
-     * @param eleHandlerDto {@link EleHandlerDto}
-     * @return {@link EleHandlerDto}
-     */
-    public EleHandlerDto buildGetText(EleHandlerDto eleHandlerDto) {
-        eleHandlerDto.setActionEnum(ActionEnum.GET_TEXT);
         return eleHandlerDto;
     }
 

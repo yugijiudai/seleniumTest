@@ -2,10 +2,16 @@ package com.lml.selenium.demo;
 
 import com.lml.selenium.common.SeleniumBaseTest;
 import com.lml.selenium.factory.SeleniumFactory;
+import com.lml.selenium.util.WebUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 /**
  * @author yugi
@@ -47,6 +53,12 @@ public class DemoTest2 extends SeleniumBaseTest {
     @Test(testName = "打开新窗口")
     public void testDemo3() {
         this.doHandleByModel(new String[]{"新窗口"});
+        List<WebElement> list = WebUtil.retryFindElements(By.className("ipt"));
+        Assert.assertEquals(list.size(), 3);
+        for (WebElement webElement : list) {
+            Assert.assertEquals(webElement.getTagName(), "input");
+            Assert.assertEquals(webElement.getAttribute("value"), "hello");
+        }
     }
 
 

@@ -26,7 +26,7 @@ public class DemoAssert {
      * @param assertMsg 要断言的信息
      */
     public void assertTestDemo01(String assertMsg) {
-        WebElement tip = WebUtil.retryFindAndGetText(By.id("tip")).get(0);
+        WebElement tip = WebUtil.retryFindElements(By.id("tip")).get(0);
         Assert.assertEquals(tip.getText(), assertMsg);
     }
 
