@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 08/02/2022 14:42:03
+ Date: 08/02/2022 16:05:33
 */
 
 SET NAMES utf8mb4;
@@ -47,20 +47,20 @@ CREATE TABLE `demo_test`
 BEGIN;
 INSERT INTO `demo_test`
 VALUES (1, '点击登录', '什么都不做直接点登录', 'CLICK', 'API', 'btn', 'ID', NULL, 'Y',
-        '{className: \'com.lml.selenium.demo.asserts.DemoAssert\', methodName: \'assertTestDemo01\', args:[\'用户不存在\']}', NULL, NULL);
+        '{\"className\":\"com.lml.selenium.demo.asserts.DemoAssert\",\"methodName\":\"assertTestDemo01\",\"args\":[\"用户不存在\"]}', NULL, NULL);
 INSERT INTO `demo_test`
 VALUES (2, '输入用户名haha', '输入错密码', 'SEND_KEYS', NULL, 'name', 'ID', 'haha', 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
 VALUES (3, '输入密码1', '输入错密码', 'SEND_KEYS', NULL, 'pass', 'ID', '1', 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
-VALUES (4, '点击登录', '输入错密码', 'CLICK', 'API', 'btn', 'ID', NULL, 'Y', '{className: \'com.lml.selenium.demo.asserts.DemoAssert\', methodName: \'assertTestDemo02\', args:[\'密码错误\']}',
-        NULL, NULL);
+VALUES (4, '点击登录', '输入错密码', 'CLICK', 'API', 'btn', 'ID', NULL, 'Y',
+        '{\"className\":\"com.lml.selenium.demo.asserts.DemoAssert\",\"methodName\":\"assertTestDemo02\",\"args\":[\"密码错误\"]}', NULL, NULL);
 INSERT INTO `demo_test`
 VALUES (5, '输入用户名', '登录成功', 'SEND_KEYS', NULL, '#name', 'CSS_SELECTOR', 'lml', 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
 VALUES (6, '输入密码', '登录成功', 'SEND_KEYS', NULL, '//input[@id=\'pass\']', 'XPATH', '111111', 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
-VALUES (7, '点击登录', '登录成功', 'CLICK', 'API', 'btn', 'ID', NULL, 'Y', '{className: \'com.lml.selenium.demo.asserts.DemoAssert\', methodName: \'assertTestDemo03\'}', NULL, NULL);
+VALUES (7, '点击登录', '登录成功', 'CLICK', 'API', 'btn', 'ID', NULL, 'Y', '{\"className\":\"com.lml.selenium.demo.asserts.DemoAssert\",\"methodName\":\"assertTestDemo03\"}', NULL, NULL);
 INSERT INTO `demo_test`
 VALUES (8, '输入alert脚本', '登录成功', 'RUN_SCRIPT', NULL, NULL, NULL, '{\'script\': \'alert(111)\'}', 'Y', NULL, 2000, NULL);
 INSERT INTO `demo_test`
@@ -79,7 +79,7 @@ INSERT INTO `demo_test`
 VALUES (15, '切换到新窗口', '新窗口', 'SWITCH_WINDOW', NULL, NULL, NULL, '1', 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
 VALUES (16, '获取所有输入框输入内容', '新窗口', 'SEND_KEYS', NULL, 'ipt', 'CLASS_NAME', 'hello', 'Y',
-        '{className: \'com.lml.selenium.demo.asserts.DemoAssert\', methodName: \'assertWindowAndCallBack\', \'args\': [\'hello\']}', NULL, NULL);
+        '{\"className\": \"com.lml.selenium.demo.asserts.DemoAssert\", \"methodName\": \"assertWindowAndCallBack\", \"args\": [\"hello\"]}', NULL, NULL);
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
