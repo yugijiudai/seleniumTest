@@ -275,11 +275,10 @@ public class WebUtil {
      * 重复查找和执行动作（click或sendKeys等），当出现引用的element过时后，重新查找该element
      *
      * @param eleHandlerDto {@link EleHandlerDto}
-     * @return {@link WebElement}
      */
-    private List<WebElement> retryingFindAndDoAction(EleHandlerDto eleHandlerDto) {
+    private void retryingFindAndDoAction(EleHandlerDto eleHandlerDto) {
         ElementHandler handler = HandlerFactory.getElementHandler(eleHandlerDto.getActionEnum());
-        return handler.retryingFindAndDoAction(eleHandlerDto);
+        handler.retryingFindAndDoAction(eleHandlerDto);
     }
 
 }

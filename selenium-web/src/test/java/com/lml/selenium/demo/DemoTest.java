@@ -59,7 +59,7 @@ public class DemoTest extends SeleniumBaseTest {
     /**
      * 什么都不填直接点登录
      */
-    @Test(testName = "什么都不填直接点登录")
+    @Test(testName = "什么都不填直接点登录", description = "什么都不填直接点登录")
     public void testDemo1() {
         this.doHandle(Pair.of(0, 1));
     }
@@ -68,7 +68,7 @@ public class DemoTest extends SeleniumBaseTest {
     /**
      * 输入错密码
      */
-    @Test(testName = "输入错密码")
+    @Test(testName = "输入错密码", description = "输入错误密码")
     public void testDemo02() {
         this.doHandle(Pair.of(2, 4));
     }
@@ -76,7 +76,7 @@ public class DemoTest extends SeleniumBaseTest {
     /**
      * 登录成功
      */
-    @Test(testName = "登录成功,从第五步直接执行到最后(第九步)")
+    @Test(testName = "登录成功,从第五步直接执行到最后(第九步)", description = "登录成功,从第五步直接执行到最后(第九步)")
     public void testDemo03() {
         this.doHandle(Pair.of(5, 9));
         UserDto user = UserUtil.getUser();
@@ -85,13 +85,8 @@ public class DemoTest extends SeleniumBaseTest {
         Assert.assertEquals(user.getUsername(), "lml");
     }
 
-    @Test(testName = "iframe")
-    public void testDemo4() {
-        this.doHandleByModel(new String[]{"iframeSelf"});
-    }
 
-
-    @Test(testName = "测试脚本运行")
+    @Test(testName = "测试脚本运行", description = "测试runScriptHandler")
     public void testScriptHandler() {
         String file = ResourceUtil.readUtf8Str("script/runScript.json");
         JSONArray array = JSONUtil.parseArray(file);

@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 08/02/2022 11:39:58
+ Date: 08/02/2022 14:42:03
 */
 
 SET NAMES utf8mb4;
@@ -78,7 +78,8 @@ VALUES (14, '打开新窗口', '新窗口', 'CLICK', 'API', 'newWindow', 'ID', N
 INSERT INTO `demo_test`
 VALUES (15, '切换到新窗口', '新窗口', 'SWITCH_WINDOW', NULL, NULL, NULL, '1', 'Y', NULL, NULL, NULL);
 INSERT INTO `demo_test`
-VALUES (16, '所有输入框输入内容', '新窗口', 'SEND_KEYS', NULL, 'ipt', 'CLASS_NAME', 'hello', 'Y', NULL, NULL, NULL);
+VALUES (16, '获取所有输入框输入内容', '新窗口', 'SEND_KEYS', NULL, 'ipt', 'CLASS_NAME', 'hello', 'Y',
+        '{className: \'com.lml.selenium.demo.asserts.DemoAssert\', methodName: \'assertWindowAndCallBack\', \'args\': [\'hello\']}', NULL, NULL);
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

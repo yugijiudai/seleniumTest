@@ -1,6 +1,7 @@
 {
   "scripts": {
     "live-server": "cd selenium-web/src/test/resources/demo && live-server",
-    "test": "mvn clean test"
+    "test": "mvn clean test",
+    "testAndReport": "npm run test && cd selenium-web/target/surefire-reports/html && live-server --port=8090"
   }
 }

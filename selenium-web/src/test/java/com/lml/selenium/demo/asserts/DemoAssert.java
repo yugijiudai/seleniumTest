@@ -70,4 +70,18 @@ public class DemoAssert {
         }
         Assert.assertEquals(actualMsg.substring(0, actualMsg.length() - 1), expectMsg);
     }
+
+    /**
+     * 对testWindowAndCallback的断言,打开新窗口,把找到的元素列表带回来
+     *
+     * @param list      找到的元素列表
+     * @param expectMsg 要断言的值
+     */
+    public void assertWindowAndCallBack(List<WebElement> list, String expectMsg) {
+        Assert.assertEquals(list.size(), 3);
+        for (WebElement webElement : list) {
+            Assert.assertEquals(webElement.getTagName(), "input");
+            Assert.assertEquals(webElement.getAttribute("value"), expectMsg);
+        }
+    }
 }
