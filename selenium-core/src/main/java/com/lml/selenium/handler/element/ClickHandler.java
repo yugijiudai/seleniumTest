@@ -27,7 +27,7 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class ClickHandler implements ElementHandler {
 
-    private static final String[] TAG_NAMES_CLICK_BY_JS = new String[]{"button", "a", "span", "img", "li", "input"};
+    private static final String[] TAG_NAMES_CLICK_BY_JS = new String[]{"button", "a", "span", "img", "li", "input", "i"};
 
     private static final String DISABLED_FLAG = "true";
 
@@ -37,9 +37,9 @@ public class ClickHandler implements ElementHandler {
         for (WebElement element : elements) {
             JavascriptExecutor executor = (JavascriptExecutor) SeleniumFactory.getDriver();
             Object result = executor.executeScript("var items = {}; for (var index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value } return items;", element);
-            log.debug("click element attributes:{}", result);
+            log.trace("click element attributes:{}", result);
             String attribute = element.getAttribute("disabled");
-            log.debug("disabled = {}", attribute);
+            log.trace("disabled = {}", attribute);
             if (DISABLED_FLAG.equalsIgnoreCase(attribute) || !element.isEnabled()) {
                 log.warn("元素[{}]不是Enable状态，不能点击", handleDto.getBy());
                 return false;

@@ -199,7 +199,8 @@ public class WebUtil {
      * @return true表示找到
      */
     public boolean isFind(WebElement webElement) {
-        return webElement != null && webElement.isDisplayed() && webElement.isEnabled();
+        return webElement != null && webElement.isEnabled();
+        // return webElement != null && webElement.isDisplayed() && webElement.isEnabled();
     }
 
     /**
