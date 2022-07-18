@@ -2,6 +2,7 @@ package com.lml.selenium.factory;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.setting.dialect.Props;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.exception.InitException;
@@ -113,22 +114,28 @@ public class SeleniumFactory {
         LoggingPreferences logPrefs = new LoggingPreferences();
         logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
         // 禁用阻止弹出窗口
-        options.addArguments("--disable-popup-blocking");
+        // options.addArguments("--disable-popup-blocking");
         // 启动无沙盒模式运行
         options.addArguments("no-sandbox");
         // 禁用扩展
         options.addArguments("disable-extensions");
         // 默认浏览器检查
         options.addArguments("no-default-browser-check");
+        // 无痕模式
+        options.addArguments("--incognito");
+        // 不显示 chrome正受到自动测试软件的控制
+        options.addArguments("--disable-infobars");
         Map<String, Object> prefs = Maps.newHashMap();
         prefs.put("credentials_enable_service", false);
-        prefs.put("profile.password_manager_enabled", false);
         // 禁用保存密码提示框
+        prefs.put("profile.password_manager_enabled", false);
         options.setExperimentalOption("prefs", prefs);
         options.setExperimentalOption("w3c", false);
         options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
         options.setAcceptInsecureCerts(true);
         options.setExperimentalOption("useAutomationExtension", false);
+        // 模拟真正浏览器
+        options.setExperimentalOption("excludeSwitches", Lists.newArrayList("enable-automation"));
         if (setDto.getUseBmpProxy()) {
             options.setProxy(RequestProxy.createProxy());
         }
