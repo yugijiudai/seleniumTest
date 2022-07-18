@@ -1,5 +1,6 @@
 package com.lml.selenium.common;
 
+import com.lml.selenium.ext.MyChromeOption;
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.BizUtil;
 import com.lml.selenium.util.UserUtil;
@@ -33,7 +34,7 @@ public abstract class SeleniumBaseTest {
      * 初始化
      */
     protected void initWebDriver() {
-        SeleniumFactory.initWebDriver();
+        SeleniumFactory.initWebDriver(new MyChromeOption());
     }
 
     /**

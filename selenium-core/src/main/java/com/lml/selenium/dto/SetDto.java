@@ -87,4 +87,9 @@ public class SetDto {
      * 是否使用无头
      */
     private Boolean useNoHead;
+
+    /**
+     * 下载的时候是否开启弹窗
+     */
+    private Boolean promptForDownload;
 }
