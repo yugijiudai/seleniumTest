@@ -36,4 +36,10 @@ public class BrowserVo {
      * 请求的头部
      */
     private Object requestHeader;
+
+    /**
+     * 当前请求消耗的总时间
+     */
+    private Long time;
+
 }

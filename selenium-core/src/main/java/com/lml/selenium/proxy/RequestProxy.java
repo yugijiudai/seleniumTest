@@ -78,7 +78,7 @@ public class RequestProxy {
             if (!response.getContent().getMimeType().contains("json") || NetUtil.isStaticResource(request.getUrl())) {
                 continue;
             }
-            handleRequestByMethod(resultList, request, response);
+            handleRequestByMethod(resultList, harEntry);
         }
         browserMobProxy.endHar();
         log.info("总请求{}", resultList.size());
@@ -99,12 +99,13 @@ public class RequestProxy {
      * 根据requestMethod来设置请求参数和响应体,目前只获取post和get的
      *
      * @param resultList 请求的结果集
-     * @param request    请求
-     * @param response   响应体
+     * @param harEntry   请求相关信息
      */
-    private void handleRequestByMethod(List<BrowserVo> resultList, HarRequest request, HarResponse response) {
+    private void handleRequestByMethod(List<BrowserVo> resultList, HarEntry harEntry) {
+        HarRequest request = harEntry.getRequest();
+        HarResponse response = harEntry.getResponse();
         String method = request.getMethod();
-        BrowserVo browserVo = new BrowserVo().setUrl(request.getUrl()).setResponseBody(JSONUtil.parseObj(response.getContent().getText()));
+        BrowserVo browserVo = new BrowserVo().setUrl(request.getUrl()).setResponseBody(JSONUtil.parseObj(response.getContent().getText())).setTime(harEntry.getTime());
         if (HttpMethod.POST.name().equals(method)) {
             HarPostData postData = request.getPostData();
             browserVo.setRequestParam(postData == null ? null : JSONUtil.parseObj(postData.getText()));
