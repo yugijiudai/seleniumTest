@@ -12,7 +12,7 @@ import java.awt.event.KeyEvent;
 /**
  * @author yugi
  * @apiNote 机器人工具类
- * @since 2019-05-21
+ * @since 2022-07-19
  */
 @UtilityClass
 @Slf4j
@@ -35,16 +35,61 @@ public class RobotUtil {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(filepath, null);
         try {
             Robot robot = new Robot();
-            robot.keyPress(KeyEvent.VK_CONTROL);
-            robot.keyPress(KeyEvent.VK_V);
-            robot.keyRelease(KeyEvent.VK_V);
-            robot.keyRelease(KeyEvent.VK_CONTROL);
-            robot.keyPress(KeyEvent.VK_ENTER);
-            robot.keyRelease(KeyEvent.VK_ENTER);
+            String os = System.getProperty("os.name");
+            if (os.contains("Mac")) {
+                handleMac(robot);
+            }
+            else {
+                handleWin(robot);
+            }
             WebUtil.doWait(waitDownLoad);
         }
         catch (Exception e) {
             throw new BizException(e);
         }
     }
+
+    /**
+     * window的处理
+     *
+     * @param robot {@link Robot}
+     */
+    private void handleWin(Robot robot) {
+        robot.keyPress(KeyEvent.VK_CONTROL);
+        robot.keyPress(KeyEvent.VK_V);
+        robot.keyRelease(KeyEvent.VK_V);
+        robot.keyRelease(KeyEvent.VK_CONTROL);
+        robot.delay(100);
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.keyRelease(KeyEvent.VK_ENTER);
+    }
+
+    /**
+     * mac系统的处理(注:mac系统路径是无效的)
+     *
+     * @param robot {@link Robot}
+     */
+    private void handleMac(Robot robot) {
+        robot.keyPress(KeyEvent.VK_META);
+        robot.keyPress(KeyEvent.VK_TAB);
+        robot.keyRelease(KeyEvent.VK_META);
+        robot.keyRelease(KeyEvent.VK_TAB);
+        robot.delay(100);
+        robot.keyPress(KeyEvent.VK_META);
+        robot.keyPress(KeyEvent.VK_A);
+        robot.keyRelease(KeyEvent.VK_A);
+        robot.keyPress(KeyEvent.VK_V);
+        robot.keyRelease(KeyEvent.VK_META);
+        robot.keyRelease(KeyEvent.VK_V);
+        robot.delay(100);
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.delay(100);
+        robot.keyRelease(KeyEvent.VK_ENTER);
+        robot.delay(100);
+        // 可能会出现后缀名不同，所以要两次回车
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.delay(100);
+        robot.keyRelease(KeyEvent.VK_ENTER);
+    }
+
 }
