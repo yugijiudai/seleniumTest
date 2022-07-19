@@ -92,4 +92,9 @@ public class SetDto {
      * 下载的时候是否开启弹窗
      */
     private Boolean promptForDownload;
+
+    /**
+     * 下载文件的默认路径
+     */
+    private String downloadPath;
 }

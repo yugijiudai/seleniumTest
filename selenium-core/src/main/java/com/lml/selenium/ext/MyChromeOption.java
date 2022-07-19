@@ -2,8 +2,10 @@ package com.lml.selenium.ext;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.proxy.RequestProxy;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
@@ -18,8 +20,11 @@ import java.util.logging.Level;
  * @since 2022-07-19
  */
 public class MyChromeOption implements AbstractChromeOption {
+
+
     @Override
     public ChromeOptions createChromeOption() {
+        SetDto setDto = SeleniumFactory.getSetDto();
         ChromeOptions options = new ChromeOptions();
         LoggingPreferences logPrefs = new LoggingPreferences();
         logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
@@ -40,7 +45,11 @@ public class MyChromeOption implements AbstractChromeOption {
         // 禁用保存密码提示框
         prefs.put("profile.password_manager_enabled", false);
         // 是否打开下载弹窗
-        prefs.put("download.prompt_for_download", SeleniumFactory.getSetDto().getPromptForDownload());
+        prefs.put("download.prompt_for_download", setDto.getPromptForDownload());
+        // 文件默认的下载路径
+        if (StringUtils.isNotBlank(setDto.getDownloadPath())) {
+            prefs.put("download.default_directory", setDto.getDownloadPath());
+        }
         options.setExperimentalOption("prefs", prefs);
         options.setExperimentalOption("w3c", false);
         options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
@@ -48,10 +57,10 @@ public class MyChromeOption implements AbstractChromeOption {
         options.setExperimentalOption("useAutomationExtension", false);
         // 模拟真正浏览器
         options.setExperimentalOption("excludeSwitches", Lists.newArrayList("enable-automation"));
-        if (SeleniumFactory.getSetDto().getUseBmpProxy()) {
+        if (setDto.getUseBmpProxy()) {
             options.setProxy(RequestProxy.createProxy());
         }
-        if (SeleniumFactory.getSetDto().getUseNoHead()) {
+        if (setDto.getUseNoHead()) {
             options.addArguments("-headless");
         }
         return options;

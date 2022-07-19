@@ -1,5 +1,6 @@
 package com.lml.selenium.demo;
 
+import cn.hutool.core.util.IdUtil;
 import com.lml.selenium.common.SeleniumBaseTest;
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.RobotUtil;
@@ -30,7 +31,8 @@ public class DemoTest3 extends SeleniumBaseTest {
     public void testDownLoad() {
         SeleniumFactory.getDriver().get("http://nodejs.cn/download/");
         WebUtil.retryFindElements(By.xpath("//a[contains(text(), ' 32 位 ')]")).get(0).click();
-        RobotUtil.selectFile("hello.csv", 3000, 5000);
+        String newFileName = IdUtil.fastSimpleUUID() + ".csv";
+        System.out.println(RobotUtil.selectFile(newFileName, 1000, true));
     }
 
 

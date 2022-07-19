@@ -26,7 +26,8 @@ public class SwitchWindowHandler implements OtherHandler {
         Set<String> windowHandles = driver.getWindowHandles();
         List<String> list = Lists.newArrayList(windowHandles);
         log.info("当前窗口有:{}", list);
-        String window = list.get(Integer.parseInt(noEleHandlerDto.getExt()));
+        String window = noEleHandlerDto.getExt();
+        // String window = list.get(Integer.parseInt(noEleHandlerDto.getExt()));
         driver.switchTo().window(window);
         log.info("切换window:{}成功,当前url是:{}", window, driver.getCurrentUrl());
     }
