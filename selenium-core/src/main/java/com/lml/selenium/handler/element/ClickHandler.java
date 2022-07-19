@@ -13,7 +13,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 
 import java.util.List;
@@ -111,9 +110,16 @@ public class ClickHandler implements ElementHandler {
      * @param webElement 要点击的元素
      */
     private void doubleClick(WebElement webElement) {
-        Actions action = new Actions(SeleniumFactory.getDriver());
-        Action build = action.doubleClick(webElement).build();
-        build.perform();
+        try {
+            Actions action = new Actions(SeleniumFactory.getDriver());
+            // Action build = action.doubleClick(webElement).build();
+            action.doubleClick(webElement).perform();
+        }
+        catch (Throwable e) {
+            log.warn("尝试使用原生api双击失败,使用js方法来双击");
+            String doubleClickScript = "var event = new MouseEvent('dblclick',{'view':window,'bubbles':true,'cancelable':true});arguments[0].dispatchEvent(event)";
+            JsUtil.runJs(doubleClickScript, webElement);
+        }
     }
 
     /**

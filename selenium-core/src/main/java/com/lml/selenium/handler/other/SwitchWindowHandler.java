@@ -6,6 +6,7 @@ import com.lml.selenium.dto.NoEleHandlerDto;
 import com.lml.selenium.enums.ActionEnum;
 import com.lml.selenium.factory.SeleniumFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.openqa.selenium.WebDriver;
 
 import java.util.List;
@@ -26,8 +27,9 @@ public class SwitchWindowHandler implements OtherHandler {
         Set<String> windowHandles = driver.getWindowHandles();
         List<String> list = Lists.newArrayList(windowHandles);
         log.info("当前窗口有:{}", list);
-        String window = noEleHandlerDto.getExt();
-        // String window = list.get(Integer.parseInt(noEleHandlerDto.getExt()));
+        String ext = noEleHandlerDto.getExt();
+        // 如果ext是数字则切换到指定数字编号的窗口,如果不是则取最后一个打开的窗口
+        String window = NumberUtils.isDigits(ext) ? list.get(Integer.parseInt(noEleHandlerDto.getExt())) : list.get(list.size() - 1);
         driver.switchTo().window(window);
         log.info("切换window:{}成功,当前url是:{}", window, driver.getCurrentUrl());
     }
