@@ -1,6 +1,7 @@
 package com.lml.selenium.demo;
 
 import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.core.lang.Pair;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
 import com.lml.selenium.common.SeleniumBaseTest;
@@ -13,7 +14,6 @@ import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.handler.other.RunScriptHandler;
 import com.lml.selenium.util.UserUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;

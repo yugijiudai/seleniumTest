@@ -1,11 +1,10 @@
 package com.lml.selenium.common;
 
-import com.lml.selenium.ext.MyChromeOption;
+import cn.hutool.core.lang.Pair;
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.BizUtil;
 import com.lml.selenium.util.UserUtil;
 import com.lml.selenium.util.WebUtil;
-import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * @author yugi
@@ -34,7 +33,7 @@ public abstract class SeleniumBaseTest {
      * 初始化
      */
     protected void initWebDriver() {
-        SeleniumFactory.initWebDriver(new MyChromeOption());
+        SeleniumFactory.initWebDriver(null);
     }
 
     /**

@@ -52,7 +52,7 @@ public class RobotUtil {
         if (StringUtils.isBlank(fileName)) {
             return oldFileName;
         }
-        FileUtil.rename(FileUtil.file(SeleniumFactory.getSetDto().getDownloadPath() + oldFileName), fileName, true);
+        FileUtil.rename(FileUtil.file(getFileFullPath(oldFileName)), fileName, true);
         log.info("文件下载和重命名成功,新名字为:{}", fileName);
         return fileName;
     }
@@ -68,12 +68,13 @@ public class RobotUtil {
         if (StringUtils.isBlank(fileName)) {
             throw new BizException("文件的名字不能为空!");
         }
-        StringSelection filepath = new StringSelection(fileName);
+        String name = setFilePathByOs(fileName);
+        log.info("文件地址:{}", name);
+        StringSelection filepath = new StringSelection(name);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(filepath, null);
         try {
             Robot robot = new Robot();
-            String os = System.getProperty("os.name");
-            if (os.contains("Mac")) {
+            if (System.getProperty("os.name").contains("Mac")) {
                 handleMac(robot);
             }
             else {
@@ -96,29 +97,19 @@ public class RobotUtil {
      * @return 返回下载后文件的名字
      */
     public String waitUntilDownloadCompleted() {
+        WebUtil.doWait(300);
         WebDriver driver = SeleniumFactory.getDriver();
         String mainWindow = driver.getWindowHandle();
-        JsUtil.runJs("window.open()");
-        for (String winHandle : driver.getWindowHandles()) {
-            WebUtil.switchToWindow(winHandle);
-        }
-        driver.get("chrome://downloads");
+        JsUtil.runJs("window.open('', '_blank')");
+        WebUtil.switchToWindow(null);
+        driver.get("chrome://downloads/");
+        // 确保这个页面有打开,出现下载内容这个dom
+        JsUtil.waitPageLoadedBySelfJs("return document.querySelector(\"body > downloads-manager\").shadowRoot.querySelector(\"#toolbar\").shadowRoot.querySelector(\"#toolbar\") !== null");
         String downloadTaskScript = "document.querySelector('downloads-manager').shadowRoot.querySelector('#downloadsList downloads-item').shadowRoot";
-        Boolean hasDownloadTask = JsUtil.runJs(StrUtil.format("return {}.querySelector('#progress') !== null", downloadTaskScript));
-        if (hasDownloadTask) {
-            Long percentage = 0L;
-            while (percentage != 100) {
-                percentage = JsUtil.runJs(StrUtil.format("return {}.querySelector('#progress').value", downloadTaskScript));
-                log.debug("下载进度:{}", percentage);
-                WebUtil.doWait(200);
-            }
-        }
+        String progress = StrUtil.format("return {}.querySelector('#progress') === null || {}.querySelector('#progress').value === 100", downloadTaskScript, downloadTaskScript);
+        JsUtil.waitPageLoadedBySelfJs(progress);
         String fileName = JsUtil.runJs(StrUtil.format("return {}.querySelector('div#content #file-link').text", downloadTaskScript));
-        // String downLoadedAt = JsUtil.runJs(StrUtil.format("return {}.querySelector('div.is-active.focus-row-active #file-icon-wrapper img').src", downloadTaskScript));
-        // String sourceURL = JsUtil.runJs(StrUtil.format("return {}.querySelector('div#content #file-link').href", downloadTaskScript));
-        // close the downloads tab2
         driver.close();
-        // switch back to main window
         driver.switchTo().window(mainWindow);
         return fileName;
     }
@@ -130,11 +121,15 @@ public class RobotUtil {
      */
     private void handleWin(Robot robot) {
         robot.keyPress(KeyEvent.VK_CONTROL);
+        robot.delay(200);
         robot.keyPress(KeyEvent.VK_V);
+        robot.delay(200);
         robot.keyRelease(KeyEvent.VK_V);
+        robot.delay(200);
         robot.keyRelease(KeyEvent.VK_CONTROL);
-        robot.delay(100);
+        robot.delay(200);
         robot.keyPress(KeyEvent.VK_ENTER);
+        robot.delay(200);
         robot.keyRelease(KeyEvent.VK_ENTER);
     }
 
@@ -164,6 +159,30 @@ public class RobotUtil {
         robot.keyPress(KeyEvent.VK_ENTER);
         robot.delay(100);
         robot.keyRelease(KeyEvent.VK_ENTER);
+    }
+
+
+    /**
+     * 根据操作系统设置文件的名字
+     *
+     * @param fileName 文件名字
+     * @return mac直接返回文件名字, win系统需要拼接全路径, 因为在弹窗的时候下载目录无法修改
+     */
+    private String setFilePathByOs(String fileName) {
+        if (System.getProperty("os.name").contains("Mac")) {
+            return fileName;
+        }
+        return FileUtil.file(getFileFullPath(fileName)).getPath();
+    }
+
+    /**
+     * 文件的全路径
+     *
+     * @param fileName 文件名称
+     * @return 拼接好的全路径
+     */
+    private String getFileFullPath(String fileName) {
+        return SeleniumFactory.getSetDto().getDownloadPath() + "/" + fileName;
     }
 
 }

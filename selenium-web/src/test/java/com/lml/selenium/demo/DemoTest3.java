@@ -2,12 +2,12 @@ package com.lml.selenium.demo;
 
 import cn.hutool.core.util.IdUtil;
 import com.lml.selenium.common.SeleniumBaseTest;
+import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.RobotUtil;
 import com.lml.selenium.util.WebUtil;
 import org.openqa.selenium.By;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -17,10 +17,6 @@ import org.testng.annotations.Test;
  */
 public class DemoTest3 extends SeleniumBaseTest {
 
-    @BeforeClass
-    public void beforeClass() {
-        this.initWebDriver();
-    }
 
     @AfterClass
     public void afterClass() {
@@ -29,6 +25,9 @@ public class DemoTest3 extends SeleniumBaseTest {
 
     @Test(testName = "测试下载", description = "测试下载")
     public void testDownLoad() {
+        SetDto setDto = SeleniumFactory.getSetDto();
+        setDto.setPromptForDownload(false);
+        this.initWebDriver();
         SeleniumFactory.getDriver().get("http://nodejs.cn/download/");
         WebUtil.retryFindElements(By.xpath("//a[contains(text(), ' 32 位 ')]")).get(0).click();
         String newFileName = IdUtil.fastSimpleUUID() + ".csv";

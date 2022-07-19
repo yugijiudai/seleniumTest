@@ -2,6 +2,7 @@ package com.lml.selenium.util;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.Pair;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -14,7 +15,6 @@ import com.lml.selenium.handler.other.RunMethodHandler;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
@@ -41,7 +41,7 @@ public class BizUtil {
      * @param step 左边是开始的步骤,右边是结束的步骤,如果右边小于等于,则直接从左边的步骤运行到结束
      */
     public void doHandle(String name, Pair<Integer, Integer> step) {
-        List<Selenium> list = LoadTestCaseUtil.loadTestCase(name, step.getLeft(), step.getRight());
+        List<Selenium> list = LoadTestCaseUtil.loadTestCase(name, step.getKey(), step.getValue());
         handleSeleniumBoList(list);
     }
 

@@ -4,13 +4,14 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.setting.dialect.Props;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.exception.InitException;
-import com.lml.selenium.ext.AbstractChromeOption;
+import com.lml.selenium.ext.MyChromeOption;
 import com.lml.selenium.proxy.ChromeDriverProxy;
 import com.lml.selenium.proxy.RequestProxy;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -86,10 +87,16 @@ public class SeleniumFactory {
 
     /**
      * 初始化webDriver
+     *
+     * @param chromeOption 自己定义初始化好的chromeOption
      */
-    public void initWebDriver(AbstractChromeOption option) {
+    public void initWebDriver(ChromeOptions chromeOption) {
         initService();
-        ChromeOptions chromeOption = option.createChromeOption();
+        if (chromeOption == null) {
+            // 如果没有则使用默认的配置
+            MyChromeOption newOption = new MyChromeOption();
+            chromeOption = newOption.createChromeOption().getKey();
+        }
         driver = new ChromeDriverProxy(service, chromeOption);
         if (setDto.getUseMaxWindow()) {
             driver.manage().window().maximize();
@@ -98,6 +105,11 @@ public class SeleniumFactory {
             // 如果是debug模式,则会开启隐式等待
             driver.manage().timeouts().implicitlyWait(Duration.ofMillis(setDto.getImplicitlyWait()));
         }
+        ChromeDriver d = (ChromeDriver) driver;
+        // d.getCommandExecutor().execute()
+        // driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+        // params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': r"C:\Users\Any\Downloads"}}
+        // driver.execute("send_command", params)
     }
 
 }

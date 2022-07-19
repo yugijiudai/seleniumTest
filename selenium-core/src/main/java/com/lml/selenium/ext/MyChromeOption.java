@@ -1,5 +1,6 @@
 package com.lml.selenium.ext;
 
+import cn.hutool.core.lang.Pair;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lml.selenium.dto.SetDto;
@@ -9,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
 
 import java.util.Map;
 import java.util.logging.Level;
@@ -23,7 +23,7 @@ public class MyChromeOption implements AbstractChromeOption {
 
 
     @Override
-    public ChromeOptions createChromeOption() {
+    public Pair<ChromeOptions, Map<String, Object>> createChromeOption() {
         SetDto setDto = SeleniumFactory.getSetDto();
         ChromeOptions options = new ChromeOptions();
         LoggingPreferences logPrefs = new LoggingPreferences();
@@ -52,7 +52,8 @@ public class MyChromeOption implements AbstractChromeOption {
         }
         options.setExperimentalOption("prefs", prefs);
         options.setExperimentalOption("w3c", false);
-        options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+        options.setCapability(ChromeOptions.LOGGING_PREFS, logPrefs);
+        // options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
         options.setAcceptInsecureCerts(true);
         options.setExperimentalOption("useAutomationExtension", false);
         // 模拟真正浏览器
@@ -63,7 +64,7 @@ public class MyChromeOption implements AbstractChromeOption {
         if (setDto.getUseNoHead()) {
             options.addArguments("-headless");
         }
-        return options;
+        return Pair.of(options, prefs);
     }
 
 }
