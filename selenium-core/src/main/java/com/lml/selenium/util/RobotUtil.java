@@ -29,14 +29,15 @@ public class RobotUtil {
      * @param fileName           文件的名字,可以带上盘符,如:D:\\1.png
      * @param waitDownLoadPrompt 等待弹窗出来的时间,因为有些点击下载后弹窗未必弹出来，所以这里需要设置一个等待时间(时间:毫秒)
      * @param isDownload         是否下载文件
-     * @return 如果是下载文件则返回下载后文件的名字
+     * @return 如果是下载文件则返回下载后文件的路径
      */
     public String selectFile(String fileName, Integer waitDownLoadPrompt, boolean isDownload) {
         WebUtil.doWait(waitDownLoadPrompt);
+        String downloadPath = SeleniumFactory.getSetDto().getDownloadPath();
         if (!SeleniumFactory.getSetDto().getPromptForDownload() && isDownload) {
-            return handleNoPrompt(fileName);
+            return downloadPath + handleNoPrompt(fileName);
         }
-        return handlePrompt(fileName, isDownload);
+        return downloadPath + handlePrompt(fileName, isDownload);
     }
 
     /**
@@ -51,7 +52,7 @@ public class RobotUtil {
         if (StringUtils.isBlank(fileName)) {
             return oldFileName;
         }
-        FileUtil.rename(FileUtil.file(SeleniumFactory.getSetDto().getDownloadPath() + "/" + oldFileName), fileName, true);
+        FileUtil.rename(FileUtil.file(SeleniumFactory.getSetDto().getDownloadPath() + oldFileName), fileName, true);
         log.info("文件下载和重命名成功,新名字为:{}", fileName);
         return fileName;
     }
