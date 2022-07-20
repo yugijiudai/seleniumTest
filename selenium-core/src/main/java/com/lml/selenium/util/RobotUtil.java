@@ -23,7 +23,7 @@ import java.awt.event.KeyEvent;
 public class RobotUtil {
 
 
-    private int ROBOT_DELAY = 200;
+    private int ROBOT_DELAY = 300;
 
 
     /**
@@ -133,9 +133,11 @@ public class RobotUtil {
      */
     private void handleWin(Robot robot) {
         keyPress(robot, KeyEvent.VK_CONTROL);
+        keyPress(robot, KeyEvent.VK_A);
+        keyRelease(robot, KeyEvent.VK_A);
         keyPress(robot, KeyEvent.VK_V);
-        keyRelease(robot, KeyEvent.VK_V);
         keyRelease(robot, KeyEvent.VK_CONTROL);
+        keyRelease(robot, KeyEvent.VK_V);
         keyPress(robot, KeyEvent.VK_ENTER);
         keyRelease(robot, KeyEvent.VK_ENTER);
     }

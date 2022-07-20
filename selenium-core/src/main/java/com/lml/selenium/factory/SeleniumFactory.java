@@ -2,6 +2,7 @@ package com.lml.selenium.factory;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.setting.dialect.Props;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.exception.InitException;
 import com.lml.selenium.ext.MyChromeOption;
@@ -10,6 +11,10 @@ import com.lml.selenium.proxy.RequestProxy;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -18,6 +23,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author yugi
@@ -105,7 +112,28 @@ public class SeleniumFactory {
             // 如果是debug模式,则会开启隐式等待
             driver.manage().timeouts().implicitlyWait(Duration.ofMillis(setDto.getImplicitlyWait()));
         }
-        ChromeDriver d = (ChromeDriver) driver;
+        try {
+            ChromeDriver driverService = (ChromeDriver) driver;
+            Map<String, Object> commandParams = new HashMap<>();
+            commandParams.put("cmd", "Page.setDownloadBehavior");
+            Map<String, String> params = new HashMap<>();
+            params.put("behavior", "allow");
+            params.put("downloadPath", "D:\\driver\\download");
+            commandParams.put("params", params);
+            ObjectMapper objectMapper = new ObjectMapper();
+            HttpClient httpClient = HttpClientBuilder.create().build();
+            String command = objectMapper.writeValueAsString(commandParams);
+            String u = service.getUrl() + "/session/" + driverService.getSessionId() + "/chromium/send_command";
+            HttpPost request = new HttpPost(u);
+            request.addHeader("content-type", "application/json");
+            request.setEntity(new StringEntity(command));
+            httpClient.execute(request);
+        }
+        catch (Exception e) {
+            throw new InitException(e);
+        }
+
+
         // d.getCommandExecutor().execute()
         // driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
         // params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': r"C:\Users\Any\Downloads"}}
