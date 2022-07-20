@@ -6,7 +6,6 @@ import com.google.common.collect.Maps;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.proxy.RequestProxy;
-import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
@@ -48,9 +47,7 @@ public class MyChromeOption implements AbstractChromeOption {
         // 是否打开下载弹窗
         prefs.put("download.prompt_for_download", setDto.getPromptForDownload());
         // 文件默认的下载路径
-        if (StringUtils.isNotBlank(setDto.getDownloadPath())) {
-            prefs.put("download.default_directory", setDto.getDownloadPath());
-        }
+        // prefs.put("download.default_directory", setDto.getDownloadPath());
         options.setExperimentalOption("prefs", prefs);
         options.setExperimentalOption("w3c", false);
         options.setCapability(ChromeOptions.LOGGING_PREFS, logPrefs);

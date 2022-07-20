@@ -1,8 +1,9 @@
 package com.lml.selenium.factory;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import cn.hutool.setting.dialect.Props;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.exception.InitException;
 import com.lml.selenium.ext.MyChromeOption;
@@ -11,10 +12,6 @@ import com.lml.selenium.proxy.RequestProxy;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -23,8 +20,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author yugi
@@ -112,32 +107,34 @@ public class SeleniumFactory {
             // 如果是debug模式,则会开启隐式等待
             driver.manage().timeouts().implicitlyWait(Duration.ofMillis(setDto.getImplicitlyWait()));
         }
-        try {
-            ChromeDriver driverService = (ChromeDriver) driver;
-            Map<String, Object> commandParams = new HashMap<>();
-            commandParams.put("cmd", "Page.setDownloadBehavior");
-            Map<String, String> params = new HashMap<>();
-            params.put("behavior", "allow");
-            params.put("downloadPath", "D:\\driver\\download");
-            commandParams.put("params", params);
-            ObjectMapper objectMapper = new ObjectMapper();
-            HttpClient httpClient = HttpClientBuilder.create().build();
-            String command = objectMapper.writeValueAsString(commandParams);
-            String u = service.getUrl() + "/session/" + driverService.getSessionId() + "/chromium/send_command";
-            HttpPost request = new HttpPost(u);
-            request.addHeader("content-type", "application/json");
-            request.setEntity(new StringEntity(command));
-            httpClient.execute(request);
-        }
-        catch (Exception e) {
-            throw new InitException(e);
+        if (!setDto.getPromptForDownload()) {
+            // 只有弹窗模式禁止才适合用这个方式，这个方式开启之后就算弹窗模式设置成true也不会生效
+            setDownloadBehavior(driver);
         }
 
-
-        // d.getCommandExecutor().execute()
-        // driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
-        // params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': r"C:\Users\Any\Downloads"}}
-        // driver.execute("send_command", params)
     }
+
+    /**
+     * 设置下载的默认目录，设置win系统下一些exe文件下载下来提示风险导致保存无效的问题
+     *
+     * @param driver {@link WebDriver}
+     */
+    private void setDownloadBehavior(WebDriver driver) {
+        ChromeDriver driverService = (ChromeDriver) driver;
+        // JSONObject commandParams = JSONUtil.createObj();
+        // commandParams.set("cmd", "Page.setDownloadBehavior");
+        JSONObject params = JSONUtil.createObj();
+        params.set("behavior", "allow");
+        params.set("downloadPath", setDto.getDownloadPath());
+        // commandParams.set("params", params);
+        // String url = StrUtil.format("{}/session/{}/chromium/send_command", service.getUrl(), driverService.getSessionId());
+        // HttpUtil.post(url, commandParams.toString());
+        // 直接使用cdp的方式来运行命令,不需要走http协议
+        driverService.executeCdpCommand("Page.setDownloadBehavior", params);
+       /* driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+        params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': r"C:\Users\Any\Downloads"}}
+        driver.execute("send_command", params)*/
+    }
+
 
 }

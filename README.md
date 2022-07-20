@@ -29,6 +29,8 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
    - (4) 修改useDb,如果是true,用例是维护在数据库的表里面,如果是false,用例是维护在excel里面
    - (5) debug模式下默认开启显式和隐式等待,等待时间取最长的那个,开启隐式等待只是为了方便调试代码,driver.findElement()就可以直接使用
    - (6) useBmpProxy如果为true，表示会开启代理去抓取对应的ajax请求，目前只会抓get和post的请求
+   - (7) promptForDownload，表示是否开启弹窗下载，默认为false，开启弹窗后win，mac等不同系统在处理上会有不同的机制，例如路径上的保存，win可以直接给一个绝对路径就可以保存，mac不行也无法修改默认的保存目录，虽然robotUtil做了兼容，但仍然不太稳定，不建议开启
+   - (8) downloadPath，表示是下载文件的默认保持路径
 5. 具体用法和用例步骤格式可以参考下面两个测试类和demo_test.sql里面设置的用例步骤
 
 ```
@@ -204,12 +206,12 @@ com.lml.selenium.demo.DemoTest2
 </dependency>
 ```
 
-4. pom里面指定selenium-java版本是4.1.2,testng使用7.4.0版本
+4. pom里面指定selenium-java版本是4.3.0,testng使用7.4.0版本
 
 ```xml
 
 <properties>
-   <selenium.version>4.1.2</selenium.version>
+   <selenium.version>4.3.0</selenium.version>
    <testNg.version>7.4.0</testNg.version>
 </properties>
 ```
@@ -230,3 +232,4 @@ com.lml.selenium.demo.DemoTest2
 #### 待改进的地方
 
 1. 默认driver使用chrome,暂不支持其他浏览器,google上面说新版的firefox双击好像有问题???
+2. 每次更新selenium的版本后doubleClick可能都会出现问题，所以目前才用重试机制，原生api不行的时候会采用js的方式来进行双击

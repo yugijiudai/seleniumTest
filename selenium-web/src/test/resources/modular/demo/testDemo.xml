@@ -5,6 +5,7 @@
         <classes>
             <class name="com.lml.selenium.demo.DemoTest"/>
             <class name="com.lml.selenium.demo.DemoTest2"/>
+            <class name="com.lml.selenium.demo.DemoTest3"/>
         </classes>
     </test>
 </suite>
