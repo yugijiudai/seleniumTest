@@ -1,6 +1,5 @@
 package com.lml.selenium.ext;
 
-import cn.hutool.core.lang.Pair;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lml.selenium.dto.SetDto;
@@ -22,7 +21,7 @@ public class MyChromeOption implements AbstractChromeOption {
 
 
     @Override
-    public Pair<ChromeOptions, Map<String, Object>> createChromeOption() {
+    public ChromeOptions createChromeOption() {
         SetDto setDto = SeleniumFactory.getSetDto();
         ChromeOptions options = new ChromeOptions();
         LoggingPreferences logPrefs = new LoggingPreferences();
@@ -62,7 +61,7 @@ public class MyChromeOption implements AbstractChromeOption {
         if (setDto.getUseNoHead()) {
             options.addArguments("-headless");
         }
-        return Pair.of(options, prefs);
+        return options;
     }
 
 }

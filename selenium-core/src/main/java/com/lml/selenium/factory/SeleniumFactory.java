@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import cn.hutool.setting.dialect.Props;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.exception.InitException;
+import com.lml.selenium.ext.AbstractChromeOption;
 import com.lml.selenium.ext.MyChromeOption;
 import com.lml.selenium.proxy.ChromeDriverProxy;
 import com.lml.selenium.proxy.RequestProxy;
@@ -15,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
-import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,16 +90,15 @@ public class SeleniumFactory {
     /**
      * 初始化webDriver
      *
-     * @param chromeOption 自己定义初始化好的chromeOption
+     * @param abstractChromeOption 自己定义初始化好的chromeOption
      */
-    public void initWebDriver(ChromeOptions chromeOption) {
+    public void initWebDriver(AbstractChromeOption abstractChromeOption) {
         initService();
-        if (chromeOption == null) {
+        if (abstractChromeOption == null) {
             // 如果没有则使用默认的配置
-            MyChromeOption newOption = new MyChromeOption();
-            chromeOption = newOption.createChromeOption().getKey();
+            abstractChromeOption = new MyChromeOption();
         }
-        driver = new ChromeDriverProxy(service, chromeOption);
+        driver = new ChromeDriverProxy(service, abstractChromeOption.createChromeOption());
         if (setDto.getUseMaxWindow()) {
             driver.manage().window().maximize();
         }
@@ -116,24 +115,24 @@ public class SeleniumFactory {
 
     /**
      * 设置下载的默认目录，设置win系统下一些exe文件下载下来提示风险导致保存无效的问题
+     * driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+     * params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': r"C:\Users\Any\Downloads"}}
+     * driver.execute("send_command", params)
      *
      * @param driver {@link WebDriver}
      */
     private void setDownloadBehavior(WebDriver driver) {
-        ChromeDriver driverService = (ChromeDriver) driver;
         // JSONObject commandParams = JSONUtil.createObj();
         // commandParams.set("cmd", "Page.setDownloadBehavior");
+        ChromeDriver driverService = (ChromeDriver) driver;
         JSONObject params = JSONUtil.createObj();
         params.set("behavior", "allow");
         params.set("downloadPath", setDto.getDownloadPath());
+        // 直接使用cdp的方式来运行命令,不需要走http协议
+        driverService.executeCdpCommand("Page.setDownloadBehavior", params);
         // commandParams.set("params", params);
         // String url = StrUtil.format("{}/session/{}/chromium/send_command", service.getUrl(), driverService.getSessionId());
         // HttpUtil.post(url, commandParams.toString());
-        // 直接使用cdp的方式来运行命令,不需要走http协议
-        driverService.executeCdpCommand("Page.setDownloadBehavior", params);
-       /* driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
-        params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': r"C:\Users\Any\Downloads"}}
-        driver.execute("send_command", params)*/
     }
 
 

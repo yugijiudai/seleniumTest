@@ -12,6 +12,7 @@ import org.openqa.selenium.WebDriver;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
+import java.io.File;
 
 /**
  * @author yugi
@@ -23,7 +24,7 @@ import java.awt.event.KeyEvent;
 public class RobotUtil {
 
 
-    private int ROBOT_DELAY = 300;
+    private int robotDelay = 300;
 
 
     /**
@@ -32,7 +33,7 @@ public class RobotUtil {
      * @param delay 延迟时间(单位:秒)
      */
     private void setRobotDelay(int delay) {
-        ROBOT_DELAY = delay;
+        robotDelay = delay;
     }
 
     /**
@@ -45,11 +46,10 @@ public class RobotUtil {
      */
     public String selectFile(String fileName, Integer waitDownLoadPrompt, boolean isDownload) {
         WebUtil.doWait(waitDownLoadPrompt);
-        String downloadPath = SeleniumFactory.getSetDto().getDownloadPath();
         if (!SeleniumFactory.getSetDto().getPromptForDownload() && isDownload) {
-            return FileUtil.file(downloadPath + handleNoPrompt(fileName)).getPath();
+            return handleNoPrompt(fileName);
         }
-        return FileUtil.file(downloadPath + "/" + handlePrompt(fileName, isDownload)).getPath();
+        return handlePrompt(fileName, isDownload);
     }
 
     /**
@@ -62,11 +62,16 @@ public class RobotUtil {
         log.warn("弹窗下载没有开启");
         String oldFileName = waitUntilDownloadCompleted();
         if (StringUtils.isBlank(fileName)) {
-            return oldFileName;
+            return getFileFullPath(oldFileName);
         }
-        FileUtil.rename(FileUtil.file(getFileFullPath(oldFileName)), fileName, true);
-        log.info("文件下载和重命名成功,新名字为:{}", fileName);
-        return fileName;
+        File oldFile = FileUtil.file(getFileFullPath(oldFileName));
+        while (!oldFile.canWrite()) {
+            log.warn("文件{}不可写,等待重试", oldFile.getPath());
+            WebUtil.doWait(100);
+        }
+        File newFile = FileUtil.rename(oldFile, fileName, true);
+        log.info("文件下载和重命名成功,新名字为:{}", newFile.getPath());
+        return newFile.getPath();
     }
 
     /**
@@ -74,7 +79,7 @@ public class RobotUtil {
      *
      * @param fileName   新文件的名字，必须非空
      * @param isDownload 标识上传还是下载
-     * @return 如果是下载则返回下载的文件名字
+     * @return 如果是下载则返回下载的文件路径
      */
     private String handlePrompt(String fileName, boolean isDownload) {
         if (StringUtils.isBlank(fileName)) {
@@ -93,7 +98,8 @@ public class RobotUtil {
                 handleWin(robot);
             }
             if (isDownload) {
-                return waitUntilDownloadCompleted();
+                String downloadFile = waitUntilDownloadCompleted();
+                return getFileFullPath(downloadFile);
             }
             return null;
         }
@@ -115,6 +121,8 @@ public class RobotUtil {
         JsUtil.runJs("window.open('', '_blank')");
         WebUtil.switchToWindow(null);
         driver.get("chrome://downloads/");
+        // 先等待一下，shadowRoot有可能会没出来导致脚本执行报错
+        JsUtil.waitUntilJsReady();
         // 确保这个页面有打开,出现下载内容这个dom
         JsUtil.waitPageLoadedBySelfJs("return document.querySelector(\"body > downloads-manager\").shadowRoot.querySelector(\"#toolbar\").shadowRoot.querySelector(\"#toolbar\") !== null");
         String downloadTaskScript = "document.querySelector('downloads-manager').shadowRoot.querySelector('#downloadsList downloads-item').shadowRoot";
@@ -174,7 +182,7 @@ public class RobotUtil {
      */
     private void keyPress(Robot robot, int keycode) {
         robot.keyPress(keycode);
-        robot.delay(ROBOT_DELAY);
+        robot.delay(robotDelay);
     }
 
     /**
@@ -185,7 +193,7 @@ public class RobotUtil {
      */
     private void keyRelease(Robot robot, int keycode) {
         robot.keyRelease(keycode);
-        robot.delay(ROBOT_DELAY);
+        robot.delay(robotDelay);
     }
 
     /**
@@ -198,7 +206,7 @@ public class RobotUtil {
         if (System.getProperty("os.name").contains("Mac")) {
             return fileName;
         }
-        return FileUtil.file(getFileFullPath(fileName)).getPath();
+        return getFileFullPath(fileName);
     }
 
     /**
@@ -207,8 +215,8 @@ public class RobotUtil {
      * @param fileName 文件名称
      * @return 拼接好的全路径
      */
-    private String getFileFullPath(String fileName) {
-        return SeleniumFactory.getSetDto().getDownloadPath() + "/" + fileName;
+    public String getFileFullPath(String fileName) {
+        return FileUtil.file(SeleniumFactory.getSetDto().getDownloadPath() + "/" + fileName).getPath();
     }
 
 }

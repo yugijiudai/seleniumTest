@@ -56,7 +56,7 @@ public class JsUtil {
     public final static String FRAME_SCRIPT = "frameHelper";
 
     /**
-     * 等待ajax加载的最大时间(毫秒)
+     * 等待js加载的最大时间(毫秒)
      */
     private static final Long WAIT_JS_TIME = 120000L;
 
@@ -192,7 +192,7 @@ public class JsUtil {
     /**
      * Wait Until JS Ready
      */
-    private static void waitUntilJsReady() {
+    public static void waitUntilJsReady() {
         waitPageLoadedBySelfJs("return document.readyState=='complete'", WAIT_JS_TIME, SeleniumFactory.getSetDto().getInterval());
     }
 

@@ -36,6 +36,7 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
 ```
 com.lml.selenium.demo.DemoTest
 com.lml.selenium.demo.DemoTest2
+com.lml.selenium.demo.DemoTest3
 ```
 
 6. RunMethodHandler.java类,这个类是通过反射的方式来调用指定的方法,有以下两种使用姿势:
@@ -116,15 +117,22 @@ com.lml.selenium.demo.DemoTest2
 1. WebUtil.java 该类封装了一些selenium操作的通用方法，例如查找元素，点击元素等，当操作步骤太过复杂(excel or 数据库的步骤不适用)的时候可以使用此类来进行相关的操作
 2. ChromeDriverProxy.java() 该类继承了ChromeDriver，saveResponse()用来获取所有ajax请求的返回值，但这个方法有缺点，不能获取请求的参数，不建议使用(后续此类可能会废弃，由RequestProxy.java代替)
 3. RequestProxy.java 基础的请求代理类，基于bmp的代理，可以获取ajax的请求参数和返回内容，目前只抓取了get和post的请求，使用方法如下:
-    - (1)开启新的har包```RequestProxy.newHar("test");```
-    - (2)运行对应的业务代码,等待页面全部加载完,包括所有请求完成
-    - (3)结束抓包```Pair<List<BrowserVo>, Har> listHarPair = requestProxy.captureRequest();```
-    - (4)此时会返回一个pari对象，左边是解析好的参数响应体对象list，右边是原生抓取的har群文件，用户可以根据自己的需求拿这个list去操作或者拿这个har文件去操作
-    - (5)outPutFile()方法接受一个```List<BrowserVo>```的入参，用户输出到对应的文件
+   - (1)开启新的har包```RequestProxy.newHar("test");```
+   - (2)运行对应的业务代码,等待页面全部加载完,包括所有请求完成
+   - (3)结束抓包```Pair<List<BrowserVo>, Har> listHarPair = requestProxy.captureRequest();```
+   - (4)此时会返回一个pari对象，左边是解析好的参数响应体对象list，右边是原生抓取的har群文件，用户可以根据自己的需求拿这个list去操作或者拿这个har文件去操作
+   - (5)outPutFile()方法接受一个```List<BrowserVo>```的入参，用户输出到对应的文件
 4. SeleniumFactory.java selenium的初始化类,用来初始化driver和各种事件handler
 5. JsUtil.java 用来执行和加载js脚本的工具类,里面提供了等待页面元素加载和等待ajax请求的方法
 6. LoadTestCaseUtil.java 用于加载用例的工具类,目前支持从excel和数据库里加载,推荐优先从数据库加载
 7. SeleniumBaseTest.java 基础测试类,测试类可以继承此类，然后重写getCaseTemplate()方法,返回值就是对应要加载用例的表或者excel
+
+#### 关于初始化类```com.lml.selenium.factory.SeleniumFactory```
+
+1. 该类是负责主要的初始化工作，这里默认使用chromeDriver来初始化
+2. 最开始可以调用该类的```initWebDriver()```来进行初始化工作, 该方法接受一个abstractChromeOption，如果传入null，则会使用默认的```com.lml.selenium.ext.MyChromeOption```来初始化，如果该默认的option不满足，
+   用户可以根据自己的需要来实现```com.lml.selenium.ext.AbstractChromeOption```这个接口
+3. 全部执行完可以调用```quitDriver()```来进行销毁工作
 
 #### 用例的表结构
 
@@ -141,7 +149,7 @@ com.lml.selenium.demo.DemoTest2
 |findType |enum     |是   |   | 元素查询的方式 |
 |ext |varchar(1000)     |是   |   |  预留字段扩展 |
 |valid |enum     |否   | Y  |  是否有效(Y:有效,N:无效) |
-|callBack |varchar(255)     |是   |   |  动作完成执行回调 |
+|callBack |varchar(255)     |是   |   |  动作完成执行回调的类和方法 |
 |wait |int(8)     |是   |   |  自定义查询这个dom节点需要等待的时间(单位:毫秒) |
 |retry |int(5)     |是   |   |  自定义查询这个dom节点重试次数 |
 
