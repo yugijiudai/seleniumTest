@@ -38,6 +38,7 @@ public class MyChromeOption implements AbstractChromeOption {
         options.addArguments("--incognito");
         // 不显示 chrome正受到自动测试软件的控制
         options.addArguments("--disable-infobars");
+        options.addArguments("--safebrowsing-disable-download-protection");
         // 禁用阻止弹出窗口
         // options.addArguments("--disable-popup-blocking");
         Map<String, Object> prefs = Maps.newHashMap();

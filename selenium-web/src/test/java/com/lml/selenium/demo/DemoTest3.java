@@ -2,7 +2,6 @@ package com.lml.selenium.demo;
 
 import cn.hutool.core.util.IdUtil;
 import com.lml.selenium.common.SeleniumBaseTest;
-import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.RobotUtil;
 import com.lml.selenium.util.WebUtil;
@@ -25,8 +24,8 @@ public class DemoTest3 extends SeleniumBaseTest {
 
     @Test(testName = "测试下载", description = "测试下载")
     public void testDownLoad() {
-        SetDto setDto = SeleniumFactory.getSetDto();
-        setDto.setPromptForDownload(true);
+        // SetDto setDto = SeleniumFactory.getSetDto();
+        // setDto.setPromptForDownload(true);
         this.initWebDriver();
         SeleniumFactory.getDriver().get("http://nodejs.cn/download/");
         WebUtil.retryFindElements(By.xpath("//a[contains(text(), ' 32 位 ')]")).get(0).click();
