@@ -23,6 +23,18 @@ import java.awt.event.KeyEvent;
 public class RobotUtil {
 
 
+    private int ROBOT_DELAY = 200;
+
+
+    /**
+     * 自己定义的robot延迟时间
+     *
+     * @param delay 延迟时间(单位:秒)
+     */
+    private void setRobotDelay(int delay) {
+        ROBOT_DELAY = delay;
+    }
+
     /**
      * 选择上传或者下载文件,这个只适用于有弹窗的下载和上传，如果没有开启弹窗会有问题
      *
@@ -35,9 +47,9 @@ public class RobotUtil {
         WebUtil.doWait(waitDownLoadPrompt);
         String downloadPath = SeleniumFactory.getSetDto().getDownloadPath();
         if (!SeleniumFactory.getSetDto().getPromptForDownload() && isDownload) {
-            return downloadPath + handleNoPrompt(fileName);
+            return FileUtil.file(downloadPath + handleNoPrompt(fileName)).getPath();
         }
-        return downloadPath + handlePrompt(fileName, isDownload);
+        return FileUtil.file(downloadPath + "/" + handlePrompt(fileName, isDownload)).getPath();
     }
 
     /**
@@ -120,17 +132,12 @@ public class RobotUtil {
      * @param robot {@link Robot}
      */
     private void handleWin(Robot robot) {
-        robot.keyPress(KeyEvent.VK_CONTROL);
-        robot.delay(200);
-        robot.keyPress(KeyEvent.VK_V);
-        robot.delay(200);
-        robot.keyRelease(KeyEvent.VK_V);
-        robot.delay(200);
-        robot.keyRelease(KeyEvent.VK_CONTROL);
-        robot.delay(200);
-        robot.keyPress(KeyEvent.VK_ENTER);
-        robot.delay(200);
-        robot.keyRelease(KeyEvent.VK_ENTER);
+        keyPress(robot, KeyEvent.VK_CONTROL);
+        keyPress(robot, KeyEvent.VK_V);
+        keyRelease(robot, KeyEvent.VK_V);
+        keyRelease(robot, KeyEvent.VK_CONTROL);
+        keyPress(robot, KeyEvent.VK_ENTER);
+        keyRelease(robot, KeyEvent.VK_ENTER);
     }
 
     /**
@@ -139,28 +146,45 @@ public class RobotUtil {
      * @param robot {@link Robot}
      */
     private void handleMac(Robot robot) {
-        robot.keyPress(KeyEvent.VK_META);
-        robot.keyPress(KeyEvent.VK_TAB);
-        robot.keyRelease(KeyEvent.VK_META);
-        robot.keyRelease(KeyEvent.VK_TAB);
-        robot.delay(100);
-        robot.keyPress(KeyEvent.VK_META);
-        robot.keyPress(KeyEvent.VK_A);
-        robot.keyRelease(KeyEvent.VK_A);
-        robot.keyPress(KeyEvent.VK_V);
-        robot.keyRelease(KeyEvent.VK_META);
-        robot.keyRelease(KeyEvent.VK_V);
-        robot.delay(100);
-        robot.keyPress(KeyEvent.VK_ENTER);
-        robot.delay(100);
-        robot.keyRelease(KeyEvent.VK_ENTER);
-        robot.delay(100);
+        keyPress(robot, KeyEvent.VK_META);
+        keyPress(robot, KeyEvent.VK_TAB);
+        keyRelease(robot, KeyEvent.VK_META);
+        keyRelease(robot, KeyEvent.VK_TAB);
+        keyPress(robot, KeyEvent.VK_META);
+        keyPress(robot, KeyEvent.VK_A);
+        keyRelease(robot, KeyEvent.VK_A);
+        keyPress(robot, KeyEvent.VK_V);
+        keyRelease(robot, KeyEvent.VK_META);
+        keyRelease(robot, KeyEvent.VK_V);
+        keyPress(robot, KeyEvent.VK_ENTER);
+        keyRelease(robot, KeyEvent.VK_ENTER);
         // 可能会出现后缀名不同，所以要两次回车
-        robot.keyPress(KeyEvent.VK_ENTER);
-        robot.delay(100);
-        robot.keyRelease(KeyEvent.VK_ENTER);
+        keyPress(robot, KeyEvent.VK_ENTER);
+        keyRelease(robot, KeyEvent.VK_ENTER);
     }
 
+
+    /**
+     * 带有等待的按键
+     *
+     * @param robot   机器人对象
+     * @param keycode 要按的键
+     */
+    private void keyPress(Robot robot, int keycode) {
+        robot.keyPress(keycode);
+        robot.delay(ROBOT_DELAY);
+    }
+
+    /**
+     * 带有等待的释放按键
+     *
+     * @param robot   机器人对象
+     * @param keycode 要释放的按键
+     */
+    private void keyRelease(Robot robot, int keycode) {
+        robot.keyRelease(keycode);
+        robot.delay(ROBOT_DELAY);
+    }
 
     /**
      * 根据操作系统设置文件的名字

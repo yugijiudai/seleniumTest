@@ -26,7 +26,7 @@ public class DemoTest3 extends SeleniumBaseTest {
     @Test(testName = "测试下载", description = "测试下载")
     public void testDownLoad() {
         SetDto setDto = SeleniumFactory.getSetDto();
-        setDto.setPromptForDownload(false);
+        setDto.setPromptForDownload(true);
         this.initWebDriver();
         SeleniumFactory.getDriver().get("http://nodejs.cn/download/");
         WebUtil.retryFindElements(By.xpath("//a[contains(text(), ' 32 位 ')]")).get(0).click();
