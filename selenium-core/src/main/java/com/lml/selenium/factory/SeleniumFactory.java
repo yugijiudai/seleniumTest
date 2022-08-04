@@ -13,6 +13,7 @@ import com.lml.selenium.proxy.RequestProxy;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -99,8 +100,17 @@ public class SeleniumFactory {
             abstractChromeOption = new MyChromeOption();
         }
         driver = new ChromeDriverProxy(service, abstractChromeOption.createChromeOption());
-        if (setDto.getUseMaxWindow()) {
+        String[] windowSize = setDto.getWindowSize().split(",");
+        if (windowSize.length != 3) {
+            throw new InitException("请检查窗口大小的参数格式!");
+        }
+        String isMaxWindow = windowSize[0];
+        if ("true".equals(isMaxWindow)) {
             driver.manage().window().maximize();
+        }
+        else {
+            Dimension dimension = new Dimension(Integer.parseInt(windowSize[1]), Integer.parseInt(windowSize[2]));
+            driver.manage().window().setSize(dimension);
         }
         if (setDto.getDebugMode()) {
             // 如果是debug模式,则会开启隐式等待

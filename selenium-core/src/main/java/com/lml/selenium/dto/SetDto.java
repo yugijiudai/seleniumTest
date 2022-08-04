@@ -79,9 +79,10 @@ public class SetDto {
     private Boolean useBmpProxy;
 
     /**
-     * 是否最大化窗口
+     * 窗口大小,格式如下:true,1920,1080
+     * 第一个如果是true则表示全屏,后面两个不生效,当第一个为false的时候使用后面两个分辨率
      */
-    private Boolean useMaxWindow;
+    private String windowSize;
 
     /**
      * 是否使用无头
