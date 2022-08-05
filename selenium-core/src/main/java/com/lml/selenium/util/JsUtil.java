@@ -6,7 +6,6 @@ import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Lists;
 import com.lml.selenium.dto.SetDto;
-import com.lml.selenium.exception.FindElementException;
 import com.lml.selenium.exception.InitException;
 import com.lml.selenium.factory.SeleniumFactory;
 import lombok.experimental.UtilityClass;
@@ -15,9 +14,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author yugi
@@ -127,73 +123,8 @@ public class JsUtil {
      *
      * @return true表示有
      */
-    public boolean checkJqueryIsExist() {
+    private boolean checkJqueryIsExist() {
         return runJs("return typeof jQuery != 'undefined'");
-    }
-
-
-    /**
-     * 等待页面加载完成(使用自己定义的脚本方式)
-     *
-     * @see JsUtil#waitPageLoadedBySelfJs(String)
-     */
-    public void waitPageLoadedBySelfJs(String script) {
-        SetDto setDto = SeleniumFactory.getSetDto();
-        waitPageLoadedBySelfJs(script, setDto.getMaxWaitTime(), setDto.getInterval());
-    }
-
-    /**
-     * 使用自定义js的方式来等待页面加载
-     *
-     * @param script 等待的脚本
-     */
-    public void waitLoadBySelfJs(String script) {
-        SetDto setDto = SeleniumFactory.getSetDto();
-        waitLoadBySelfJs(script, setDto.getMaxWaitTime(), setDto.getInterval());
-    }
-
-    /**
-     * 等待页面的某些元素或者某些东西加载完成(通过使用脚本来判断这些是否加载完成)
-     *
-     * @param script      要执行判断的脚本
-     * @param maxWaitTime 最长等待时间(毫秒)
-     * @param interval    每次轮询间隔的时间(毫秒)
-     */
-    public void waitPageLoadedBySelfJs(String script, long maxWaitTime, Integer interval) {
-        long end = System.currentTimeMillis() + maxWaitTime;
-        log.info("执行等待脚本:" + script);
-        while (!(Boolean) JsUtil.runJs(script)) {
-            if (System.currentTimeMillis() > end) {
-                log.warn("超出最长等待时间{},跳出循环", maxWaitTime);
-                throw new FindElementException("超出最长等待时间:" + maxWaitTime);
-            }
-            WebUtil.doWait(interval);
-        }
-    }
-
-    /**
-     * 使用java的定时任务来轮训页面的dom,直到找到或者超时为止
-     *
-     * @param script      要执行判断的脚本
-     * @param maxWaitTime 最长等待时间(毫秒)
-     * @param interval    每次轮询间隔的时间(毫秒)
-     */
-    public void waitLoadBySelfJs(String script, long maxWaitTime, Integer interval) {
-        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-        scheduledExecutorService.scheduleAtFixedRate(() -> {
-            if ((Boolean) JsUtil.runJs(script)) {
-                scheduledExecutorService.shutdownNow();
-            }
-        }, 0, interval, TimeUnit.MILLISECONDS);
-        try {
-            if (!scheduledExecutorService.awaitTermination(maxWaitTime, TimeUnit.MILLISECONDS)) {
-                log.warn("超出最长等待时间{},跳出循环", maxWaitTime);
-                throw new FindElementException("超出最长等待时间:" + maxWaitTime);
-            }
-        }
-        catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 
@@ -224,14 +155,14 @@ public class JsUtil {
     private static void waitForJqueryLoad(Long requestWaitTime) {
         SetDto setDto = SeleniumFactory.getSetDto();
         requestWaitTime = requestWaitTime == null ? WAIT_JS_TIME : requestWaitTime;
-        waitPageLoadedBySelfJs("return jQuery.active==0", requestWaitTime, setDto.getInterval());
+        WaitUtl.waitLoadByJs("return jQuery.active==0", requestWaitTime, setDto.getInterval());
     }
 
     /**
      * Wait Until JS Ready
      */
     public static void waitUntilJsReady() {
-        waitPageLoadedBySelfJs("return document.readyState=='complete'", WAIT_JS_TIME, SeleniumFactory.getSetDto().getInterval());
+        WaitUtl.waitLoadByJs("return document.readyState=='complete'", WAIT_JS_TIME, SeleniumFactory.getSetDto().getInterval());
     }
 
     /**

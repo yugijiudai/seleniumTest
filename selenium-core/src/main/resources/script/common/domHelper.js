@@ -79,6 +79,37 @@ $(function () {
                 return document.evaluate(xpath, document).iterateNext();
             }
 
+            /**
+             * 使用定时任务的方式轮询指定的脚本，直到条件满足或者超时为止
+             * @param intervalTime 定时任务的轮询时间
+             * @param maxWaitTime 最大的等待时间
+             * @param script 条件结束的js脚本
+             */
+            static async waitDomByTimer(intervalTime, maxWaitTime, script) {
+                return await new Promise(resolve => {
+                    let endTime = new Date().getTime() + maxWaitTime;
+                    let timer = setInterval(() => {
+                        setTimeout(() => {
+                            try {
+                                let now = new Date();
+                                console.log(now);
+                                let dom = eval(script);
+                                if (dom) {
+                                    clearTimeout(timer);
+                                    resolve("true");
+                                }
+                                if (now.getTime() > endTime) {
+                                    clearTimeout(timer);
+                                    resolve('超时找不到!');
+                                }
+                            } catch (err) {
+                                clearTimeout(timer);
+                                resolve(err.message);
+                            }
+                        }, 0);
+                    }, intervalTime);
+                });
+            }
 
         }
 

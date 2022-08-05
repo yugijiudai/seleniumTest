@@ -62,9 +62,9 @@ public class RobotUtil {
         log.warn("弹窗下载没有开启");
         String oldFileName = waitUntilDownloadCompleted();
         if (StringUtils.isBlank(fileName)) {
-            return getFileFullPath(oldFileName);
+            return oldFileName;
         }
-        File oldFile = FileUtil.file(getFileFullPath(oldFileName));
+        File oldFile = FileUtil.file(oldFileName);
         while (!oldFile.canWrite()) {
             log.warn("文件{}不可写,等待重试", oldFile.getPath());
             WebUtil.doWait(100);
@@ -91,15 +91,14 @@ public class RobotUtil {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(filepath, null);
         try {
             Robot robot = new Robot();
-            if (System.getProperty("os.name").contains("Mac")) {
+            if (EnvUtil.getOs().contains("Mac")) {
                 handleMac(robot);
             }
             else {
                 handleWin(robot);
             }
             if (isDownload) {
-                String downloadFile = waitUntilDownloadCompleted();
-                return getFileFullPath(downloadFile);
+                return waitUntilDownloadCompleted();
             }
             return null;
         }
@@ -124,14 +123,17 @@ public class RobotUtil {
         // 先等待一下，shadowRoot有可能会没出来导致脚本执行报错
         JsUtil.waitUntilJsReady();
         // 确保这个页面有打开,出现下载内容这个dom
-        JsUtil.waitPageLoadedBySelfJs("return document.querySelector(\"body > downloads-manager\").shadowRoot.querySelector(\"#toolbar\").shadowRoot.querySelector(\"#toolbar\") !== null");
+        WaitUtl.waitLoadByJs("return document.querySelector(\"body > downloads-manager\").shadowRoot.querySelector(\"#toolbar\").shadowRoot.querySelector(\"#toolbar\") !== null");
         String downloadTaskScript = "document.querySelector('downloads-manager').shadowRoot.querySelector('#downloadsList downloads-item').shadowRoot";
         String progress = StrUtil.format("return {}.querySelector('#progress') === null || {}.querySelector('#progress').value === 100", downloadTaskScript, downloadTaskScript);
-        JsUtil.waitPageLoadedBySelfJs(progress);
-        String fileName = JsUtil.runJs(StrUtil.format("return {}.querySelector('div#content #file-link').text", downloadTaskScript));
+        WaitUtl.waitLoadByJs(progress);
+        // String fileName = JsUtil.runJs(StrUtil.format("return {}.querySelector('div#content #file-link').text", downloadTaskScript));
+        String downloadPath = JsUtil.runJs(StrUtil.format("return {}.querySelector('#show').title", downloadTaskScript));
+        // String downLoadedAt = JsUtil.runJs(StrUtil.format("return {}.querySelector('div.is-active.focus-row-active #file-icon-wrapper img').src", downloadTaskScript));
+        // String sourceURL = JsUtil.runJs(StrUtil.format("return {}.querySelector('div#content #file-link').href", downloadTaskScript));
         driver.close();
         driver.switchTo().window(mainWindow);
-        return fileName;
+        return downloadPath;
     }
 
     /**
@@ -203,7 +205,7 @@ public class RobotUtil {
      * @return mac直接返回文件名字, win系统需要拼接全路径, 因为在弹窗的时候下载目录无法修改
      */
     private String setFilePathByOs(String fileName) {
-        if (System.getProperty("os.name").contains("Mac")) {
+        if (EnvUtil.getOs().contains("Mac")) {
             return fileName;
         }
         return getFileFullPath(fileName);
@@ -216,7 +218,8 @@ public class RobotUtil {
      * @return 拼接好的全路径
      */
     public String getFileFullPath(String fileName) {
-        return FileUtil.file(SeleniumFactory.getSetDto().getDownloadPath() + "/" + fileName).getPath();
+        String downloadPath = SeleniumFactory.getSetDto().getDownloadPath();
+        return FileUtil.file(downloadPath + "/" + fileName).getPath();
     }
 
 }

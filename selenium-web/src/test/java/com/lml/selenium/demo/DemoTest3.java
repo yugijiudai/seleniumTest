@@ -5,6 +5,7 @@ import cn.hutool.core.util.IdUtil;
 import com.lml.selenium.common.SeleniumBaseTest;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.factory.SeleniumFactory;
+import com.lml.selenium.util.EnvUtil;
 import com.lml.selenium.util.RobotUtil;
 import com.lml.selenium.util.WebUtil;
 import org.openqa.selenium.By;
@@ -22,6 +23,12 @@ import java.io.File;
 public class DemoTest3 extends SeleniumBaseTest {
 
     private final SetDto setDto = SeleniumFactory.getSetDto();
+
+
+    /**
+     * mac系统默认的保存地址,根据用户名字需要自己修改!!!!
+     */
+    private final static String MAC_DEFAULT_DOWNLOAD = "/Users/mahiru/Downloads/";
 
     @AfterClass
     public void afterClass() {
@@ -49,6 +56,10 @@ public class DemoTest3 extends SeleniumBaseTest {
         File file = FileUtil.file(downloadFile);
         Assert.assertTrue(file.exists(), "文件不存在:" + downloadFile);
         String expectFileName = RobotUtil.getFileFullPath(newFileName);
+        if (isPrompt) {
+            // 弹窗的情况下要区分系统,mac系统会保存在download的文件夹,不管你指定下载的目录是什么
+            expectFileName = EnvUtil.isMac() ? MAC_DEFAULT_DOWNLOAD + newFileName : RobotUtil.getFileFullPath(newFileName);
+        }
         Assert.assertEquals(downloadFile, expectFileName);
     }
 
