@@ -5,7 +5,8 @@
         <classes>
             <class name="com.lml.selenium.demo.DemoTest"/>
             <class name="com.lml.selenium.demo.DemoTest2"/>
-            <class name="com.lml.selenium.demo.DemoTest3"/>
+            <class name="com.lml.selenium.demo.DownloadDemoTest"/>
+            <class name="com.lml.selenium.demo.JsWaitDemoTest"/>
         </classes>
     </test>
 </suite>

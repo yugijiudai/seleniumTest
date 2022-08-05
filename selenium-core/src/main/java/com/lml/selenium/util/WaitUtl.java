@@ -71,12 +71,19 @@ public class WaitUtl {
         }
     }
 
+    /**
+     * 使用js自己的轮询方式等待
+     *
+     * @param script      等待的脚本
+     * @param maxWaitTime 最长等待时间(毫秒)
+     * @param interval    每次轮询间隔的时间(毫秒)
+     */
     private void waitLoadByNormalJs(String script, long maxWaitTime, Integer interval) {
         JsUtil.addCommonScript("domHelper");
-        String runScript = String.format("return domHelper.domObj.waitDomByTimer('%s', %s, %s)", script, maxWaitTime, interval);
+        String runScript = String.format("return domHelper.domObj.getWaitDomByTimerResult(`%s`, %s, %s)", script, maxWaitTime, interval);
         Object result = JsUtil.runJs(runScript);
         if (!"true".equals(result)) {
-            throw new FindElementException("等待失败！原因如下:" + result);
+            throw new FindElementException("等待失败,原因如下:" + result);
         }
     }
 

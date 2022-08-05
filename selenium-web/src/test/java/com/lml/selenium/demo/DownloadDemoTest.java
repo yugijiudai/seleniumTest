@@ -20,7 +20,7 @@ import java.io.File;
  * @apiNote 文件下载的测试用例
  * @since 2022-07-18
  */
-public class DemoTest3 extends SeleniumBaseTest {
+public class DownloadDemoTest extends SeleniumBaseTest {
 
     private final SetDto setDto = SeleniumFactory.getSetDto();
 

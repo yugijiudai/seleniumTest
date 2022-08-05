@@ -33,18 +33,18 @@ public class DemoTest2 extends SeleniumBaseTest {
     }
 
 
-    @Test(testName = "登录成功,使用模块执行", description = "测试按模块执行")
+    @Test(description = "登录成功,测试按模块执行")
     public void testDemo01() {
         this.doHandleByModel(new String[]{"登录成功"});
     }
 
 
-    @Test(testName = "iframe", description = "测试iframe")
+    @Test(description = "测试iframe")
     public void testDemo2() {
         this.doHandleByModel(new String[]{"iframeSelf"});
     }
 
-    @Test(testName = "打开新窗口和查找到的元素", description = "打开新窗口和查找到的元素")
+    @Test(description = "打开新窗口和查找到的元素")
     public void testWindowAndCallback() {
         this.doHandleByModel(new String[]{"新窗口"});
     }

@@ -81,26 +81,26 @@ $(function () {
 
             /**
              * 使用定时任务的方式轮询指定的脚本，直到条件满足或者超时为止
-             * @param intervalTime 定时任务的轮询时间
              * @param maxWaitTime 最大的等待时间
+             * @param intervalTime 定时任务的轮询时间
              * @param script 条件结束的js脚本
              */
-            static async waitDomByTimer(intervalTime, maxWaitTime, script) {
-                return await new Promise(resolve => {
+            static waitDomByTimer(script, maxWaitTime, intervalTime) {
+                return new Promise(resolve => {
                     let endTime = new Date().getTime() + maxWaitTime;
                     let timer = setInterval(() => {
                         setTimeout(() => {
                             try {
                                 let now = new Date();
-                                console.log(now);
-                                let dom = eval(script);
+                                let dom = new Function(script)();
+                                console.log(`执行脚本:${script}`)
+                                console.log(`执行结果:${dom}`)
                                 if (dom) {
                                     clearTimeout(timer);
                                     resolve("true");
                                 }
                                 if (now.getTime() > endTime) {
-                                    clearTimeout(timer);
-                                    resolve('超时找不到!');
+                                    throw Error('超时无法找到');
                                 }
                             } catch (err) {
                                 clearTimeout(timer);
@@ -109,6 +109,16 @@ $(function () {
                         }, 0);
                     }, intervalTime);
                 });
+            }
+
+            /**
+             * 获取waitDomByTimer的结果
+             * @param maxWaitTime 最大的等待时间
+             * @param intervalTime 定时任务的轮询时间
+             * @param script 条件结束的js脚本
+             */
+            static async getWaitDomByTimerResult(script, maxWaitTime, intervalTime) {
+                return await this.waitDomByTimer(script, maxWaitTime, intervalTime);
             }
 
         }

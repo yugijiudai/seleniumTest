@@ -36,7 +36,8 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
 ```
 com.lml.selenium.demo.DemoTest
 com.lml.selenium.demo.DemoTest2
-com.lml.selenium.demo.DemoTest3
+com.lml.selenium.demo.DownloadDemoTest
+com.lml.selenium.demo.JsWaitDemoTest
 ```
 
 6. RunMethodHandler.java类,这个类是通过反射的方式来调用指定的方法,有以下两种使用姿势:
