@@ -47,7 +47,17 @@ $(function () {
              */
             static checkDomExist(script) {
                 let dom = this.getDomByScript(script);
-                return dom !== undefined;
+                return dom !== null && dom !== undefined;
+            }
+
+            /**
+             * 利用xpath的方式校验dom是否存在
+             * @param script xpath的脚本
+             * @returns {boolean} true表示存在
+             */
+            static checkXpathDomExist(script) {
+                let dom = this.getDomByXpath(script);
+                return dom !== null && dom !== undefined;
             }
 
             /**
@@ -91,7 +101,6 @@ $(function () {
                     let timer = setInterval(() => {
                         setTimeout(() => {
                             try {
-                                let now = new Date();
                                 let dom = new Function(script)();
                                 console.log(`执行脚本:${script}`)
                                 console.log(`执行结果:${dom}`)
@@ -99,8 +108,8 @@ $(function () {
                                     clearTimeout(timer);
                                     resolve("true");
                                 }
-                                if (now.getTime() > endTime) {
-                                    throw Error('超时无法找到');
+                                if (new Date().getTime() > endTime) {
+                                    throw Error(`脚本:【${script}】超时无法找到`);
                                 }
                             } catch (err) {
                                 clearTimeout(timer);

@@ -37,13 +37,13 @@ public enum JsWaitEnum {
         this.info = info;
     }
 
-    public static JsWaitEnum parse(String code) {
+    public static JsWaitEnum parse(String type) {
         for (JsWaitEnum value : values()) {
-            if (value.getType().equals(code)) {
+            if (value.getType().equals(type)) {
                 return value;
             }
         }
-        throw new EnumConstantNotPresentException(JsWaitEnum.class, "找不到type:" + code);
+        throw new EnumConstantNotPresentException(JsWaitEnum.class, "找不到type:" + type);
     }
 
 

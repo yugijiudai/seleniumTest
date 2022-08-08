@@ -1,5 +1,6 @@
 package com.lml.selenium.dto;
 
+import com.lml.selenium.enums.JsWaitEnum;
 import lombok.Data;
 
 /**
@@ -98,4 +99,12 @@ public class SetDto {
      * 下载文件的默认路径
      */
     private String downloadPath;
+
+    /**
+     * 使用waitUtil进行等待的时候默认方式,分别有scheduled,loop,js三种,可以参考
+     *
+     * @see JsWaitEnum
+     */
+    private String jsWaitType;
+
 }

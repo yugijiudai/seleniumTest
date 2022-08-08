@@ -1,5 +1,6 @@
 package com.lml.selenium.util;
 
+import cn.hutool.core.util.StrUtil;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.enums.JsWaitEnum;
 import com.lml.selenium.exception.FindElementException;
@@ -26,7 +27,7 @@ public class WaitUtl {
      * js等待的默认方式
      */
     @Setter
-    private static JsWaitEnum jsWaitEnum = JsWaitEnum.SCHEDULED;
+    private static JsWaitEnum jsWaitEnum = JsWaitEnum.parse(SeleniumFactory.getSetDto().getJsWaitType());
 
     /**
      * 使用自定义js的方式来等待页面加载
@@ -83,7 +84,8 @@ public class WaitUtl {
         String runScript = String.format("return domHelper.domObj.getWaitDomByTimerResult(`%s`, %s, %s)", script, maxWaitTime, interval);
         Object result = JsUtil.runJs(runScript);
         if (!"true".equals(result)) {
-            throw new FindElementException("等待失败,原因如下:" + result);
+            String msg = StrUtil.format("脚本:【{}】, 等待失败,原因如下:{}", runScript, result);
+            throw new FindElementException(msg);
         }
     }
 
@@ -99,7 +101,7 @@ public class WaitUtl {
         log.info("执行等待脚本:" + script);
         while (!(Boolean) JsUtil.runJs(script)) {
             if (System.currentTimeMillis() > end) {
-                log.warn("超出最长等待时间{},跳出循环", maxWaitTime);
+                log.warn("脚本:【{}】, 超出最长等待时间{},跳出循环", script, maxWaitTime);
                 throw new FindElementException("超出最长等待时间:" + maxWaitTime);
             }
             WebUtil.doWait(interval);
@@ -123,7 +125,7 @@ public class WaitUtl {
         }, 0, interval, TimeUnit.MILLISECONDS);
         try {
             if (!scheduledExecutorService.awaitTermination(maxWaitTime, TimeUnit.MILLISECONDS)) {
-                log.warn("超出最长等待时间{},跳出循环", maxWaitTime);
+                log.warn("脚本:【{}】, 超出最长等待时间{},跳出循环", script, maxWaitTime);
                 throw new FindElementException("超出最长等待时间:" + maxWaitTime);
             }
         }

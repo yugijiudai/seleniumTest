@@ -31,6 +31,8 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
    - (6) useBmpProxy如果为true，表示会开启代理去抓取对应的ajax请求，目前只会抓get和post的请求
    - (7) promptForDownload，表示是否开启弹窗下载，默认为false，开启弹窗后win，mac等不同系统在处理上会有不同的机制，例如路径上的保存，win可以直接给一个绝对路径就可以保存，mac不行也无法修改默认的保存目录，虽然robotUtil做了兼容，但仍然不太稳定，不建议开启
    - (8) downloadPath，表示是下载文件的默认保持路径
+   - (9) jsWaitType，表示使用waitUtil进行等待的时候默认方式
+   - (10) windowSize，窗口大小，格式如下:true,1920,1080,第一个如果是true则表示全屏,后面两个不生效,当第一个为false的时候使用后面两个分辨率
 5. 具体用法和用例步骤格式可以参考下面两个测试类和demo_test.sql里面设置的用例步骤
 
 ```
@@ -124,9 +126,14 @@ com.lml.selenium.demo.JsWaitDemoTest
    - (4)此时会返回一个pari对象，左边是解析好的参数响应体对象list，右边是原生抓取的har群文件，用户可以根据自己的需求拿这个list去操作或者拿这个har文件去操作
    - (5)outPutFile()方法接受一个```List<BrowserVo>```的入参，用户输出到对应的文件
 4. SeleniumFactory.java selenium的初始化类,用来初始化driver和各种事件handler
-5. JsUtil.java 用来执行和加载js脚本的工具类,里面提供了等待页面元素加载和等待ajax请求的方法
+5. JsUtil.java 用来执行和加载js脚本的工具类,里面提供了等待页面元素加载和等待ajax请求的方法```waitPageLoad()```
 6. LoadTestCaseUtil.java 用于加载用例的工具类,目前支持从excel和数据库里加载,推荐优先从数据库加载
 7. SeleniumBaseTest.java 基础测试类,测试类可以继承此类，然后重写getCaseTemplate()方法,返回值就是对应要加载用例的表或者excel
+8. WaitUtl.java 这个是用于等待的工具类，用户可以根据需要自己编写相关条件的js脚本来进行等待，该类提供三种等待方法，可以在selenium.properties中通过jsWaitType来指定,
+   对应的枚举类为```com.lml.selenium.enums.JsWaitEnum```，相关用例和使用姿势可以参考```com.lml.selenium.demo.JsWaitDemoTest```
+   - (1)使用loop的方式,底层运用while(true)+sleep去轮询，直到给定的js条件满足为止，每次调用会输出相关的日志记录执行状态
+   - (2)使用scheduled的方式,底层运用java的```scheduleAtFixedRate()```方式实现轮询，每次调用会输出相关的日志记录执行状态
+   - (3)使用js的方式,底层运用了js原生的```setInterval()```方式实现轮询等待，只有报错才会有相关的日志
 
 #### 关于初始化类```com.lml.selenium.factory.SeleniumFactory```
 
