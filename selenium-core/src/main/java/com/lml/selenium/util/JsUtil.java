@@ -4,8 +4,8 @@ import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.StrUtil;
-import com.google.common.collect.Lists;
 import com.lml.selenium.dto.SetDto;
+import com.lml.selenium.exception.BizException;
 import com.lml.selenium.exception.InitException;
 import com.lml.selenium.factory.SeleniumFactory;
 import lombok.experimental.UtilityClass;
@@ -254,12 +254,8 @@ public class JsUtil {
      * @param script 需要执行的js脚本
      * @return 需要返回的类型
      */
-    @SuppressWarnings("unchecked")
     public <T> T runJs(String script) {
-        log.debug("预执行脚本:\n{}", script);
-        Object response = ((JavascriptExecutor) SeleniumFactory.getDriver()).executeScript(script);
-        log.info("执行脚本成功:\n{}\n返回值是:{}", script, response);
-        return (T) response;
+        return doRunJs(script, new Object[0]);
     }
 
     /**
@@ -268,11 +264,21 @@ public class JsUtil {
      * @param script 要运行的js脚本
      * @param args   运行脚本需要的参数
      */
-    @SuppressWarnings("unchecked")
     public <T> T runJs(String script, Object... args) {
+        return doRunJs(script, args);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T doRunJs(String script, Object... args) {
         log.debug("预执行脚本:\n{}\n参数是:{}", script, args);
-        Object response = ((JavascriptExecutor) SeleniumFactory.getDriver()).executeScript(script, args);
-        log.info("执行脚本成功:\n{}\n参数是:{}\n返回值是:{}", script, Lists.newArrayList(args), response);
-        return (T) response;
+        try {
+            Object response = ((JavascriptExecutor) SeleniumFactory.getDriver()).executeScript(script, args);
+            log.info("执行脚本成功:\n{}\n参数是:{}\n返回值是:{}", script, args, response);
+            return (T) response;
+        }
+        catch (Throwable e) {
+            log.error("js脚本报错，参数:{},脚本:{}", args, script);
+            throw new BizException(e);
+        }
     }
 }
