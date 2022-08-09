@@ -55,12 +55,12 @@ public class DragHandler implements OtherHandler {
         // 查询需要拖动的元素
         JSONObject fromObj = json.getJSONObject(FROM);
         By sourceBy = SelectFactory.getSelector(fromObj.getStr(FIND_TYPE), fromObj.getStr(ELE));
-        WebElement source = WebUtil.fluentWaitUntilFind(EleHandlerDtoFactory.buildCommon(sourceBy)).get(0);
+        WebElement source = WebUtil.findUntil(EleHandlerDtoFactory.buildCommon(sourceBy)).get(0);
 
         // 查询需要拖到的地方
         JSONObject toObj = json.getJSONObject(TO);
         By targetBy = SelectFactory.getSelector(toObj.getStr(FIND_TYPE), toObj.getStr(ELE));
-        WebElement target = WebUtil.fluentWaitUntilFind(EleHandlerDtoFactory.buildCommon(targetBy)).get(0);
+        WebElement target = WebUtil.findUntil(EleHandlerDtoFactory.buildCommon(targetBy)).get(0);
 
         Actions action = new Actions(SeleniumFactory.getDriver());
         action.dragAndDrop(source, target).build().perform();

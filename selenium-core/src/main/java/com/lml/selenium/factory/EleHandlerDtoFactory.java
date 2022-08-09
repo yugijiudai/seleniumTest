@@ -105,6 +105,6 @@ public class EleHandlerDtoFactory {
      */
     private EleHandlerDto buildCommon(Selenium selenium) {
         By by = SelectFactory.getSelector(selenium);
-        return EleHandlerDto.builder().by(by).retry(selenium.getRetry()).waitTime(selenium.getWait()).build();
+        return EleHandlerDto.builder().by(by).waitTime(selenium.getWait()).build();
     }
 }

@@ -42,10 +42,6 @@ public class EleHandlerDto extends BaseSeleniumDto {
      */
     private String keys;
 
-    /**
-     * 节点查找失败重试的次数
-     */
-    private Integer retry;
 
     /**
      * 查询元素等待的时间(毫秒)

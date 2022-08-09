@@ -27,12 +27,11 @@ testng + selenium + redis + MySQL + springboot(暂时没使用,后续可能集�
    - (2) 修改baseUrl, 这个是selenium初始化后需要打开的网页
    - (3) 修改errorPic, 这个是selenium报错后屏幕截图的保存文件夹路径,debug模式不会保存
    - (4) 修改useDb,如果是true,用例是维护在数据库的表里面,如果是false,用例是维护在excel里面
-   - (5) debug模式下默认开启显式和隐式等待,等待时间取最长的那个,开启隐式等待只是为了方便调试代码,driver.findElement()就可以直接使用
-   - (6) useBmpProxy如果为true，表示会开启代理去抓取对应的ajax请求，目前只会抓get和post的请求
-   - (7) promptForDownload，表示是否开启弹窗下载，默认为false，开启弹窗后win，mac等不同系统在处理上会有不同的机制，例如路径上的保存，win可以直接给一个绝对路径就可以保存，mac不行也无法修改默认的保存目录，虽然robotUtil做了兼容，但仍然不太稳定，不建议开启
-   - (8) downloadPath，表示是下载文件的默认保持路径
-   - (9) jsWaitType，表示使用waitUtil进行等待的时候默认方式
-   - (10) windowSize，窗口大小，格式如下:true,1920,1080,第一个如果是true则表示全屏,后面两个不生效,当第一个为false的时候使用后面两个分辨率
+   - (5) useBmpProxy如果为true，表示会开启代理去抓取对应的ajax请求，目前只会抓get和post的请求
+   - (6) promptForDownload，表示是否开启弹窗下载，默认为false，开启弹窗后win，mac等不同系统在处理上会有不同的机制，例如路径上的保存，win可以直接给一个绝对路径就可以保存，mac不行也无法修改默认的保存目录，虽然robotUtil做了兼容，但仍然不太稳定，不建议开启
+   - (7) downloadPath，表示是下载文件的默认保持路径
+   - (8) jsWaitType，表示使用waitUtil进行等待的时候默认方式
+   - (9) windowSize，窗口大小，格式如下:true,1920,1080,第一个如果是true则表示全屏,后面两个不生效,当第一个为false的时候使用后面两个分辨率
 5. 具体用法和用例步骤格式可以参考下面两个测试类和demo_test.sql里面设置的用例步骤
 
 ```
@@ -133,7 +132,8 @@ com.lml.selenium.demo.JsWaitDemoTest
    对应的枚举类为```com.lml.selenium.enums.JsWaitEnum```，相关用例和使用姿势可以参考```com.lml.selenium.demo.JsWaitDemoTest```
    - (1)使用loop的方式,底层运用while(true)+sleep去轮询，直到给定的js条件满足为止，每次调用会输出相关的日志记录执行状态
    - (2)使用scheduled的方式,底层运用java的```scheduleAtFixedRate()```方式实现轮询，每次调用会输出相关的日志记录执行状态
-   - (3)使用js的方式,底层运用了js原生的```setInterval()```方式实现轮询等待，只有报错才会有相关的日志
+   - (3)使用js的方式,底层运用了js原生的```setInterval()```方式实现轮询等待，只有报错才会有相关的日志，这个是通过用字符串脚本的方法注入，并不是所有的网页都能支持这方法，例如chrome的chrome://download页面
+9. WaitFactory.java 用于初始化等待类的工场，目前默认是用fluentWait的方式，在webUtil中是用```findUntil()```的方法来进行等待，后续通过配置文件方式来根据自己喜好初始化这个等待类
 
 #### 关于初始化类```com.lml.selenium.factory.SeleniumFactory```
 
@@ -159,7 +159,6 @@ com.lml.selenium.demo.JsWaitDemoTest
 |valid |enum     |否   | Y  |  是否有效(Y:有效,N:无效) |
 |callBack |varchar(255)     |是   |   |  动作完成执行回调的类和方法 |
 |wait |int(8)     |是   |   |  自定义查询这个dom节点需要等待的时间(单位:毫秒) |
-|retry |int(5)     |是   |   |  自定义查询这个dom节点重试次数 |
 
 #### src/main/resources下相关配置文件的说明
 

@@ -15,12 +15,14 @@ import com.lml.selenium.exception.FindElementException;
 import com.lml.selenium.factory.EleHandlerDtoFactory;
 import com.lml.selenium.factory.HandlerFactory;
 import com.lml.selenium.factory.SeleniumFactory;
+import com.lml.selenium.factory.WaitFactory;
 import com.lml.selenium.handler.element.ElementHandler;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.Wait;
 
 import java.time.Duration;
 import java.util.List;
@@ -42,7 +44,7 @@ public class WebUtil {
      * @return {@link WebElement}
      */
     public List<WebElement> retryFindElements(By by) {
-        return WebUtil.fluentWaitUntilFind(EleHandlerDtoFactory.buildCommon(by));
+        return WebUtil.findUntil(EleHandlerDtoFactory.buildCommon(by));
     }
 
     /**
@@ -129,32 +131,30 @@ public class WebUtil {
 
 
     /**
-     * 流畅等待，查找页面元素,采用重试机制
+     * 查找页面元素
      *
      * @param eleHandlerDto {@link EleHandlerDto}
      * @return {@link WebElement}
      */
-    public List<WebElement> fluentWaitUntilFind(EleHandlerDto eleHandlerDto) {
-        int attempts = 0;
-        By by = eleHandlerDto.getBy();
-        Integer retry = eleHandlerDto.getRetry();
-        List<WebElement> elements = null;
-        ActionEnum actionEnum = eleHandlerDto.getActionEnum();
-        String action = actionEnum == null ? "查找元素" : actionEnum.getDesc();
-        // 如果没有指定,用默认的
-        int attemptsTime = retry != null ? retry : SeleniumFactory.getSetDto().getAttemptsTime();
-        while (attempts++ < attemptsTime) {
-            elements = findElement(eleHandlerDto);
-            if (checkElementAllFind(elements)) {
-                break;
-            }
-            if (attempts == attemptsTime) {
-                throw new FindElementException(StrUtil.format("执行{}时尝试{}次仍然发生错误", by, attempts));
-            }
-            doWait(SeleniumFactory.getSetDto().getInterval());
-            log.warn("执行动作:【{}】操作节点【{}】时,发生错误,重试第{}次", action, by, attempts);
+    public List<WebElement> findUntil(EleHandlerDto eleHandlerDto) {
+        try {
+            Long timeWait = eleHandlerDto.getWaitTime();
+            SetDto setDto = SeleniumFactory.getSetDto();
+            timeWait = timeWait != null ? timeWait : setDto.getMaxWaitTime();
+            WebDriver webDriver = SeleniumFactory.getDriver();
+            Wait<WebDriver> waitDriver = WaitFactory.createDefaultWait(Duration.ofMillis(timeWait), Duration.ofMillis(setDto.getInterval()));
+            waitDriver.until(driver -> {
+                // 这里不使用ExpectedConditions.visibilityOfAllElementsLocatedBy,因为有些节点是要用enable判断的
+                return checkElementAllFind(driver.findElements(eleHandlerDto.getBy()));
+            });
+            return webDriver.findElements(eleHandlerDto.getBy());
         }
-        return elements;
+        catch (Throwable e) {
+            ActionEnum actionEnum = eleHandlerDto.getActionEnum();
+            String action = actionEnum == null ? "查找元素" : actionEnum.getCode();
+            String msg = StrUtil.format("执行动作:【{}】操作节点【{}】时超过重试最大时间", action, eleHandlerDto.getBy());
+            throw new FindElementException(msg, e);
+        }
     }
 
     /**
@@ -175,20 +175,6 @@ public class WebUtil {
             }
         }
         return true;
-    }
-
-    /**
-     * 查找元素
-     *
-     * @param eleHandlerDto {@link EleHandlerDto}
-     * @return 如果找不到会返回空列表
-     */
-    public List<WebElement> findElement(EleHandlerDto eleHandlerDto) {
-        Long timeWait = eleHandlerDto.getWaitTime();
-        SetDto setDto = SeleniumFactory.getSetDto();
-        timeWait = timeWait != null ? timeWait : setDto.getMaxWaitTime();
-        WebDriverWait waitSetting = new WebDriverWait(SeleniumFactory.getDriver(), Duration.ofMillis(timeWait), Duration.ofMillis(setDto.getInterval()));
-        return waitSetting.until(driver -> driver.findElements(eleHandlerDto.getBy()));
     }
 
 

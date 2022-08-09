@@ -32,6 +32,14 @@
         }
         alert('密码错误');
     }
+
+    function createDom(id, time) {
+        setTimeout(() => {
+            let childNode = document.createElement('div');
+            childNode.setAttribute('id', id);
+            document.getElementsByTagName('body')[0].appendChild(childNode);
+        }, time)
+    }
 </script>
 </body>
 </html>

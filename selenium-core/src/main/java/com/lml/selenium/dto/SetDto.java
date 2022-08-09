@@ -38,16 +38,6 @@ public class SetDto {
      */
     private Integer interval;
 
-    /**
-     * 隐式等待时间(单位:毫秒)
-     */
-    private Long implicitlyWait;
-
-
-    /**
-     * 查找元素最大尝试次数
-     */
-    private Integer attemptsTime;
 
     /**
      * jq的地址

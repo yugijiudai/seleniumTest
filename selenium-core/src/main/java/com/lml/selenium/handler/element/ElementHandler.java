@@ -35,7 +35,7 @@ public interface ElementHandler extends SeleniumHandler {
      * @return {@link WebElement}
      */
     default List<WebElement> retryingFindAndDoAction(EleHandlerDto handleDto) {
-        List<WebElement> webElements = WebUtil.fluentWaitUntilFind(handleDto);
+        List<WebElement> webElements = WebUtil.findUntil(handleDto);
         handleDto.setElements(webElements);
         if (this.preHandle(handleDto)) {
             this.doHandle(handleDto);

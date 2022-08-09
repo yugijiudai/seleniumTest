@@ -1,34 +1,59 @@
 package com.lml.selenium.factory;
 
-import com.lml.selenium.dto.SetDto;
 import lombok.experimental.UtilityClass;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
 /**
  * @author zhonghaowen
  * @apiNote wait工厂
- * @since 2017-05-19
+ * @since 2022-08-09
  */
 @UtilityClass
 public class WaitFactory {
 
     /**
+     * 创建默认的等待对象
+     *
+     * @param timeout  超时时间
+     * @param interval 轮询时间
+     * @return 对应的等待类
+     */
+    public Wait<WebDriver> createDefaultWait(Duration timeout, Duration interval) {
+        return createFluentWait(timeout, interval);
+    }
+
+
+    /**
      * 创建流畅等待的对象,可以根据自己需要来写等待的条件
      * wait.until(webDriver -> ExpectedConditions.frameToBeAvailableAndSwitchToIt(element));
      *
-     * @return {@link Wait}
+     * @param timeout  超时时间
+     * @param interval 轮询时间
+     * @return 对应的等待类
      */
-    public Wait<WebDriver> createDefaultWait() {
-        SetDto setDto = SeleniumFactory.getSetDto();
+    public Wait<WebDriver> createFluentWait(Duration timeout, Duration interval) {
         return new FluentWait<>(SeleniumFactory.getDriver())
-                .withTimeout(Duration.ofMillis(setDto.getMaxWaitTime()))
-                .pollingEvery(Duration.ofMillis(setDto.getInterval()));
+                .withTimeout(timeout)
+                .pollingEvery(interval);
         // .ignoring(NoSuchElementException.class)
         // .ignoring(StaleElementReferenceException.class)
         // .ignoring(NullPointerException.class);
     }
+
+    /**
+     * 创建显示等待
+     *
+     * @param timeout  超时时间
+     * @param interval 轮询时间
+     * @return 对应的等待类
+     */
+    public Wait<WebDriver> createWebDriverWait(Duration timeout, Duration interval) {
+        return new WebDriverWait(SeleniumFactory.getDriver(), timeout, interval);
+    }
+
 }

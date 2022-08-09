@@ -18,6 +18,9 @@ public enum JsWaitEnum {
 
     LOOP("loop", "通过轮询的方式等待"),
 
+    /**
+     * 这个是通过用字符串脚本的方法注入，并不是所有的网页都能支持这方法，例如chrome的chrome://download页面
+     */
     JS("js", "通过js原生的轮询等待方式等待"),
 
     ;

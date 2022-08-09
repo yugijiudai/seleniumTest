@@ -62,11 +62,6 @@ public class Selenium {
     @Min(value = 1, message = "等待时间不能小于{value}毫秒")
     private Long wait;
 
-    /**
-     * 自定义查询这个dom节点重试次数(非必填)
-     */
-    @Min(value = 1, message = "重试次数不能小于{value}")
-    private Integer retry;
 
     /**
      * 点击使用的方法{@link ClickActionEnum}

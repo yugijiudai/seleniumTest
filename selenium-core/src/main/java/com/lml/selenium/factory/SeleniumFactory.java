@@ -20,7 +20,6 @@ import org.openqa.selenium.chrome.ChromeDriverService;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 
 /**
  * @author yugi
@@ -111,10 +110,6 @@ public class SeleniumFactory {
         else {
             Dimension dimension = new Dimension(Integer.parseInt(windowSize[1]), Integer.parseInt(windowSize[2]));
             driver.manage().window().setSize(dimension);
-        }
-        if (setDto.getDebugMode()) {
-            // 如果是debug模式,则会开启隐式等待
-            driver.manage().timeouts().implicitlyWait(Duration.ofMillis(setDto.getImplicitlyWait()));
         }
         if (!setDto.getPromptForDownload()) {
             // 只有弹窗模式禁止才适合用这个方式，这个方式开启之后就算弹窗模式设置成true也不会生效

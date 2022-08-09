@@ -123,7 +123,7 @@ public class JsUtil {
      *
      * @return true表示有
      */
-    private boolean checkJqueryIsExist() {
+    public boolean checkJqueryIsExist() {
         return runJs("return typeof jQuery != 'undefined'");
     }
 

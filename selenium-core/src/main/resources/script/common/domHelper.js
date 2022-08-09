@@ -1,4 +1,4 @@
-$(function () {
+// $(function () {
     (function (obj) {
 
         class DomObj {
@@ -135,4 +135,4 @@ $(function () {
         obj.domHelper = obj.domHelper || {};
         obj.domHelper.domObj = DomObj;
     })(window);
-});
+// });
