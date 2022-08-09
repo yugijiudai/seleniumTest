@@ -144,7 +144,7 @@ public class WebUtil {
             WebDriver webDriver = SeleniumFactory.getDriver();
             Wait<WebDriver> waitDriver = WaitFactory.createDefaultWait(Duration.ofMillis(timeWait), Duration.ofMillis(setDto.getInterval()));
             waitDriver.until(driver -> {
-                // 这里不使用ExpectedConditions.visibilityOfAllElementsLocatedBy,因为有些节点是要用enable判断的
+                // 这里不使用ExpectedConditions.presenceOfAllElementsLocatedBy,因为要判断所有元素可用才行
                 return checkElementAllFind(driver.findElements(eleHandlerDto.getBy()));
             });
             return webDriver.findElements(eleHandlerDto.getBy());

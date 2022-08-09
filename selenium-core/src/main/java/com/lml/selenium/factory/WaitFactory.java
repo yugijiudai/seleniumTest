@@ -56,4 +56,14 @@ public class WaitFactory {
         return new WebDriverWait(SeleniumFactory.getDriver(), timeout, interval);
     }
 
+    /**
+     * 创建隐式等待(可以用于调试使用,不建议用于生产)
+     *
+     * @param timeout 最大的超时时间
+     */
+    public void createImplicitlyWait(Duration timeout) {
+        WebDriver driver = SeleniumFactory.getDriver();
+        driver.manage().timeouts().implicitlyWait(timeout);
+    }
+
 }
