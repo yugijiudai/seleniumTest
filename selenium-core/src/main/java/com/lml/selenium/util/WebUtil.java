@@ -1,7 +1,6 @@
 package com.lml.selenium.util;
 
 import cn.hutool.core.thread.ThreadUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.lml.selenium.client.HandlerClient;
@@ -137,23 +136,25 @@ public class WebUtil {
      * @return {@link WebElement}
      */
     public List<WebElement> findUntil(EleHandlerDto eleHandlerDto) {
+        Long timeWait = eleHandlerDto.getWaitTime();
+        SetDto setDto = SeleniumFactory.getSetDto();
+        timeWait = timeWait != null ? timeWait : setDto.getMaxWaitTime();
+        Integer interval = setDto.getInterval();
         try {
-            Long timeWait = eleHandlerDto.getWaitTime();
-            SetDto setDto = SeleniumFactory.getSetDto();
-            timeWait = timeWait != null ? timeWait : setDto.getMaxWaitTime();
             WebDriver webDriver = SeleniumFactory.getDriver();
-            Wait<WebDriver> waitDriver = WaitFactory.createDefaultWait(Duration.ofMillis(timeWait), Duration.ofMillis(setDto.getInterval()));
+            Wait<WebDriver> waitDriver = WaitFactory.createDefaultWait(Duration.ofMillis(timeWait), Duration.ofMillis(interval));
             waitDriver.until(driver -> {
                 // 这里不使用ExpectedConditions.presenceOfAllElementsLocatedBy,因为要判断所有元素可用才行
-                return checkElementAllFind(driver.findElements(eleHandlerDto.getBy()));
+                List<WebElement> elements = driver.findElements(eleHandlerDto.getBy());
+                return checkElementAllFind(elements);
             });
             return webDriver.findElements(eleHandlerDto.getBy());
         }
         catch (Throwable e) {
             ActionEnum actionEnum = eleHandlerDto.getActionEnum();
             String action = actionEnum == null ? "查找元素" : actionEnum.getCode();
-            String msg = StrUtil.format("执行动作:【{}】操作节点【{}】时超过重试最大时间", action, eleHandlerDto.getBy());
-            throw new FindElementException(msg, e);
+            log.error("执行动作:【{}】操作节点【{}】时超过最大时间:{}ms,重试频率:{}ms", action, eleHandlerDto.getBy(), timeWait, interval);
+            throw new FindElementException(e);
         }
     }
 
