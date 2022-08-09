@@ -42,4 +42,9 @@ public class BrowserVo {
      */
     private Long time;
 
+    /**
+     * 相关描述或者信息
+     */
+    private String info;
+
 }
