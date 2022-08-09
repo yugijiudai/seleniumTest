@@ -5,6 +5,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Pair;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
+import com.lml.selenium.exception.BizException;
 import com.lml.selenium.util.NetUtil;
 import com.lml.selenium.vo.BrowserVo;
 import io.netty.handler.codec.http.HttpMethod;
@@ -107,8 +108,8 @@ public class RequestProxy {
         String method = request.getMethod();
         BrowserVo browserVo = new BrowserVo().setUrl(request.getUrl()).setResponseBody(JSONUtil.parseObj(response.getContent().getText())).setTime(harEntry.getTime());
         if (HttpMethod.POST.name().equals(method)) {
-            HarPostData postData = request.getPostData();
-            browserVo.setRequestParam(postData == null ? null : JSONUtil.parseObj(postData.getText()));
+            Object requestParam = getPostRequestParam(request.getPostData());
+            browserVo.setRequestParam(requestParam);
             resultList.add(browserVo.setMethod(method));
         }
         else if (HttpMethod.GET.name().equals(method)) {
@@ -116,6 +117,27 @@ public class RequestProxy {
             browserVo.setRequestParam((CollectionUtil.isEmpty(param) ? null : JSONUtil.parseArray(param)));
             resultList.add(browserVo.setMethod(method));
         }
+    }
+
+    /**
+     * 获取post的请求参数，对其进行格式转换
+     *
+     * @param postData {@link HarPostData}
+     * @return 可以是空, json, jsonArray三种格式
+     */
+    private Object getPostRequestParam(HarPostData postData) {
+        if (postData == null) {
+            return null;
+        }
+        String text = postData.getText();
+        if (JSONUtil.isJsonObj(text)) {
+            return JSONUtil.parseObj(text);
+        }
+        if (JSONUtil.isJsonArray(text)) {
+            return JSONUtil.parseArray(text);
+        }
+        log.error("请求参数格式不对,格式如下:{}", text);
+        throw new BizException("请求参数格式不对!");
     }
 
     /**
