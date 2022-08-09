@@ -1,11 +1,13 @@
 package com.lml.selenium.util;
 
-import cn.hutool.core.util.StrUtil;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.enums.JsWaitEnum;
 import com.lml.selenium.exception.FindElementException;
 import com.lml.selenium.factory.SeleniumFactory;
-import lombok.Setter;
+import com.lml.selenium.strategy.JsWaitByLoopStrategy;
+import com.lml.selenium.strategy.JsWaitByNormalJsStrategy;
+import com.lml.selenium.strategy.JsWaitBySeleniumStrategy;
+import com.lml.selenium.strategy.JsWaitStrategy;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,10 +26,45 @@ public class WaitUtl {
 
 
     /**
-     * js等待的默认方式
+     * js的等待策略
      */
-    @Setter
-    private static JsWaitEnum jsWaitEnum = JsWaitEnum.parse(SeleniumFactory.getSetDto().getJsWaitType());
+    private JsWaitStrategy jsWaitStrategy = defaultInitJsWaitStrategy();
+
+    /**
+     * 根据配置文件初始化默认的等待策略
+     *
+     * @return {@link JsWaitStrategy}
+     */
+    private JsWaitStrategy defaultInitJsWaitStrategy() {
+        JsWaitEnum jsWaitEnum = JsWaitEnum.parse(SeleniumFactory.getSetDto().getJsWaitType());
+        return buildWaitStrategy(jsWaitEnum);
+    }
+
+    /**
+     * 构建等待的策略
+     *
+     * @param jsWaitEnum {@link  JsWaitEnum}
+     * @return 对应的策略
+     */
+    private JsWaitStrategy buildWaitStrategy(JsWaitEnum jsWaitEnum) {
+        switch (jsWaitEnum) {
+            case JS:
+                return new JsWaitByNormalJsStrategy();
+            case SELENIUM:
+                return new JsWaitBySeleniumStrategy();
+            default:
+                return new JsWaitByLoopStrategy();
+        }
+    }
+
+    /**
+     * 修改对应的策略
+     *
+     * @param jsWaitEnum {@link JsWaitEnum}
+     */
+    public void setWaitStrategy(JsWaitEnum jsWaitEnum) {
+        jsWaitStrategy = buildWaitStrategy(jsWaitEnum);
+    }
 
     /**
      * 使用自定义js的方式来等待页面加载
@@ -47,65 +84,7 @@ public class WaitUtl {
      * @param interval    每次轮询间隔的时间(毫秒)
      */
     public void waitLoadByJs(String script, long maxWaitTime, Integer interval) {
-        waitLoadByJs(script, maxWaitTime, interval, jsWaitEnum);
-    }
-
-    /**
-     * 使用自定义js的方式来等待页面加载
-     *
-     * @param script      等待的脚本
-     * @param maxWaitTime 最长等待时间(毫秒)
-     * @param interval    每次轮询间隔的时间(毫秒)
-     * @param waitType    等待的执行方式,loop:轮询,scheduled:定时任务,js:js自己的轮询方式
-     */
-    public void waitLoadByJs(String script, long maxWaitTime, Integer interval, JsWaitEnum waitType) {
-        switch (waitType) {
-            case LOOP:
-                waitLoadByLoop(script, maxWaitTime, interval);
-                break;
-            case SCHEDULED:
-                waitLoadBySchedule(script, maxWaitTime, interval);
-                break;
-            case JS:
-                waitLoadByNormalJs(script, maxWaitTime, interval);
-                break;
-        }
-    }
-
-    /**
-     * 使用js自己的轮询方式等待
-     *
-     * @param script      等待的脚本
-     * @param maxWaitTime 最长等待时间(毫秒)
-     * @param interval    每次轮询间隔的时间(毫秒)
-     */
-    private void waitLoadByNormalJs(String script, long maxWaitTime, Integer interval) {
-        JsUtil.addCommonScript("domHelper");
-        String runScript = String.format("return domHelper.domObj.getWaitDomByTimerResult(`%s`, %s, %s)", script, maxWaitTime, interval);
-        Object result = JsUtil.runJs(runScript);
-        if (!"true".equals(result)) {
-            String msg = StrUtil.format("脚本:【{}】, 等待失败,原因如下:{}", runScript, result);
-            throw new FindElementException(msg);
-        }
-    }
-
-    /**
-     * 等待页面的某些元素或者某些东西加载完成(通过使用脚本来判断这些是否加载完成)
-     *
-     * @param script      要执行判断的脚本
-     * @param maxWaitTime 最长等待时间(毫秒)
-     * @param interval    每次轮询间隔的时间(毫秒)
-     */
-    private void waitLoadByLoop(String script, long maxWaitTime, Integer interval) {
-        long end = System.currentTimeMillis() + maxWaitTime;
-        log.info("执行等待脚本:" + script);
-        while (!(Boolean) JsUtil.runJs(script)) {
-            if (System.currentTimeMillis() > end) {
-                log.warn("脚本:【{}】, 超出最长等待时间{},跳出循环", script, maxWaitTime);
-                throw new FindElementException("超出最长等待时间:" + maxWaitTime);
-            }
-            WebUtil.doWait(interval);
-        }
+        jsWaitStrategy.waitLoadByJs(script, maxWaitTime, interval);
     }
 
 
@@ -115,7 +94,9 @@ public class WaitUtl {
      * @param script      要执行判断的脚本
      * @param maxWaitTime 最长等待时间(毫秒)
      * @param interval    每次轮询间隔的时间(毫秒)
+     * @deprecated 每次都要新建一个定时任务线程, 貌似会对性能有影响, 使用selenium自带的方式代替这个
      */
+    @Deprecated
     private void waitLoadBySchedule(String script, long maxWaitTime, Integer interval) {
         ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
         scheduledExecutorService.scheduleAtFixedRate(() -> {

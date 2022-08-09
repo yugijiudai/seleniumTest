@@ -29,23 +29,23 @@ public class JsWaitDemoTest extends SeleniumBaseTest {
         this.quitDriver();
     }
 
-    @Test(testName = "测试使用schedule等待")
-    public void testJsWaitWithSchedule() {
-        WaitUtl.setJsWaitEnum(JsWaitEnum.SCHEDULED);
-        this.waitDom("waitByJs");
+    @Test(testName = "测试使用selenium等待")
+    public void testJsWaitWithSelenium() {
+        WaitUtl.setWaitStrategy(JsWaitEnum.SELENIUM);
+        this.waitDom("selenium");
     }
 
 
     @Test(testName = "测试使用js原生等待")
     public void testJsWaitWithJs() {
-        WaitUtl.setJsWaitEnum(JsWaitEnum.JS);
+        WaitUtl.setWaitStrategy(JsWaitEnum.JS);
         this.waitDom("js");
     }
 
 
     @Test(testName = "测试使用while循环等待")
     public void testJsWaitWithLoop() {
-        WaitUtl.setJsWaitEnum(JsWaitEnum.LOOP);
+        WaitUtl.setWaitStrategy(JsWaitEnum.LOOP);
         this.waitDom("loop");
     }
 

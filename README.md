@@ -129,11 +129,11 @@ com.lml.selenium.demo.JsWaitDemoTest
 6. LoadTestCaseUtil.java 用于加载用例的工具类,目前支持从excel和数据库里加载,推荐优先从数据库加载
 7. SeleniumBaseTest.java 基础测试类,测试类可以继承此类，然后重写getCaseTemplate()方法,返回值就是对应要加载用例的表或者excel
 8. WaitUtl.java 这个是用于等待的工具类，用户可以根据需要自己编写相关条件的js脚本来进行等待，该类提供三种等待方法，可以在selenium.properties中通过jsWaitType来指定,
-   对应的枚举类为```com.lml.selenium.enums.JsWaitEnum```，相关用例和使用姿势可以参考```com.lml.selenium.demo.JsWaitDemoTest```
-   - (1)使用loop的方式,底层运用while(true)+sleep去轮询，直到给定的js条件满足为止，每次调用会输出相关的日志记录执行状态
-   - (2)使用scheduled的方式,底层运用java的```scheduleAtFixedRate()```方式实现轮询，每次调用会输出相关的日志记录执行状态
-   - (3)使用js的方式,底层运用了js原生的```setInterval()```方式实现轮询等待，只有报错才会有相关的日志，这个是通过用字符串脚本的方法注入，并不是所有的网页都能支持这方法，例如chrome的chrome://download页面
-9. WaitFactory.java 用于初始化等待类的工场，目前默认是用fluentWait的方式，在webUtil中是用```findUntil()```的方法来进行等待，后续通过配置文件方式来根据自己喜好初始化这个等待类
+   也可以通过方法```setWaitStrategy()```来动态修改等待的策略，对应的枚举类为```com.lml.selenium.enums.JsWaitEnum```，相关用例和使用姿势可以参考```com.lml.selenium.demo.JsWaitDemoTest```
+   - (1)使用loop的方式，底层运用while(true)+sleep去轮询，直到给定的js条件满足为止，每次调用会输出相关的日志记录执行状态
+   - (2)使用selenium的方式，底层运用selenium的```waitUntil()```方式进行等待，每次调用会输出相关的日志记录执行状态
+   - (3)使用js的方式，底层运用了js原生的```setInterval()```方式实现轮询等待，只有报错才会有相关的日志，这个是通过用字符串脚本的方法注入，并不是所有的网页都能支持这方法，例如chrome的chrome://download页面，所以这个方式并不是万能
+10. WaitFactory.java 用于初始化等待类的工场，目前默认是用fluentWait的方式，在webUtil中是用```findUntil()```的方法来进行等待，后续通过配置文件方式来根据自己喜好初始化这个等待类
 
 #### 关于初始化类```com.lml.selenium.factory.SeleniumFactory```
 

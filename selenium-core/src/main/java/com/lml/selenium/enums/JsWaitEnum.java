@@ -14,7 +14,7 @@ public enum JsWaitEnum {
     /**
      * 通过css选择器查找
      */
-    SCHEDULED("scheduled", "通过java定时任务方式等待"),
+    SELENIUM("selenium", "通过使用selenium的waitUntil方式等待"),
 
     LOOP("loop", "通过轮询的方式等待"),
 
