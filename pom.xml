@@ -18,7 +18,7 @@
         <java.version>1.8</java.version>
         <selenium.version>4.0.0</selenium.version>
 <!--        <selenium.version>3.141.59</selenium.version>-->
-        <testNg.version>6.14.3</testNg.version>
+        <testNg.version>7.5.1</testNg.version>
     </properties>
 
     <dependencies>
