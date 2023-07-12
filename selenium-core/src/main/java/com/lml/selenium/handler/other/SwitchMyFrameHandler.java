@@ -42,10 +42,10 @@ public class SwitchMyFrameHandler implements OtherHandler {
         WebUtil.getCurrentFrame();
         switch (actionEnum) {
             case PARENT:
-                SeleniumFactory.getDriver().switchTo().parentFrame();
+                SeleniumFactory.getDriverHolder().switchTo().parentFrame();
                 break;
             case SELF:
-                WebDriver driver = SeleniumFactory.getDriver();
+                WebDriver driver = SeleniumFactory.getDriverHolder();
                 driver.switchTo().defaultContent();
                 // 切换到最顶级后需要等待一下,不然有可能页面没切换完,js脚本就注入到页面上,导致获取iframe不准确
                 WebUtil.doWait(100);
@@ -57,7 +57,7 @@ public class SwitchMyFrameHandler implements OtherHandler {
                 }
                 break;
             default:
-                SeleniumFactory.getDriver().switchTo().defaultContent();
+                SeleniumFactory.getDriverHolder().switchTo().defaultContent();
                 break;
         }
         WebUtil.getCurrentFrame();

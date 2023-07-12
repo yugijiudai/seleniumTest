@@ -62,7 +62,7 @@ public class DragHandler implements OtherHandler {
         By targetBy = SelectFactory.getSelector(toObj.getStr(FIND_TYPE), toObj.getStr(ELE));
         WebElement target = WebUtil.findUntil(EleHandlerDtoFactory.buildCommon(targetBy)).get(0);
 
-        Actions action = new Actions(SeleniumFactory.getDriver());
+        Actions action = new Actions(SeleniumFactory.getDriverHolder());
         action.dragAndDrop(source, target).build().perform();
     }
 }

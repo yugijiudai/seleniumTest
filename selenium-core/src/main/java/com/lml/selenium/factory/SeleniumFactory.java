@@ -2,7 +2,6 @@ package com.lml.selenium.factory;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import cn.hutool.setting.dialect.Props;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.exception.InitException;
@@ -30,9 +29,70 @@ import java.io.IOException;
 @Slf4j
 public class SeleniumFactory {
 
+    /**
+     * driverHolder为每个线程独立一个driver
+     */
+    private final ThreadLocal<WebDriver> driverHolder = new ThreadLocal<>();
 
-    @Getter
-    private WebDriver driver;
+
+    /**
+     * serviceHolder为每个线程独立一个service
+     */
+    private final ThreadLocal<ChromeDriverService> serviceHolder = new ThreadLocal<>();
+
+
+    /**
+     * 获取driver
+     *
+     * @return uuid
+     */
+    public WebDriver getDriverHolder() {
+        return driverHolder.get();
+    }
+
+    /**
+     * 添加测试id
+     *
+     * @param driver 需要添加的driver
+     */
+    public void addDriverHolder(WebDriver driver) {
+        driverHolder.set(driver);
+    }
+
+
+    /**
+     * 移除driver
+     */
+    public void removeDriverHolder() {
+        driverHolder.remove();
+    }
+
+    /**
+     * 获取service
+     *
+     * @return service
+     */
+    public ChromeDriverService getServiceHolder() {
+        return serviceHolder.get();
+    }
+
+    /**
+     * 添加测试id
+     *
+     * @param service 需要添加的service
+     */
+    public void addServiceHolder(ChromeDriverService service) {
+        serviceHolder.set(service);
+    }
+
+
+    /**
+     * 移除serviceHolder
+     */
+    public void removeServiceHolder() {
+        serviceHolder.remove();
+    }
+
 
     /**
      * 配置文件映射到的实体类
@@ -40,10 +100,6 @@ public class SeleniumFactory {
     @Getter
     private final SetDto setDto = initSetting();
 
-    /**
-     * 全局的service对象
-     */
-    private ChromeDriverService service;
 
     /**
      * 初始化配置文件和handler
@@ -66,9 +122,11 @@ public class SeleniumFactory {
      */
     private void initService() {
         try {
+            ChromeDriverService service = getServiceHolder();
             if (service == null || !service.isRunning()) {
                 service = new ChromeDriverService.Builder().usingDriverExecutable(new File(setDto.getDriverPath())).usingAnyFreePort().build();
                 service.start();
+                addServiceHolder(service);
             }
         }
         catch (IOException e) {
@@ -82,8 +140,12 @@ public class SeleniumFactory {
     public void quitDriver() {
         // 先关闭代理再关闭driver
         RequestProxy.closeProxy();
+        WebDriver driver = getDriverHolder();
         driver.quit();
+        removeDriverHolder();
+        ChromeDriverService service = getServiceHolder();
         service.close();
+        removeServiceHolder();
     }
 
 
@@ -98,7 +160,8 @@ public class SeleniumFactory {
             // 如果没有则使用默认的配置
             abstractChromeOption = new MyChromeOption();
         }
-        driver = new ChromeDriverProxy(service, abstractChromeOption.createChromeOption());
+        ChromeDriverService service = getServiceHolder();
+        WebDriver driver = new ChromeDriverProxy(service, abstractChromeOption.createChromeOption());
         String[] windowSize = setDto.getWindowSize().split(",");
         if (windowSize.length != 3) {
             throw new InitException("请检查窗口大小的参数格式!");
@@ -115,6 +178,7 @@ public class SeleniumFactory {
             // 只有弹窗模式禁止才适合用这个方式，这个方式开启之后就算弹窗模式设置成true也不会生效
             setDownloadBehavior(driver);
         }
+        addDriverHolder(driver);
     }
 
     /**
@@ -129,7 +193,7 @@ public class SeleniumFactory {
         // JSONObject commandParams = JSONUtil.createObj();
         // commandParams.set("cmd", "Page.setDownloadBehavior");
         ChromeDriver driverService = (ChromeDriver) driver;
-        JSONObject params = JSONUtil.createObj();
+        JSONObject params = new JSONObject();
         params.set("behavior", "allow");
         params.set("downloadPath", setDto.getDownloadPath());
         // 直接使用cdp的方式来运行命令,不需要走http协议

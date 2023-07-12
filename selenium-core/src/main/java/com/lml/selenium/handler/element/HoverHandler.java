@@ -22,7 +22,7 @@ public class HoverHandler implements ElementHandler {
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
         EleHandlerDto handleDto = (EleHandlerDto) baseSeleniumDto;
-        Actions mouseHover = new Actions(SeleniumFactory.getDriver());
+        Actions mouseHover = new Actions(SeleniumFactory.getDriverHolder());
         List<WebElement> elements = handleDto.getElements();
         for (WebElement element : elements) {
             mouseHover.moveToElement(element).perform();

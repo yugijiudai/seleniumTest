@@ -34,7 +34,7 @@ public class ClickHandler implements ElementHandler {
     public boolean preHandle(EleHandlerDto handleDto) {
         List<WebElement> elements = handleDto.getElements();
         for (WebElement element : elements) {
-            JavascriptExecutor executor = (JavascriptExecutor) SeleniumFactory.getDriver();
+            JavascriptExecutor executor = (JavascriptExecutor) SeleniumFactory.getDriverHolder();
             Object result = executor.executeScript("var items = {}; for (var index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value } return items;", element);
             log.trace("click element attributes:{}", result);
             String attribute = element.getAttribute("disabled");
@@ -99,7 +99,7 @@ public class ClickHandler implements ElementHandler {
      * @param webElement 要点击的元素
      */
     private void rightClick(WebElement webElement) {
-        Actions action = new Actions(SeleniumFactory.getDriver());
+        Actions action = new Actions(SeleniumFactory.getDriverHolder());
         action.moveToElement(webElement);
         action.contextClick(webElement).build().perform();
     }
@@ -111,7 +111,7 @@ public class ClickHandler implements ElementHandler {
      */
     private void doubleClick(WebElement webElement) {
         try {
-            Actions action = new Actions(SeleniumFactory.getDriver());
+            Actions action = new Actions(SeleniumFactory.getDriverHolder());
             // Action build = action.doubleClick(webElement).build();
             action.doubleClick(webElement).perform();
         }

@@ -37,7 +37,7 @@ public class WaitFactory {
      * @return 对应的等待类
      */
     public Wait<WebDriver> createFluentWait(Duration timeout, Duration interval) {
-        return new FluentWait<>(SeleniumFactory.getDriver())
+        return new FluentWait<>(SeleniumFactory.getDriverHolder())
                 .withTimeout(timeout)
                 .pollingEvery(interval);
         // .ignoring(NoSuchElementException.class)
@@ -53,7 +53,7 @@ public class WaitFactory {
      * @return 对应的等待类
      */
     public Wait<WebDriver> createWebDriverWait(Duration timeout, Duration interval) {
-        return new WebDriverWait(SeleniumFactory.getDriver(), timeout, interval);
+        return new WebDriverWait(SeleniumFactory.getDriverHolder(), timeout, interval);
     }
 
     /**
@@ -62,7 +62,7 @@ public class WaitFactory {
      * @param timeout 最大的超时时间
      */
     public void createImplicitlyWait(Duration timeout) {
-        WebDriver driver = SeleniumFactory.getDriver();
+        WebDriver driver = SeleniumFactory.getDriverHolder();
         driver.manage().timeouts().implicitlyWait(timeout);
     }
 

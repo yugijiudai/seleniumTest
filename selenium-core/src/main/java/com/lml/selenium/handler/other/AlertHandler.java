@@ -22,6 +22,6 @@ public class AlertHandler implements OtherHandler {
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
         // 先等待一下
         WebUtil.doWait(500);
-        SeleniumFactory.getDriver().switchTo().alert().accept();
+        SeleniumFactory.getDriverHolder().switchTo().alert().accept();
     }
 }

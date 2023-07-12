@@ -36,7 +36,7 @@ public class DemoAssert {
      * @param assertMsg 要断言的信息
      */
     public void assertTestDemo02(String assertMsg) {
-        Alert alert = SeleniumFactory.getDriver().switchTo().alert();
+        Alert alert = SeleniumFactory.getDriverHolder().switchTo().alert();
         Assert.assertEquals(alert.getText(), assertMsg);
         WebUtil.clickAlert();
     }

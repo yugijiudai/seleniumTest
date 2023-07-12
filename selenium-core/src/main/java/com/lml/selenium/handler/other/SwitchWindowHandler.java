@@ -23,7 +23,7 @@ public class SwitchWindowHandler implements OtherHandler {
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
         NoEleHandlerDto noEleHandlerDto = (NoEleHandlerDto) baseSeleniumDto;
-        WebDriver driver = SeleniumFactory.getDriver();
+        WebDriver driver = SeleniumFactory.getDriverHolder();
         Set<String> windowHandles = driver.getWindowHandles();
         List<String> list = Lists.newArrayList(windowHandles);
         log.info("当前窗口有:{}", list);

@@ -141,7 +141,7 @@ public class WebUtil {
         timeWait = timeWait != null ? timeWait : setDto.getMaxWaitTime();
         Integer interval = setDto.getInterval();
         try {
-            WebDriver webDriver = SeleniumFactory.getDriver();
+            WebDriver webDriver = SeleniumFactory.getDriverHolder();
             Wait<WebDriver> waitDriver = WaitFactory.createDefaultWait(Duration.ofMillis(timeWait), Duration.ofMillis(interval));
             waitDriver.until(driver -> {
                 // 这里不使用ExpectedConditions.presenceOfAllElementsLocatedBy,因为要判断所有元素可用才行

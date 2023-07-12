@@ -19,6 +19,6 @@ public class RefreshHandler implements OtherHandler {
 
     @Override
     public void doHandle(BaseSeleniumDto baseSeleniumDto) {
-        SeleniumFactory.getDriver().navigate().refresh();
+        SeleniumFactory.getDriverHolder().navigate().refresh();
     }
 }

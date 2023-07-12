@@ -21,7 +21,7 @@ public class JsWaitDemoTest extends SeleniumBaseTest {
     @BeforeMethod
     public void init() {
         initWebDriver();
-        SeleniumFactory.getDriver().get(SeleniumFactory.getSetDto().getBaseUrl());
+        SeleniumFactory.getDriverHolder().get(SeleniumFactory.getSetDto().getBaseUrl());
     }
 
     @AfterMethod

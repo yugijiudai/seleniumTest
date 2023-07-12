@@ -49,7 +49,7 @@ public class DownloadDemoTest extends SeleniumBaseTest {
     private void doDownload(boolean isPrompt) {
         setDto.setPromptForDownload(isPrompt);
         this.initWebDriver();
-        SeleniumFactory.getDriver().get("http://nodejs.cn/download/");
+        SeleniumFactory.getDriverHolder().get("http://nodejs.cn/download/");
         WebUtil.retryFindElements(By.xpath("//a[contains(text(), ' 32 位 ')]")).get(0).click();
         String newFileName = IdUtil.fastSimpleUUID() + ".csv";
         String downloadFile = RobotUtil.selectFile(newFileName, 1000, true);

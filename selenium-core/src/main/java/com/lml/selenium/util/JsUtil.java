@@ -82,7 +82,7 @@ public class JsUtil {
      */
     public void addCommonScript(String fileName) {
         String domHelper = loadCommonScript(fileName);
-        ((JavascriptExecutor) SeleniumFactory.getDriver()).executeScript(domHelper);
+        ((JavascriptExecutor) SeleniumFactory.getDriverHolder()).executeScript(domHelper);
     }
 
     /**
@@ -102,7 +102,7 @@ public class JsUtil {
      */
     public void addBizScript(String fileName) {
         String bizHelper = loadBizScript(fileName);
-        ((JavascriptExecutor) SeleniumFactory.getDriver()).executeScript(bizHelper);
+        ((JavascriptExecutor) SeleniumFactory.getDriverHolder()).executeScript(bizHelper);
     }
 
     /**
@@ -272,7 +272,7 @@ public class JsUtil {
     private <T> T doRunJs(String script, Object... args) {
         log.debug("预执行脚本:\n{}\n参数是:{}", script, args);
         try {
-            Object response = ((JavascriptExecutor) SeleniumFactory.getDriver()).executeScript(script, args);
+            Object response = ((JavascriptExecutor) SeleniumFactory.getDriverHolder()).executeScript(script, args);
             log.info("执行脚本成功:\n{}\n参数是:{}\n返回值是:{}", script, args, response);
             return (T) response;
         }

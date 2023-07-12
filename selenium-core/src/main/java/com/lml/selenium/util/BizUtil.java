@@ -87,7 +87,7 @@ public class BizUtil {
         if (setDto.getDebugMode()) {
             return;
         }
-        File file = ((TakesScreenshot) SeleniumFactory.getDriver()).getScreenshotAs(OutputType.FILE);
+        File file = ((TakesScreenshot) SeleniumFactory.getDriverHolder()).getScreenshotAs(OutputType.FILE);
         String name = setDto.getErrorPic() + "_" + DateUtil.format(new Date(), "yyyy-MM-dd-hh-mm-ss") + ".jpg";
         File dest = new File(name);
         FileUtil.copy(file, dest, false);

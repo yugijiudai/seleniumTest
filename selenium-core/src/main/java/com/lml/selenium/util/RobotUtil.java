@@ -115,7 +115,7 @@ public class RobotUtil {
      */
     public String waitUntilDownloadCompleted() {
         WebUtil.doWait(300);
-        WebDriver driver = SeleniumFactory.getDriver();
+        WebDriver driver = SeleniumFactory.getDriverHolder();
         String mainWindow = driver.getWindowHandle();
         JsUtil.runJs("window.open('', '_blank')");
         WebUtil.switchToWindow(null);
