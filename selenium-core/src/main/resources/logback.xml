@@ -3,7 +3,7 @@
 <configuration>
 
     <!-- 日志级别 -->
-    <property name="logLevel" value="DEBUG"/>
+    <property name="logLevel" value="INFO"/>
     <!--控制台输出格式-->
     <property name="consoleLogFormat" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %logger{50}  - %m%n"/>
 <!--    <property name="consoleLogFormat" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p - %m%n"/>-->

@@ -115,7 +115,6 @@ public class SeleniumFactory {
             // 只有弹窗模式禁止才适合用这个方式，这个方式开启之后就算弹窗模式设置成true也不会生效
             setDownloadBehavior(driver);
         }
-
     }
 
     /**

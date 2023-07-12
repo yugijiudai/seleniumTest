@@ -25,6 +25,8 @@ public class MyChromeOption implements AbstractChromeOption {
         SetDto setDto = SeleniumFactory.getSetDto();
         ChromeOptions options = new ChromeOptions();
         LoggingPreferences logPrefs = new LoggingPreferences();
+        //解决新版的403出错问题
+        options.addArguments("--remote-allow-origins=*");
         logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
         // 启动无沙盒模式运行
         options.addArguments("no-sandbox");
