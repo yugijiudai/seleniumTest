@@ -4,14 +4,19 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.setting.dialect.Props;
 import com.lml.selenium.dto.SetDto;
+import com.lml.selenium.exception.BizException;
 import com.lml.selenium.exception.InitException;
 import com.lml.selenium.ext.AbstractChromeOption;
 import com.lml.selenium.ext.MyChromeOption;
+import com.lml.selenium.holder.ReqHolder;
 import com.lml.selenium.proxy.ChromeDriverProxy;
 import com.lml.selenium.proxy.RequestProxy;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -19,6 +24,7 @@ import org.openqa.selenium.chrome.ChromeDriverService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author yugi
@@ -30,75 +36,75 @@ import java.io.IOException;
 public class SeleniumFactory {
 
     /**
-     * driverHolder为每个线程独立一个driver
+     * 用来跟踪对应的driver,用于给用户灵活使用driver,每次初始化可以使用新的driver或者使用之前用的,key是跟踪id,value是对应driver和service,通过这个id找回对应的driver和service
      */
-    private final ThreadLocal<WebDriver> driverHolder = new ThreadLocal<>();
-
+    private final ConcurrentHashMap<String, Pair<WebDriver, ChromeDriverService>> traceDriverMap = new ConcurrentHashMap<>();
 
     /**
-     * serviceHolder为每个线程独立一个service
+     * id关联map,key是每次请求的独立id,全局独立唯一,value是这个请求对应的driver跟踪id
      */
-    private final ThreadLocal<ChromeDriverService> serviceHolder = new ThreadLocal<>();
-
-
-    /**
-     * 获取driver
-     *
-     * @return uuid
-     */
-    public WebDriver getDriverHolder() {
-        return driverHolder.get();
-    }
-
-    /**
-     * 添加测试id
-     *
-     * @param driver 需要添加的driver
-     */
-    public void addDriverHolder(WebDriver driver) {
-        driverHolder.set(driver);
-    }
-
-
-    /**
-     * 移除driver
-     */
-    public void removeDriverHolder() {
-        driverHolder.remove();
-    }
-
-    /**
-     * 获取service
-     *
-     * @return service
-     */
-    public ChromeDriverService getServiceHolder() {
-        return serviceHolder.get();
-    }
-
-    /**
-     * 添加测试id
-     *
-     * @param service 需要添加的service
-     */
-    public void addServiceHolder(ChromeDriverService service) {
-        serviceHolder.set(service);
-    }
-
-
-    /**
-     * 移除serviceHolder
-     */
-    public void removeServiceHolder() {
-        serviceHolder.remove();
-    }
-
+    private final ConcurrentHashMap<String, String> traceIdMap = new ConcurrentHashMap<>();
 
     /**
      * 配置文件映射到的实体类
      */
     @Getter
     private final SetDto setDto = initSetting();
+
+    /**
+     * 获取driver
+     *
+     * @return 对应的驱动
+     */
+    public WebDriver getDriverHolder() {
+        String reqUid = traceIdMap.get(ReqHolder.getTraceId());
+        return traceDriverMap.get(reqUid).getLeft();
+    }
+
+
+    /**
+     * 添加测试id
+     *
+     * @param driver 需要添加的driver
+     */
+    public void addDriverHolder(String reqUid, WebDriver driver) {
+        Pair<WebDriver, ChromeDriverService> pair = traceDriverMap.get(reqUid);
+        if (pair == null) {
+            throw new BizException("找不到对应的驱动跟踪id");
+        }
+        traceDriverMap.put(reqUid, Pair.of(driver, pair.getRight()));
+    }
+
+
+    /**
+     * 移除driver
+     *
+     * @param reqUid 追踪id
+     */
+    public void removeDriver(String reqUid) {
+        traceDriverMap.remove(reqUid);
+    }
+
+    /**
+     * 获取service
+     *
+     * @param reqUid 追踪id
+     * @return service
+     */
+    public ChromeDriverService getServiceHolder(String reqUid) {
+        Pair<WebDriver, ChromeDriverService> pair = traceDriverMap.get(reqUid);
+        return pair == null ? null : pair.getRight();
+    }
+
+    /**
+     * 添加service
+     *
+     * @param reqUid  追踪id
+     * @param service 需要添加的service
+     */
+    public void addServiceHolder(String reqUid, ChromeDriverService service) {
+        traceDriverMap.put(reqUid, Pair.of(null, service));
+    }
 
 
     /**
@@ -119,55 +125,76 @@ public class SeleniumFactory {
 
     /**
      * 初始化驱动的service
+     *
+     * @param reqUid 追踪id
+     * @return 返回初始化好的service
      */
-    private void initService() {
+    private ChromeDriverService initService(String reqUid) {
+        ChromeDriverService service = getServiceHolder(reqUid);
         try {
-            ChromeDriverService service = getServiceHolder();
             if (service == null || !service.isRunning()) {
                 service = new ChromeDriverService.Builder().usingDriverExecutable(new File(setDto.getDriverPath())).usingAnyFreePort().build();
                 service.start();
-                addServiceHolder(service);
+                addServiceHolder(reqUid, service);
             }
         }
         catch (IOException e) {
             throw new InitException("初始化service失败", e);
         }
+        return service;
     }
 
     /**
      * 关闭驱动,可以用在afterMethod
      */
-    public void quitDriver() {
+    public void quitDriver(String reqUid) {
         // 先关闭代理再关闭driver
         RequestProxy.closeProxy();
         WebDriver driver = getDriverHolder();
         driver.quit();
-        removeDriverHolder();
-        ChromeDriverService service = getServiceHolder();
+        ChromeDriverService service = getServiceHolder(reqUid);
         service.close();
-        removeServiceHolder();
+        removeDriver(reqUid);
     }
 
+
+    /**
+     * 构建运行跟踪id和driver跟踪id关系
+     *
+     * @param reqUid driver跟踪id
+     * @return 返回driver跟踪id
+     */
+    private String buildRelationId(String reqUid) {
+        // 生成一个这次运行的跟踪id
+        String traceId = ReqHolder.buildId();
+        // 如果没有请求id则默认生成一个，和对应的driver和service绑定在一起
+        reqUid = StringUtils.isBlank(reqUid) ? ReqHolder.buildId() : reqUid;
+        // 运行跟踪的id和driver的id绑定一对一关系
+        traceIdMap.put(traceId, reqUid);
+        ReqHolder.addTraceId(traceId);
+        return reqUid;
+    }
 
     /**
      * 初始化webDriver
      *
      * @param abstractChromeOption 自己定义初始化好的chromeOption
+     * @param reqUid               请求id,如果为非空则表示初始化一个新的driver,如果是非空则使用之前使用的driver
      */
-    public void initWebDriver(AbstractChromeOption abstractChromeOption) {
-        initService();
+    public void initWebDriver(AbstractChromeOption abstractChromeOption, String reqUid) {
+        reqUid = buildRelationId(reqUid);
+        ChromeDriverService service = initService(reqUid);
         if (abstractChromeOption == null) {
             // 如果没有则使用默认的配置
             abstractChromeOption = new MyChromeOption();
         }
-        ChromeDriverService service = getServiceHolder();
         WebDriver driver = new ChromeDriverProxy(service, abstractChromeOption.createChromeOption());
         String[] windowSize = setDto.getWindowSize().split(",");
         if (windowSize.length != 3) {
             throw new InitException("请检查窗口大小的参数格式!");
         }
         String isMaxWindow = windowSize[0];
-        if ("true".equals(isMaxWindow)) {
+        if (BooleanUtils.isTrue(Boolean.parseBoolean(isMaxWindow))) {
             driver.manage().window().maximize();
         }
         else {
@@ -178,7 +205,7 @@ public class SeleniumFactory {
             // 只有弹窗模式禁止才适合用这个方式，这个方式开启之后就算弹窗模式设置成true也不会生效
             setDownloadBehavior(driver);
         }
-        addDriverHolder(driver);
+        addDriverHolder(reqUid, driver);
     }
 
     /**
