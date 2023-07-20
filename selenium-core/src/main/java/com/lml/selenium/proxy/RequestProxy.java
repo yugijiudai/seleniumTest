@@ -130,10 +130,13 @@ public class RequestProxy {
             return null;
         }
         String text = postData.getText();
-        if (JSONUtil.isJsonObj(text)) {
+        if (text == null) {
+            return null;
+        }
+        if (JSONUtil.isTypeJSONObject(text)) {
             return JSONUtil.parseObj(text);
         }
-        if (JSONUtil.isJsonArray(text)) {
+        if (JSONUtil.isTypeJSONArray(text)) {
             return JSONUtil.parseArray(text);
         }
         log.error("请求参数格式不对,格式如下:{}", text);

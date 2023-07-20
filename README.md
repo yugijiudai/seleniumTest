@@ -117,7 +117,8 @@ com.lml.selenium.demo.JsWaitDemoTest
 #### 特殊常用的类
 
 1. WebUtil.java 该类封装了一些selenium操作的通用方法，例如查找元素，点击元素等，当操作步骤太过复杂(excel or 数据库的步骤不适用)的时候可以使用此类来进行相关的操作
-2. ChromeDriverProxy.java() 该类继承了ChromeDriver，saveResponse()用来获取所有ajax请求的返回值，但这个方法有缺点，不能获取请求的参数，不建议使用(后续此类可能会废弃，由RequestProxy.java代替)
+2. ChromeDriverProxy.java 该类继承了ChromeDriver，saveResponse()用来获取所有ajax请求的返回值，但这个方法有缺点，不能获取请求的参数，不建议使用(
+   后续此类可能会废弃，由RequestProxy.java代替)
 3. RequestProxy.java 基础的请求代理类，基于bmp的代理，可以获取ajax的请求参数和返回内容，目前只抓取了get和post的请求，使用方法如下:
    - (1)开启新的har包```RequestProxy.newHar("test");```
    - (2)运行对应的业务代码,等待页面全部加载完,包括所有请求完成
