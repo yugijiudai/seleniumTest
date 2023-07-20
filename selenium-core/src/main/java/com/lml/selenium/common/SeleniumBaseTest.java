@@ -33,7 +33,7 @@ public abstract class SeleniumBaseTest {
      * 初始化
      */
     protected void initWebDriver() {
-        SeleniumFactory.initWebDriver(null);
+        SeleniumFactory.initWebDriver(null, null);
     }
 
     /**
