@@ -50,7 +50,6 @@ public class MyChromeOption implements AbstractChromeOption {
         // 文件默认的下载路径
         // prefs.put("download.default_directory", setDto.getDownloadPath());
         options.setExperimentalOption("prefs", prefs);
-        options.setExperimentalOption("w3c", false);
         options.setCapability(ChromeOptions.LOGGING_PREFS, logPrefs);
         // options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
         options.setAcceptInsecureCerts(true);

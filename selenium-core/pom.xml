@@ -16,8 +16,8 @@
 
 
     <properties>
-        <java.version>1.8</java.version>
-        <testNg.version>7.4.0</testNg.version>
+        <java.version>20</java.version>
+        <testNg.version>7.9.0</testNg.version>
     </properties>
 
 

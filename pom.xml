@@ -23,10 +23,10 @@
     <description>selenium自动化测试</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>20</java.version>
         <!--<selenium.version>4.2.2</selenium.version>-->
-        <selenium.version>4.3.0</selenium.version>
-        <testNg.version>7.4.0</testNg.version>
+        <selenium.version>4.17.0</selenium.version>
+        <testNg.version>7.9.0</testNg.version>
         <browsermob.version>2.1.5</browsermob.version>
     </properties>
 
