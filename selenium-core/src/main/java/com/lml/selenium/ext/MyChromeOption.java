@@ -54,6 +54,9 @@ public class MyChromeOption implements AbstractChromeOption {
         // options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
         options.setAcceptInsecureCerts(true);
         options.setExperimentalOption("useAutomationExtension", false);
+
+        options.addArguments("--ignore-certificate-errors");
+
         // 模拟真正浏览器
         options.setExperimentalOption("excludeSwitches", Lists.newArrayList("enable-automation"));
         if (setDto.getUseBmpProxy()) {

@@ -46,17 +46,22 @@ public class RequestProxy {
     public Proxy createProxy() {
         // 每次创建都需要新建代理服务器,不然会start不了
         browserMobProxy = new BrowserMobProxyServer();
+        browserMobProxy.setTrustAllServers(true);
         browserMobProxy.start();
         browserMobProxy.setHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT, CaptureType.REQUEST_HEADERS);
         browserMobProxy.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT, CaptureType.REQUEST_HEADERS);
-        return ClientUtil.createSeleniumProxy(browserMobProxy);
+        Proxy seleniumProxy = ClientUtil.createSeleniumProxy(browserMobProxy);
+        seleniumProxy.setSslProxy("localhost:" + browserMobProxy.getPort());
+        return seleniumProxy;
     }
 
     /**
      * 停止代理
      */
     public void closeProxy() {
-        browserMobProxy.stop();
+        if (browserMobProxy != null) {
+            browserMobProxy.stop();
+        }
     }
 
     /**

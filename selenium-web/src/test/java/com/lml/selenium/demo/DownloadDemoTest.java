@@ -6,6 +6,7 @@ import com.lml.selenium.common.SeleniumBaseTest;
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.util.EnvUtil;
+import com.lml.selenium.util.JsUtil;
 import com.lml.selenium.util.RobotUtil;
 import com.lml.selenium.util.WebUtil;
 import org.openqa.selenium.By;
@@ -28,7 +29,7 @@ public class DownloadDemoTest extends SeleniumBaseTest {
     /**
      * mac系统默认的保存地址,根据用户名字需要自己修改!!!!
      */
-    private final static String MAC_DEFAULT_DOWNLOAD = "/Users/mahiru/Downloads/";
+    private final static String MAC_DEFAULT_DOWNLOAD = "/Users/lml/Downloads/";
 
     @AfterClass
     public void afterClass() {
@@ -46,10 +47,20 @@ public class DownloadDemoTest extends SeleniumBaseTest {
         this.doDownload(false);
     }
 
+
+    @Test(testName = "打开网页")
+    public void testNoPromptDownLoad2() {
+        this.initWebDriver();
+        SeleniumFactory.getDriverHolder().get("https://brandradar-beauty.matrix.datastory.com.cn/");
+        JsUtil.waitPageLoad(5000L);
+        System.out.println(111);
+    }
+
     private void doDownload(boolean isPrompt) {
         setDto.setPromptForDownload(isPrompt);
         this.initWebDriver();
-        SeleniumFactory.getDriverHolder().get("http://nodejs.cn/download/");
+        SeleniumFactory.getDriverHolder().get("https://brandradar-beauty.matrix.datastory.com.cn/");
+        // SeleniumFactory.getDriverHolder().get("http://nodejs.cn/download/");
         WebUtil.retryFindElements(By.xpath("//a[contains(text(), ' 32 位 ')]")).get(0).click();
         String newFileName = IdUtil.fastSimpleUUID() + ".csv";
         String downloadFile = RobotUtil.selectFile(newFileName, 1000, true);
