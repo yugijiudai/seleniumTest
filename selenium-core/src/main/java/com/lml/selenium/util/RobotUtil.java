@@ -1,5 +1,6 @@
 package com.lml.selenium.util;
 
+import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.lml.selenium.exception.BizException;
@@ -69,7 +70,9 @@ public class RobotUtil {
             log.warn("文件{}不可写,等待重试", oldFile.getPath());
             WebUtil.doWait(100);
         }
-        File newFile = FileUtil.rename(oldFile, fileName, true);
+        // 文件的后缀
+        String fileSuffix = FileTypeUtil.getType(oldFile);
+        File newFile = FileUtil.rename(oldFile, fileName + "." + fileSuffix, true);
         log.info("文件下载和重命名成功,新名字为:{}", newFile.getPath());
         return newFile.getPath();
     }
