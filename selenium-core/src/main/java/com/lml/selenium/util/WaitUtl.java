@@ -2,6 +2,7 @@ package com.lml.selenium.util;
 
 import com.lml.selenium.dto.SetDto;
 import com.lml.selenium.enums.JsWaitEnum;
+import com.lml.selenium.exception.BizException;
 import com.lml.selenium.exception.FindElementException;
 import com.lml.selenium.factory.SeleniumFactory;
 import com.lml.selenium.strategy.JsWaitByLoopStrategy;
@@ -74,6 +75,26 @@ public class WaitUtl {
     public void waitLoadByJs(String script) {
         SetDto setDto = SeleniumFactory.getSetDto();
         waitLoadByJs(script, setDto.getMaxWaitTime(), setDto.getInterval());
+    }
+
+    /**
+     * 等待url变化，可以配合抓包使用，有时候打开新网页，waitPageLoad()方法会秒过导致无法抓包，因此可以先用这个方法监听页面url变化，然后再去等待
+     *
+     * @param lastUrl url变化前的地址
+     */
+    public void waitUrlChange(String lastUrl) {
+        String nowUrl = SeleniumFactory.getDriverHolder().getCurrentUrl();
+        SetDto setDto = SeleniumFactory.getSetDto();
+        long nowTime = System.currentTimeMillis();
+        long maxWaitTime = setDto.getMaxWaitTime() + nowTime;
+        while (lastUrl.equals(nowUrl)) {
+            log.warn("页面url没有变化，等待变化");
+            WebUtil.doWait(setDto.getInterval());
+            nowUrl = SeleniumFactory.getDriverHolder().getCurrentUrl();
+            if (System.currentTimeMillis() > maxWaitTime) {
+                throw new BizException("超出最长等待时间:");
+            }
+        }
     }
 
     /**
