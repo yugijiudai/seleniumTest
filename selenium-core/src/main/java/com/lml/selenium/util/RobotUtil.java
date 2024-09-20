@@ -20,6 +20,7 @@ import java.io.File;
  * @apiNote 机器人工具类
  * @since 2022-07-19
  */
+@SuppressWarnings("VulnerableCodeUsages")
 @UtilityClass
 @Slf4j
 public class RobotUtil {
@@ -59,6 +60,7 @@ public class RobotUtil {
      * @param fileName 如果为空则用浏览器默认下载的名字，非空则会使用新的名字
      * @return 返回下载的文件名字
      */
+    @SuppressWarnings("VulnerableCodeUsages")
     private String handleNoPrompt(String fileName) {
         log.warn("弹窗下载没有开启");
         String oldFileName = waitUntilDownloadCompleted();
@@ -131,12 +133,12 @@ public class RobotUtil {
         String progress = StrUtil.format("return {}.querySelector('#progress') === null || {}.querySelector('#progress').value === 100", downloadTaskScript, downloadTaskScript);
         WaitUtl.waitLoadByJs(progress);
         // String fileName = JsUtil.runJs(StrUtil.format("return {}.querySelector('div#content #file-link').text", downloadTaskScript));
-        String downloadPath = JsUtil.runJs(StrUtil.format("return {}.querySelector('#show').title", downloadTaskScript));
+        String downloadPath = JsUtil.runJs(StrUtil.format("return {}.querySelector('#name').innerHTML", downloadTaskScript));
         // String downLoadedAt = JsUtil.runJs(StrUtil.format("return {}.querySelector('div.is-active.focus-row-active #file-icon-wrapper img').src", downloadTaskScript));
         // String sourceURL = JsUtil.runJs(StrUtil.format("return {}.querySelector('div#content #file-link').href", downloadTaskScript));
         driver.close();
         driver.switchTo().window(mainWindow);
-        return downloadPath;
+        return getFileFullPath(downloadPath);
     }
 
     /**
@@ -174,8 +176,8 @@ public class RobotUtil {
         keyPress(robot, KeyEvent.VK_ENTER);
         keyRelease(robot, KeyEvent.VK_ENTER);
         // 可能会出现后缀名不同，所以要两次回车
-        keyPress(robot, KeyEvent.VK_ENTER);
-        keyRelease(robot, KeyEvent.VK_ENTER);
+        // keyPress(robot, KeyEvent.VK_ENTER);
+        // keyRelease(robot, KeyEvent.VK_ENTER);
     }
 
 
